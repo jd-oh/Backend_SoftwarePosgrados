@@ -32,8 +32,8 @@ public class CohorteController {
     @Autowired
     private ProgramaRepository programaRepository;
 
-    @PostMapping(path = "/nuevo")
-    public @ResponseBody String nuevo(@RequestParam String numero,
+    @PostMapping(path = "/crear")
+    public @ResponseBody String crear(@RequestParam String numero,
             @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate fecha,
             @RequestParam int idPrograma) {
 
@@ -56,7 +56,7 @@ public class CohorteController {
 
     }
 
-    @GetMapping(path = "/todos")
+    @GetMapping(path = "/listar")
     public @ResponseBody Iterable<Cohorte> listarTodos() {
         return cohorteRepository.findAll();
     }

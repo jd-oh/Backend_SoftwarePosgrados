@@ -30,8 +30,8 @@ public class DepartamentoController {
     @Autowired
     private FacultadRepository facultadRepository;
 
-    @PostMapping(path = "/nuevo")
-    public @ResponseBody String nuevo(@RequestParam String nombre, @RequestParam int idFacultad) {
+    @PostMapping(path = "/crear")
+    public @ResponseBody String crear(@RequestParam String nombre, @RequestParam int idFacultad) {
 
         // Buscar la facultad por su ID
         Optional<Facultad> facultad = facultadRepository.findById(idFacultad);
@@ -51,7 +51,7 @@ public class DepartamentoController {
 
     }
 
-    @GetMapping(path = "/todos")
+    @GetMapping(path = "/listar")
     public @ResponseBody Iterable<Departamento> listarTodos() {
         return departamentoRepository.findAll();
     }

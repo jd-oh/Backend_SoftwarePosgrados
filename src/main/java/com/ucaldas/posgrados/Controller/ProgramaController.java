@@ -30,8 +30,8 @@ public class ProgramaController {
     @Autowired
     private DepartamentoRepository departamentoRepository;
 
-    @PostMapping(path = "/nuevo")
-    public @ResponseBody String nuevo(@RequestParam String nombre, @RequestParam int idDepartamento) {
+    @PostMapping(path = "/crear")
+    public @ResponseBody String crear(@RequestParam String nombre, @RequestParam int idDepartamento) {
 
         // Buscar la departamento por su ID
         Optional<Departamento> departamento = departamentoRepository.findById(idDepartamento);

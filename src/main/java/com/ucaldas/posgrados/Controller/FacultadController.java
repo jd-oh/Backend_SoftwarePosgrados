@@ -23,8 +23,8 @@ public class FacultadController {
     // controlador y el repositorio
     private FacultadRepository facultadRepository;
 
-    @PostMapping(path = "/nuevo")
-    public @ResponseBody String nuevo(@RequestParam String nombre) {
+    @PostMapping(path = "/crear")
+    public @ResponseBody String crear(@RequestParam String nombre) {
 
         Facultad facultad = new Facultad();
         facultad.setNombre(nombre);
@@ -34,7 +34,7 @@ public class FacultadController {
 
     }
 
-    @GetMapping(path = "/todos")
+    @GetMapping(path = "/listar")
     public @ResponseBody Iterable<Facultad> listarTodos() {
         return facultadRepository.findAll();
     }
