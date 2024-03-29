@@ -51,7 +51,7 @@ public class ProgramaController {
 
     }
 
-    @GetMapping(path = "/todos")
+    @GetMapping(path = "/listar")
     public @ResponseBody Iterable<Programa> listarTodos() {
         return programaRepository.findAll();
     }
