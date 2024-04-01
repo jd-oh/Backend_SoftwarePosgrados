@@ -38,7 +38,9 @@ public class FacultadController {
 
     @GetMapping(path = "/listar")
     public @ResponseBody Iterable<Facultad> listarTodos() {
-        return facultadRepository.findAll();
+
+        return facultadRepository.findAllByOrderByNombreAsc();
+
     }
 
     @GetMapping(path = "/buscar")

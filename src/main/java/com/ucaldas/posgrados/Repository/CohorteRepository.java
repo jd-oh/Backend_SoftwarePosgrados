@@ -6,4 +6,6 @@ import com.ucaldas.posgrados.Entity.Cohorte;
 
 public interface CohorteRepository extends CrudRepository<Cohorte, Integer> {
 
+    Iterable<Cohorte> findAllByOrderByNumeroAsc();
+
 }

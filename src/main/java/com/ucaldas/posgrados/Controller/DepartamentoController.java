@@ -55,7 +55,7 @@ public class DepartamentoController {
 
     @GetMapping(path = "/listar")
     public @ResponseBody Iterable<Departamento> listarTodos() {
-        return departamentoRepository.findAll();
+        return departamentoRepository.findAllByOrderByNombreAsc();
     }
 
     @GetMapping(path = "/buscar")

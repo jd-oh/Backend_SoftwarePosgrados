@@ -6,4 +6,6 @@ import com.ucaldas.posgrados.Entity.Departamento;
 
 public interface DepartamentoRepository extends CrudRepository<Departamento, Integer> {
 
+    Iterable<Departamento> findAllByOrderByNombreAsc();
+
 }
