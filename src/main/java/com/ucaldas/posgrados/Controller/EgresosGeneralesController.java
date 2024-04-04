@@ -35,7 +35,7 @@ public class EgresosGeneralesController {
     @Autowired
     private TipoCostoRepository tipoCostoRepository;
 
-    @PostMapping("/crear")
+    @PostMapping("/crearParaPresupuesto")
     public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String concepto,
             @RequestParam double valorUnitario,
             @RequestParam int cantidad, @RequestParam int idTipoCosto) {
@@ -58,6 +58,12 @@ public class EgresosGeneralesController {
             // aprobado o no
             egresosDescuentos.setEjecucionPresupuestal(null);
 
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getEgresosGenerales().add(egresosDescuentos);
+
+            // Guardar el Presupuesto actualizado
+            presupuestoRepository.save(presupuesto.get());
+
             return "Egreso general guardado";
         } else {
             return "Error: Presupuesto no encontrado";
@@ -74,7 +80,7 @@ public class EgresosGeneralesController {
         return egresoGeneralRepository.findById(id);
     }
 
-    @PutMapping(path = "/actualizar")
+    @PutMapping(path = "/actualizarParaPresupuesto")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam int idTipoCosto,
             @RequestParam int idPresupuesto, @RequestParam String concepto, @RequestParam double valorUnitario,
             @RequestParam int cantidad) {

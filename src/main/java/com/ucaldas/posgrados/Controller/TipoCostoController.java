@@ -2,7 +2,10 @@ package com.ucaldas.posgrados.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,30 +29,30 @@ public class TipoCostoController {
         tipoCosto.setNombreTipo(nombreTipo);
 
         tipoCostoRepository.save(tipoCosto);
-        return "Tipo de descuento guardado";
+        return "Tipo de costo guardado";
 
     }
 
-    @PostMapping(path = "/eliminar")
+    @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         tipoCostoRepository.deleteById(id);
-        return "Tipo de descuento eliminado";
+        return "Tipo de costo eliminado";
 
     }
 
-    @PostMapping(path = "/actualizar")
+    @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam String nombreTipo) {
 
         TipoCosto tipoCosto = tipoCostoRepository.findById(id).get();
         tipoCosto.setNombreTipo(nombreTipo);
 
         tipoCostoRepository.save(tipoCosto);
-        return "Tipo de descuento actualizado";
+        return "Tipo de costo actualizado";
 
     }
 
-    @PostMapping(path = "/listar")
+    @GetMapping(path = "/listar")
     public @ResponseBody Iterable<TipoCosto> listar() {
 
         return tipoCostoRepository.findAllByOrderByNombreTipoAsc();

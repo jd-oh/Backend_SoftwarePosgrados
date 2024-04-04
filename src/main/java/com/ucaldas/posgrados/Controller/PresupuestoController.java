@@ -125,6 +125,7 @@ public class PresupuestoController {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
 
         if (presupuesto.isPresent()) {
+
             double egresosTotal = presupuesto.get().getEgresosOtros().stream().mapToDouble(i -> i.getValorTotal())
                     .sum();
 
@@ -137,7 +138,13 @@ public class PresupuestoController {
             egresosTotal = egresosTotal
                     + presupuesto.get().getEgresosViaje().stream().mapToDouble(i -> i.getValorTotal()).sum();
 
-            // Faltan los egresos de Servicios Personales
+            egresosTotal = egresosTotal + presupuesto.get().getEgresosOtrosServDocentes().stream()
+                    .mapToDouble(i -> i.getValorTotal()).sum();
+
+            egresosTotal = egresosTotal + presupuesto.get().getEgresosServNoDocentes().stream()
+                    .mapToDouble(i -> i.getValorTotal()).sum();
+
+            // Faltan los egresos de Servicios Docentes
 
             presupuesto.get().setEgresosProgramaTotales(egresosTotal);
 
