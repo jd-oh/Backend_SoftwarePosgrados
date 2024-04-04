@@ -35,7 +35,7 @@ public class EgresosOtrosServDocentesController {
     @Autowired
     private TipoCostoRepository tipoCostoRepository;
 
-    @PostMapping("/crear")
+    @PostMapping("/crearParaPresupuesto")
     public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String servicio,
             @RequestParam String descripcion,
             @RequestParam int numHoras, @RequestParam double valorTotal,
@@ -46,18 +46,24 @@ public class EgresosOtrosServDocentesController {
 
         // Verificar si la programa existe
         if (presupuesto.isPresent()) {
-            EgresosOtrosServDocentes egresosDescuentos = new EgresosOtrosServDocentes();
+            EgresosOtrosServDocentes egresosOtrosServDocentes = new EgresosOtrosServDocentes();
 
-            egresosDescuentos.setPresupuesto(presupuesto.get());
-            egresosDescuentos.setTipoCosto(tipoCosto.get());
-            egresosDescuentos.setServicio(servicio);
-            egresosDescuentos.setDescripcion(descripcion);
-            egresosDescuentos.setNumHoras(numHoras);
-            egresosDescuentos.setValorTotal(valorTotal);
+            egresosOtrosServDocentes.setPresupuesto(presupuesto.get());
+            egresosOtrosServDocentes.setTipoCosto(tipoCosto.get());
+            egresosOtrosServDocentes.setServicio(servicio);
+            egresosOtrosServDocentes.setDescripcion(descripcion);
+            egresosOtrosServDocentes.setNumHoras(numHoras);
+            egresosOtrosServDocentes.setValorTotal(valorTotal);
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
-            egresosDescuentos.setEjecucionPresupuestal(null);
+            egresosOtrosServDocentes.setEjecucionPresupuestal(null);
+
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getEgresosOtrosServDocentes().add(egresosOtrosServDocentes);
+
+            // Guardar el Presupuesto actualizado
+            presupuestoRepository.save(presupuesto.get());
 
             return "Egreso de otros servicios docentes guardado";
         } else {
@@ -85,16 +91,16 @@ public class EgresosOtrosServDocentesController {
         Optional<TipoCosto> tipoCosto = tipoCostoRepository.findById(idTipoCosto);
 
         if (egreso.isPresent() && presupuesto.isPresent() && tipoCosto.isPresent()) {
-            EgresosOtrosServDocentes egresosDescuentosActualizado = egreso.get();
-            egresosDescuentosActualizado.setServicio(servicio);
-            egresosDescuentosActualizado.setDescripcion(descripcion);
-            egresosDescuentosActualizado.setNumHoras(numHoras);
-            egresosDescuentosActualizado.setValorTotal(valorTotal);
+            EgresosOtrosServDocentes egresosOtrosServDocentesActualizado = egreso.get();
+            egresosOtrosServDocentesActualizado.setServicio(servicio);
+            egresosOtrosServDocentesActualizado.setDescripcion(descripcion);
+            egresosOtrosServDocentesActualizado.setNumHoras(numHoras);
+            egresosOtrosServDocentesActualizado.setValorTotal(valorTotal);
 
-            egresosDescuentosActualizado.setTipoCosto(tipoCosto.get());
-            egresosDescuentosActualizado.setPresupuesto(presupuesto.get());
+            egresosOtrosServDocentesActualizado.setTipoCosto(tipoCosto.get());
+            egresosOtrosServDocentesActualizado.setPresupuesto(presupuesto.get());
 
-            egresoOtrosServDocenteRepository.save(egresosDescuentosActualizado);
+            egresoOtrosServDocenteRepository.save(egresosOtrosServDocentesActualizado);
             return "Egreso de otros servicios docentes actualizado";
         } else {
             return "Error: Egreso de otros servicios docentes no encontrado";

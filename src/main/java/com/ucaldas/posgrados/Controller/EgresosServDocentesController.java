@@ -35,7 +35,7 @@ public class EgresosServDocentesController {
     @Autowired
     private TipoCompensacionRepository tipoCompensacionRepository;
 
-    @PostMapping("/crear")
+    @PostMapping("/crearParaPresupuesto")
     public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String nombreMateria,
             @RequestParam boolean esDocentePlanta,
             @RequestParam String nombreDocente, @RequestParam String escalafon, @RequestParam String titulo,
@@ -48,28 +48,34 @@ public class EgresosServDocentesController {
 
         // Verificar si la programa existe
         if (presupuesto.isPresent() && tipoCompensacion.isPresent()) {
-            EgresosServDocentes egresosDescuentos = new EgresosServDocentes();
+            EgresosServDocentes egresosServDocentes = new EgresosServDocentes();
 
-            egresosDescuentos.setNombreMateria(nombreMateria);
-            egresosDescuentos.setEsDocentePlanta(esDocentePlanta);
-            egresosDescuentos.setNombreDocente(nombreDocente);
-            egresosDescuentos.setEscalafon(escalafon);
-            egresosDescuentos.setTitulo(titulo);
-            egresosDescuentos.setHorasTeoricasMat(horasTeoricasMat);
-            egresosDescuentos.setHorasPracticasMat(horasPracticasMat);
+            egresosServDocentes.setNombreMateria(nombreMateria);
+            egresosServDocentes.setEsDocentePlanta(esDocentePlanta);
+            egresosServDocentes.setNombreDocente(nombreDocente);
+            egresosServDocentes.setEscalafon(escalafon);
+            egresosServDocentes.setTitulo(titulo);
+            egresosServDocentes.setHorasTeoricasMat(horasTeoricasMat);
+            egresosServDocentes.setHorasPracticasMat(horasPracticasMat);
 
-            egresosDescuentos.setTotalHorasProfesor(horasPracticasMat + horasTeoricasMat);
+            egresosServDocentes.setTotalHorasProfesor(horasPracticasMat + horasTeoricasMat);
 
-            egresosDescuentos.setValorHoraProfesor(valorHoraProfesor);
+            egresosServDocentes.setValorHoraProfesor(valorHoraProfesor);
 
-            egresosDescuentos.setTotalPagoProfesor(valorHoraProfesor * egresosDescuentos.getTotalHorasProfesor());
+            egresosServDocentes.setTotalPagoProfesor(valorHoraProfesor * egresosServDocentes.getTotalHorasProfesor());
 
-            egresosDescuentos.setPresupuesto(presupuesto.get());
-            egresosDescuentos.setTipoCompensacion(tipoCompensacion.get());
+            egresosServDocentes.setPresupuesto(presupuesto.get());
+            egresosServDocentes.setTipoCompensacion(tipoCompensacion.get());
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
-            egresosDescuentos.setEjecucionPresupuestal(null);
+            egresosServDocentes.setEjecucionPresupuestal(null);
+
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getEgresosServDocentes().add(egresosServDocentes);
+
+            // Guardar el Presupuesto actualizado
+            presupuestoRepository.save(presupuesto.get());
 
             return "Egreso de servicios docentes guardado";
         } else {
@@ -99,27 +105,27 @@ public class EgresosServDocentesController {
         Optional<TipoCompensacion> tipoCompensacion = tipoCompensacionRepository.findById(idTipoCompensacion);
 
         if (egreso.isPresent() && presupuesto.isPresent() && tipoCompensacion.isPresent()) {
-            EgresosServDocentes egresosDescuentosActualizado = egreso.get();
+            EgresosServDocentes egresosServDocentesActualizado = egreso.get();
 
-            egresosDescuentosActualizado.setNombreMateria(nombreMateria);
-            egresosDescuentosActualizado.setEsDocentePlanta(esDocentePlanta);
-            egresosDescuentosActualizado.setNombreDocente(nombreDocente);
-            egresosDescuentosActualizado.setEscalafon(escalafon);
-            egresosDescuentosActualizado.setTitulo(titulo);
-            egresosDescuentosActualizado.setHorasTeoricasMat(horasTeoricasMat);
-            egresosDescuentosActualizado.setHorasPracticasMat(horasPracticasMat);
+            egresosServDocentesActualizado.setNombreMateria(nombreMateria);
+            egresosServDocentesActualizado.setEsDocentePlanta(esDocentePlanta);
+            egresosServDocentesActualizado.setNombreDocente(nombreDocente);
+            egresosServDocentesActualizado.setEscalafon(escalafon);
+            egresosServDocentesActualizado.setTitulo(titulo);
+            egresosServDocentesActualizado.setHorasTeoricasMat(horasTeoricasMat);
+            egresosServDocentesActualizado.setHorasPracticasMat(horasPracticasMat);
 
-            egresosDescuentosActualizado.setTotalHorasProfesor(horasPracticasMat + horasTeoricasMat);
+            egresosServDocentesActualizado.setTotalHorasProfesor(horasPracticasMat + horasTeoricasMat);
 
-            egresosDescuentosActualizado.setValorHoraProfesor(valorHoraProfesor);
+            egresosServDocentesActualizado.setValorHoraProfesor(valorHoraProfesor);
 
-            egresosDescuentosActualizado
-                    .setTotalPagoProfesor(valorHoraProfesor * egresosDescuentosActualizado.getTotalHorasProfesor());
+            egresosServDocentesActualizado
+                    .setTotalPagoProfesor(valorHoraProfesor * egresosServDocentesActualizado.getTotalHorasProfesor());
 
-            egresosDescuentosActualizado.setTipoCompensacion(tipoCompensacion.get());
-            egresosDescuentosActualizado.setPresupuesto(presupuesto.get());
+            egresosServDocentesActualizado.setTipoCompensacion(tipoCompensacion.get());
+            egresosServDocentesActualizado.setPresupuesto(presupuesto.get());
 
-            egresoServDocenteRepository.save(egresosDescuentosActualizado);
+            egresoServDocenteRepository.save(egresosServDocentesActualizado);
             return "Egreso de servicios docentes actualizado";
         } else {
             return "Error: Egreso de servicios docentes no encontrado";

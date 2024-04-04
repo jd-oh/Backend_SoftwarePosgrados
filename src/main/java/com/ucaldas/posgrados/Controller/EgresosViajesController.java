@@ -30,7 +30,7 @@ public class EgresosViajesController {
     @Autowired
     private EgresosViajesRepository egresoViajeRepository;
 
-    @PostMapping("/crear")
+    @PostMapping("/crearParaPresupuesto")
     public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String descripcion,
             @RequestParam int numPersonas,
             @RequestParam double apoyoDesplazamiento, @RequestParam int numViajesPorPersona,
@@ -52,6 +52,12 @@ public class EgresosViajesController {
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
             egresoViaje.setEjecucionPresupuestal(null);
+
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getEgresosViaje().add(egresoViaje);
+
+            // Guardar el Presupuesto actualizado
+            presupuestoRepository.save(presupuesto.get());
 
             return "Egreso de viaje guardado";
         } else {

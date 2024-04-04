@@ -35,7 +35,7 @@ public class EgresosOtrosController {
     @Autowired
     private TipoCostoRepository tipoCostoRepository;
 
-    @PostMapping("/crear")
+    @PostMapping("/crearParaPresupuesto")
     public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String concepto,
             @RequestParam double valorUnitario,
             @RequestParam int cantidad, @RequestParam int idTipoCosto) {
@@ -45,18 +45,24 @@ public class EgresosOtrosController {
 
         // Verificar si la programa existe
         if (presupuesto.isPresent()) {
-            EgresosOtros egresosDescuentos = new EgresosOtros();
-            egresosDescuentos.setConcepto(concepto);
-            egresosDescuentos.setValorUnitario(valorUnitario);
-            egresosDescuentos.setCantidad(cantidad);
-            egresosDescuentos.setValorTotal(cantidad * valorUnitario);
+            EgresosOtros egresosOtros = new EgresosOtros();
+            egresosOtros.setConcepto(concepto);
+            egresosOtros.setValorUnitario(valorUnitario);
+            egresosOtros.setCantidad(cantidad);
+            egresosOtros.setValorTotal(cantidad * valorUnitario);
 
-            egresosDescuentos.setPresupuesto(presupuesto.get());
-            egresosDescuentos.setTipoCosto(tipoCosto.get());
+            egresosOtros.setPresupuesto(presupuesto.get());
+            egresosOtros.setTipoCosto(tipoCosto.get());
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
-            egresosDescuentos.setEjecucionPresupuestal(null);
+            egresosOtros.setEjecucionPresupuestal(null);
+
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getEgresosOtros().add(egresosOtros);
+
+            // Guardar el Presupuesto actualizado
+            presupuestoRepository.save(presupuesto.get());
 
             return "Egreso de otros guardado";
         } else {
@@ -84,16 +90,16 @@ public class EgresosOtrosController {
         Optional<TipoCosto> tipoCosto = tipoCostoRepository.findById(idTipoCosto);
 
         if (egreso.isPresent() && presupuesto.isPresent() && tipoCosto.isPresent()) {
-            EgresosOtros egresosDescuentosActualizado = egreso.get();
-            egresosDescuentosActualizado.setConcepto(concepto);
-            egresosDescuentosActualizado.setValorUnitario(valorUnitario);
-            egresosDescuentosActualizado.setCantidad(cantidad);
-            egresosDescuentosActualizado.setValorTotal(cantidad * valorUnitario);
+            EgresosOtros egresosOtrosActualizado = egreso.get();
+            egresosOtrosActualizado.setConcepto(concepto);
+            egresosOtrosActualizado.setValorUnitario(valorUnitario);
+            egresosOtrosActualizado.setCantidad(cantidad);
+            egresosOtrosActualizado.setValorTotal(cantidad * valorUnitario);
 
-            egresosDescuentosActualizado.setTipoCosto(tipoCosto.get());
-            egresosDescuentosActualizado.setPresupuesto(presupuesto.get());
+            egresosOtrosActualizado.setTipoCosto(tipoCosto.get());
+            egresosOtrosActualizado.setPresupuesto(presupuesto.get());
 
-            egresoOtroRepository.save(egresosDescuentosActualizado);
+            egresoOtroRepository.save(egresosOtrosActualizado);
             return "Egreso de otros actualizado";
         } else {
             return "Error: Egreso de otros no encontrado";

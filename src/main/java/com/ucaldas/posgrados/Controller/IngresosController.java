@@ -30,7 +30,7 @@ public class IngresosController {
     @Autowired
     private IngresosRepository ingresoRepository;
 
-    @PostMapping("/crear")
+    @PostMapping("/crearParaPresupuesto")
     public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String concepto,
             @RequestParam double valor) {
         // Buscar la programa por su ID
@@ -46,6 +46,12 @@ public class IngresosController {
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
             ingreso.setEjecucionPresupuestal(null);
+
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getIngresos().add(ingreso);
+
+            // Guardar el Presupuesto actualizado
+            presupuestoRepository.save(presupuesto.get());
 
             return "Ingreso guardado";
         } else {

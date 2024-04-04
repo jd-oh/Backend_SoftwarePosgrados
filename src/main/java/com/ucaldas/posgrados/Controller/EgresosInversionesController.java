@@ -35,7 +35,7 @@ public class EgresosInversionesController {
     @Autowired
     private TipoInversionRepository tipoInversionRepository;
 
-    @PostMapping("/crear")
+    @PostMapping("/crearParaPresupuesto")
     public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String concepto,
             @RequestParam double valor,
             @RequestParam int idTipoInversion) {
@@ -54,6 +54,12 @@ public class EgresosInversionesController {
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
             egresosInversiones.setEjecucionPresupuestal(null);
+
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getEgresosInversiones().add(egresosInversiones);
+
+            // Guardar el Presupuesto actualizado
+            presupuestoRepository.save(presupuesto.get());
 
             return "Egreso de descuento guardado";
         } else {

@@ -35,7 +35,7 @@ public class EgresosDescuentosController {
     @Autowired
     private TipoDescuentoRepository tipoDescuentoRepository;
 
-    @PostMapping("/crear")
+    @PostMapping("/crearParaPresupuesto")
     public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam int numEstudiantes,
             @RequestParam double valor, @RequestParam int numPeriodos, @RequestParam double totalDescuento,
             @RequestParam int idTipoDescuento) {
@@ -57,6 +57,12 @@ public class EgresosDescuentosController {
             // aprobado o no
             egresosDescuentos.setEjecucionPresupuestal(null);
 
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getEgresosDescuentos().add(egresosDescuentos);
+
+            // Guardar el Presupuesto actualizado
+            presupuestoRepository.save(presupuesto.get());
+
             return "Egreso de descuento guardado";
         } else {
             return "Error: Presupuesto no encontrado";
@@ -73,7 +79,7 @@ public class EgresosDescuentosController {
         return egresoDescuentoRepository.findById(id);
     }
 
-    @PutMapping(path = "/actualizar")
+    @PutMapping(path = "/actualizarParaPresupuesto")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam int numEstudiantes,
             @RequestParam double valor,
             @RequestParam int numPeriodos, @RequestParam double totalDescuento, @RequestParam int idTipoDescuento,

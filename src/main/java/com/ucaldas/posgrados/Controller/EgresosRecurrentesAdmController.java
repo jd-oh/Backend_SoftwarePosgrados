@@ -30,7 +30,7 @@ public class EgresosRecurrentesAdmController {
     @Autowired
     private EgresosRecurrentesAdmRepository egresoRecurrenteAdmRepository;
 
-    @PostMapping("/crear")
+    @PostMapping("/crearParaPresupuesto")
     public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String unidad,
             @RequestParam String cargo,
             @RequestParam double valorHora, @RequestParam int numHoras) {
@@ -52,6 +52,12 @@ public class EgresosRecurrentesAdmController {
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
             egresoRecurrenteAdm.setEjecucionPresupuestal(null);
+
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getEgresosRecurrentesAdm().add(egresoRecurrenteAdm);
+
+            // Guardar el Presupuesto actualizado
+            presupuestoRepository.save(presupuesto.get());
 
             return "Egreso recurrente administracion guardado";
         } else {

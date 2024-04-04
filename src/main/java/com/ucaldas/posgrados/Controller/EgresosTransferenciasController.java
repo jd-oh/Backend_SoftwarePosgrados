@@ -35,7 +35,7 @@ public class EgresosTransferenciasController {
     @Autowired
     private TipoTransferenciaRepository tipoTransferenciaRepository;
 
-    @PostMapping("/crear")
+    @PostMapping("/crearParaPresupuesto")
     public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String descripcion,
             @RequestParam double porcentaje,
             @RequestParam int idTipoTransferencia) {
@@ -45,22 +45,28 @@ public class EgresosTransferenciasController {
 
         // Verificar si la programa existe
         if (presupuesto.isPresent() && tipoTransferencia.isPresent()) {
-            EgresosTransferencias egresosDescuentos = new EgresosTransferencias();
+            EgresosTransferencias egresosTransferencias = new EgresosTransferencias();
 
-            egresosDescuentos.setDescripcion(descripcion);
-            egresosDescuentos.setPorcentaje(porcentaje);
+            egresosTransferencias.setDescripcion(descripcion);
+            egresosTransferencias.setPorcentaje(porcentaje);
 
             // La creación de los gastos por transferencia deben hacerse después de haber
             // calculado los ingresos totales
 
-            egresosDescuentos.setValorTotal(presupuesto.get().getIngresosTotales() * porcentaje / 100);
+            egresosTransferencias.setValorTotal(presupuesto.get().getIngresosTotales() * porcentaje / 100);
 
-            egresosDescuentos.setPresupuesto(presupuesto.get());
-            egresosDescuentos.setTipoTransferencia(tipoTransferencia.get());
+            egresosTransferencias.setPresupuesto(presupuesto.get());
+            egresosTransferencias.setTipoTransferencia(tipoTransferencia.get());
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
-            egresosDescuentos.setEjecucionPresupuestal(null);
+            egresosTransferencias.setEjecucionPresupuestal(null);
+
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getEgresosTransferencias().add(egresosTransferencias);
+
+            // Guardar el Presupuesto actualizado
+            presupuestoRepository.save(presupuesto.get());
 
             return "Egreso de descuento guardado";
         } else {
@@ -88,15 +94,15 @@ public class EgresosTransferenciasController {
         Optional<TipoTransferencia> tipoTransferencia = tipoTransferenciaRepository.findById(idTipoTransferencia);
 
         if (egreso.isPresent() && presupuesto.isPresent() && tipoTransferencia.isPresent()) {
-            EgresosTransferencias egresosDescuentosActualizado = egreso.get();
+            EgresosTransferencias egresosTransferenciasActualizado = egreso.get();
 
-            egresosDescuentosActualizado.setDescripcion(descripcion);
-            egresosDescuentosActualizado.setPorcentaje(porcentaje);
-            egresosDescuentosActualizado.setValorTotal(presupuesto.get().getIngresosTotales() * porcentaje / 100);
+            egresosTransferenciasActualizado.setDescripcion(descripcion);
+            egresosTransferenciasActualizado.setPorcentaje(porcentaje);
+            egresosTransferenciasActualizado.setValorTotal(presupuesto.get().getIngresosTotales() * porcentaje / 100);
 
-            egresosDescuentosActualizado.setPresupuesto(presupuesto.get());
+            egresosTransferenciasActualizado.setPresupuesto(presupuesto.get());
 
-            egresoTransferenciaRepository.save(egresosDescuentosActualizado);
+            egresoTransferenciaRepository.save(egresosTransferenciasActualizado);
             return "Egreso de descuento actualizado";
         } else {
             return "Error: Egreso de descuento no encontrado";
