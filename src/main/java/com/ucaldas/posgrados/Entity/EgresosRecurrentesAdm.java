@@ -8,13 +8,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Ingresos {
+public class EgresosRecurrentesAdm {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private String concepto;
-    private double valor;
+    private String unidad;
+    private String cargo;
 
     @ManyToOne
     @JoinColumn(name = "idPresupuesto", referencedColumnName = "id")
@@ -24,6 +24,12 @@ public class Ingresos {
     @JoinColumn(name = "idEjecucionPresupuestal", referencedColumnName = "id")
     private EjecucionPresupuestal ejecucionPresupuestal;
 
+    private double valorHora;
+
+    private int numHoras;
+
+    private double valorTotal;
+
     public int getId() {
         return id;
     }
@@ -32,20 +38,20 @@ public class Ingresos {
         this.id = id;
     }
 
-    public String getConcepto() {
-        return concepto;
+    public String getUnidad() {
+        return unidad;
     }
 
-    public void setConcepto(String concepto) {
-        this.concepto = concepto;
+    public void setUnidad(String unidad) {
+        this.unidad = unidad;
     }
 
-    public double getValor() {
-        return valor;
+    public String getCargo() {
+        return cargo;
     }
 
-    public void setValor(double valor) {
-        this.valor = valor;
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
     }
 
     public Presupuesto getPresupuesto() {
@@ -62,6 +68,30 @@ public class Ingresos {
 
     public void setEjecucionPresupuestal(EjecucionPresupuestal ejecucionPresupuestal) {
         this.ejecucionPresupuestal = ejecucionPresupuestal;
+    }
+
+    public double getValorHora() {
+        return valorHora;
+    }
+
+    public void setValorHora(double valorHora) {
+        this.valorHora = valorHora;
+    }
+
+    public int getNumHoras() {
+        return numHoras;
+    }
+
+    public void setNumHoras(int numHoras) {
+        this.numHoras = numHoras;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
     }
 
 }

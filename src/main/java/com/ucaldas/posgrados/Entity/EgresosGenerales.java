@@ -8,13 +8,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Ingresos {
+public class EgresosGenerales {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     private String concepto;
-    private double valor;
+    private double valorUnitario;
 
     @ManyToOne
     @JoinColumn(name = "idPresupuesto", referencedColumnName = "id")
@@ -23,6 +23,14 @@ public class Ingresos {
     @ManyToOne
     @JoinColumn(name = "idEjecucionPresupuestal", referencedColumnName = "id")
     private EjecucionPresupuestal ejecucionPresupuestal;
+
+    @ManyToOne
+    @JoinColumn(name = "idTipoCosto", referencedColumnName = "id")
+    private TipoCosto tipoCosto;
+
+    private int cantidad;
+
+    private double valorTotal;
 
     public int getId() {
         return id;
@@ -40,12 +48,12 @@ public class Ingresos {
         this.concepto = concepto;
     }
 
-    public double getValor() {
-        return valor;
+    public double getValorUnitario() {
+        return valorUnitario;
     }
 
-    public void setValor(double valor) {
-        this.valor = valor;
+    public void setValorUnitario(double valorUnitario) {
+        this.valorUnitario = valorUnitario;
     }
 
     public Presupuesto getPresupuesto() {
@@ -62,6 +70,30 @@ public class Ingresos {
 
     public void setEjecucionPresupuestal(EjecucionPresupuestal ejecucionPresupuestal) {
         this.ejecucionPresupuestal = ejecucionPresupuestal;
+    }
+
+    public TipoCosto getTipoCosto() {
+        return tipoCosto;
+    }
+
+    public void setTipoCosto(TipoCosto tipoCosto) {
+        this.tipoCosto = tipoCosto;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
     }
 
 }

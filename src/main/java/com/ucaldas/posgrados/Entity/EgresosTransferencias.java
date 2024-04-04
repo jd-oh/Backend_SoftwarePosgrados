@@ -8,13 +8,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Ingresos {
+public class EgresosTransferencias {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private String concepto;
-    private double valor;
+    private String descripcion;
+    private double porcentaje;
 
     @ManyToOne
     @JoinColumn(name = "idPresupuesto", referencedColumnName = "id")
@@ -24,6 +24,12 @@ public class Ingresos {
     @JoinColumn(name = "idEjecucionPresupuestal", referencedColumnName = "id")
     private EjecucionPresupuestal ejecucionPresupuestal;
 
+    @ManyToOne
+    @JoinColumn(name = "idTipoTransferencia", referencedColumnName = "id")
+    private TipoTransferencia tipoTransferencia;
+
+    private double valorTotal;
+
     public int getId() {
         return id;
     }
@@ -32,20 +38,20 @@ public class Ingresos {
         this.id = id;
     }
 
-    public String getConcepto() {
-        return concepto;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setConcepto(String concepto) {
-        this.concepto = concepto;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public double getValor() {
-        return valor;
+    public double getPorcentaje() {
+        return porcentaje;
     }
 
-    public void setValor(double valor) {
-        this.valor = valor;
+    public void setPorcentaje(double porcentaje) {
+        this.porcentaje = porcentaje;
     }
 
     public Presupuesto getPresupuesto() {
@@ -62,6 +68,22 @@ public class Ingresos {
 
     public void setEjecucionPresupuestal(EjecucionPresupuestal ejecucionPresupuestal) {
         this.ejecucionPresupuestal = ejecucionPresupuestal;
+    }
+
+    public TipoTransferencia getTipoTransferencia() {
+        return tipoTransferencia;
+    }
+
+    public void setTipoTransferencia(TipoTransferencia tipoTransferencia) {
+        this.tipoTransferencia = tipoTransferencia;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
     }
 
 }
