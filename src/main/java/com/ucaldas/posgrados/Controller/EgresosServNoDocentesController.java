@@ -35,12 +35,15 @@ public class EgresosServNoDocentesController {
     @Autowired
     private TipoCostoRepository tipoCostoRepository;
 
-    @PostMapping("/crearParaPresupuesto")
-    public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String servicio,
+    @Autowired
+    private PresupuestoController presupuestoController;
+
+    @PostMapping("/crear")
+    public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam String servicio,
             @RequestParam double valorUnitario,
             @RequestParam int cantidad, @RequestParam int idTipoCosto) {
         // Buscar la programa por su ID
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
         Optional<TipoCosto> tipoCosto = tipoCostoRepository.findById(idTipoCosto);
 
         // Verificar si la programa existe
@@ -61,6 +64,11 @@ public class EgresosServNoDocentesController {
 
             // Guardar el egreso general en el presupuesto
             presupuesto.get().getEgresosServNoDocentes().add(egresosServNoDocentes);
+
+            int idPresupuesto = egresosServNoDocentes.getPresupuesto().getId();
+            double valorNuevo = egresosServNoDocentes.getValorTotal();
+
+            presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, 0);
 
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
@@ -83,14 +91,16 @@ public class EgresosServNoDocentesController {
 
     @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam int idTipoCosto,
-            @RequestParam int idPresupuesto, @RequestParam String servicio, @RequestParam double valorUnitario,
+            @RequestParam String servicio, @RequestParam double valorUnitario,
             @RequestParam int cantidad) {
 
         Optional<EgresosServNoDocentes> egreso = egresoServNoDocenteRepository.findById(id);
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
         Optional<TipoCosto> tipoCosto = tipoCostoRepository.findById(idTipoCosto);
 
-        if (egreso.isPresent() && presupuesto.isPresent() && tipoCosto.isPresent()) {
+        if (egreso.isPresent() && tipoCosto.isPresent()) {
+
+            double valorAnterior = egreso.get().getValorTotal();
+
             EgresosServNoDocentes egresosServNoDocentesActualizado = egreso.get();
 
             egresosServNoDocentesActualizado.setServicio(servicio);
@@ -99,9 +109,13 @@ public class EgresosServNoDocentesController {
             egresosServNoDocentesActualizado.setValorTotal(cantidad * valorUnitario);
 
             egresosServNoDocentesActualizado.setTipoCosto(tipoCosto.get());
-            egresosServNoDocentesActualizado.setPresupuesto(presupuesto.get());
+
+            int idPresupuesto = egresosServNoDocentesActualizado.getPresupuesto().getId();
+            double valorNuevo = egresosServNoDocentesActualizado.getValorTotal();
 
             egresoServNoDocenteRepository.save(egresosServNoDocentesActualizado);
+
+            presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
             return "Egreso de servicio no docente actualizado";
         } else {
             return "Error: Egreso de servicio no docente no encontrado";
@@ -110,6 +124,12 @@ public class EgresosServNoDocentesController {
 
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
+
+        Optional<EgresosServNoDocentes> egreso = egresoServNoDocenteRepository.findById(id);
+        double valorAnterior = egreso.get().getValorTotal();
+        int idPresupuesto = egreso.get().getPresupuesto().getId();
+
+        presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, 0, valorAnterior);
         egresoServNoDocenteRepository.deleteById(id);
         return "Egreso de servicio no docente eliminado";
     }

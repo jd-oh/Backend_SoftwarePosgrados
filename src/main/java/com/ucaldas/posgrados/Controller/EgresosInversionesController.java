@@ -35,12 +35,15 @@ public class EgresosInversionesController {
     @Autowired
     private TipoInversionRepository tipoInversionRepository;
 
-    @PostMapping("/crearParaPresupuesto")
-    public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String concepto,
+    @Autowired
+    private PresupuestoController presupuestoController;
+
+    @PostMapping("/crear")
+    public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam String concepto,
             @RequestParam double valor,
             @RequestParam int idTipoInversion) {
         // Buscar la programa por su ID
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
         Optional<TipoInversion> tipoInversion = tipoInversionRepository.findById(idTipoInversion);
 
         // Verificar si la programa existe
@@ -57,6 +60,11 @@ public class EgresosInversionesController {
 
             // Guardar el egreso general en el presupuesto
             presupuesto.get().getEgresosInversiones().add(egresosInversiones);
+
+            int idPresupuesto = presupuesto.get().getId();
+            double valorNuevo = egresosInversiones.getValor();
+
+            presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, valorNuevo, 0);
 
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
@@ -78,22 +86,29 @@ public class EgresosInversionesController {
     }
 
     @PutMapping(path = "/actualizar")
-    public @ResponseBody String actualizar(@RequestParam int id, @RequestParam int idPresupuesto,
+    public @ResponseBody String actualizar(@RequestParam int id,
             @RequestParam String concepto, @RequestParam double valor,
             @RequestParam int idTipoInversion) {
 
         Optional<EgresosInversiones> egreso = egresoInversionRepository.findById(id);
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
         Optional<TipoInversion> tipoInversion = tipoInversionRepository.findById(idTipoInversion);
 
-        if (egreso.isPresent() && presupuesto.isPresent() && tipoInversion.isPresent()) {
+        if (egreso.isPresent() && tipoInversion.isPresent()) {
+
+            double valorAnterior = egreso.get().getValor();
+
             EgresosInversiones egresosInversionesActualizado = egreso.get();
             egresosInversionesActualizado.setConcepto(concepto);
             egresosInversionesActualizado.setValor(valor);
-            egresosInversionesActualizado.setPresupuesto(presupuesto.get());
             egresosInversionesActualizado.setTipoInversion(tipoInversion.get());
 
+            int idPresupuesto = egresosInversionesActualizado.getPresupuesto().getId();
             egresoInversionRepository.save(egresosInversionesActualizado);
+
+            double valorNuevo = egresosInversionesActualizado.getValor();
+
+            presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, valorNuevo,
+                    valorAnterior);
             return "Egreso de descuento actualizado";
         } else {
             return "Error: Egreso de descuento no encontrado";
@@ -102,6 +117,12 @@ public class EgresosInversionesController {
 
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
+
+        Optional<EgresosInversiones> egreso = egresoInversionRepository.findById(id);
+        int idPresupuesto = egreso.get().getPresupuesto().getId();
+        double valorAnterior = egreso.get().getValor();
+
+        presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, 0, valorAnterior);
         egresoInversionRepository.deleteById(id);
         return "Egreso de descuento eliminado";
     }

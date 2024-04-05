@@ -120,8 +120,55 @@ public class PresupuestoController {
         }
     }
 
+    // Se utiliza para actualizar el atributo egresosProgramaTotales de la clase
+    // Presupuesto
+    // Cuando se crea: antiguo valor será 0
+    // Cuando se modifica: antiguo valor será el valor que se quiere modificar y
+    // nuevo valor será el valor nuevo
+    // Cuando se elimina: nuevo valor será 0
     @PutMapping(path = "/actualizarEgresosProgramaTotales")
-    public @ResponseBody String actualizarEgresosProgramaTotales(@RequestParam int id) {
+    public @ResponseBody String actualizarEgresosProgramaTotales(@RequestParam int id,
+            @RequestParam double nuevoValor, @RequestParam double antiguoValor) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
+
+        if (presupuesto.isPresent()) {
+            System.out.println("Egresos programa totales antes: " + presupuesto.get().getEgresosProgramaTotales());
+            presupuesto.get().setEgresosProgramaTotales(
+                    presupuesto.get().getEgresosProgramaTotales() - antiguoValor + nuevoValor);
+            System.out.println("Antiguo valor: " + antiguoValor);
+            System.out.println("Nuevo valor: " + nuevoValor);
+            System.out.println("Egresos programa totales despues: " + presupuesto.get().getEgresosProgramaTotales());
+            return "Egresos programa totales actualizados";
+        } else {
+            return "Error: Presupuesto no encontrado";
+        }
+
+    }
+
+    // Se utiliza para actualizar el atributo egresosProgramaTotales de la clase
+    // Presupuesto
+    // Cuando se crea: antiguo valor será 0
+    // Cuando se modifica: antiguo valor será el valor que se quiere modificar y
+    // nuevo valor será el valor nuevo
+    // Cuando se elimina: nuevo valor será 0
+    @PutMapping(path = "/actualizarEgresosRecurrentesUniversidadTotales")
+    public @ResponseBody String actualizarEgresosRecurrentesUniversidadTotales(@RequestParam int id,
+            @RequestParam double nuevoValor, @RequestParam double antiguoValor) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
+
+        if (presupuesto.isPresent()) {
+            presupuesto.get().setEgresosRecurrentesUniversidadTotales(
+                    presupuesto.get().getEgresosRecurrentesUniversidadTotales() - antiguoValor + nuevoValor);
+            return "Egresos recurrentes universidad totales actualizados";
+        } else {
+            return "Error: Presupuesto no encontrado";
+        }
+    }
+
+    // Cada vez que se crea un gasto se llama a este método para que recalcule todo
+    // de nuevo
+    @PutMapping(path = "/recalcularEgresosProgramaTotales")
+    public @ResponseBody String recalcularEgresosProgramaTotales(@RequestParam int id) {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
 
         if (presupuesto.isPresent()) {
@@ -149,14 +196,16 @@ public class PresupuestoController {
             presupuesto.get().setEgresosProgramaTotales(egresosTotal);
 
             presupuestoRepository.save(presupuesto.get());
-            return "Egresos totales actualizados";
+            return "Egresos totales recalculados";
         } else {
             return "Error: Presupuesto no encontrado";
         }
     }
 
-    @PutMapping(path = "/actualizarEgresosRecurrentesUniversidadTotales")
-    public @ResponseBody String actualizarEgresosRecurrentesUniversidadTotales(@RequestParam int id) {
+    // Cada vez que se crea un gasto se llama a este método para que recalcule todo
+    // de nuevo
+    @PutMapping(path = "/recalcularEgresosRecurrentesUniversidadTotales")
+    public @ResponseBody String recalcularEgresosRecurrentesUniversidadTotales(@RequestParam int id) {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
 
         if (presupuesto.isPresent()) {
@@ -172,7 +221,7 @@ public class PresupuestoController {
 
             presupuesto.get().setEgresosRecurrentesUniversidadTotales(egresosTotal);
             presupuestoRepository.save(presupuesto.get());
-            return "Egresos recurrentes totales actualizados";
+            return "Egresos recurrentes totales recalculados";
         } else {
             return "Error: Presupuesto no encontrado";
         }

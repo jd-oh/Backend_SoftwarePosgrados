@@ -27,15 +27,16 @@ public class Presupuesto {
 
     private String observaciones;
 
+    // Son todos los ingresos menos los descuentos
     private double ingresosTotales;
 
     // Incluye gastos personales(ServDocentes parcial, ServNoDocentes total,
     // OtrosServDocentes total)
-    // gastos generales, otros gastos y gastos de viaje
+    // gastos generales, otros gastos, transferencias y gastos de viaje
     private double egresosProgramaTotales;
 
     // Incluye gastos de inversiones, recurrentes adm y gastos personales
-    // (ServDocentes, ServNoDocentes, OtrosServDocentes)
+    // (ServDocentes parcial)
     private double egresosRecurrentesUniversidadTotales;
 
     @OneToMany(mappedBy = "presupuesto", cascade = CascadeType.ALL, orphanRemoval = true)

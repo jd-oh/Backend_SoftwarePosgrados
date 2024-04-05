@@ -30,11 +30,11 @@ public class IngresosController {
     @Autowired
     private IngresosRepository ingresoRepository;
 
-    @PostMapping("/crearParaPresupuesto")
-    public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String concepto,
+    @PostMapping("/crear")
+    public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam String concepto,
             @RequestParam double valor) {
         // Buscar la programa por su ID
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
 
         // Verificar si la programa existe
         if (presupuesto.isPresent()) {
@@ -71,16 +71,13 @@ public class IngresosController {
 
     @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam String concepto,
-            @RequestParam double valor,
-            @RequestParam int idPresupuesto) {
+            @RequestParam double valor) {
         Optional<Ingresos> ingreso = ingresoRepository.findById(id);
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
 
-        if (ingreso.isPresent() && presupuesto.isPresent()) {
+        if (ingreso.isPresent()) {
             Ingresos ingresoActualizado = ingreso.get();
             ingresoActualizado.setConcepto(concepto);
             ingresoActualizado.setValor(valor);
-            ingresoActualizado.setPresupuesto(presupuesto.get());
 
             ingresoRepository.save(ingresoActualizado);
             return "Ingreso actualizado";

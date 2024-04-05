@@ -30,13 +30,16 @@ public class EgresosViajesController {
     @Autowired
     private EgresosViajesRepository egresoViajeRepository;
 
-    @PostMapping("/crearParaPresupuesto")
-    public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String descripcion,
+    @Autowired
+    private PresupuestoController presupuestoController;
+
+    @PostMapping("/crear")
+    public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam String descripcion,
             @RequestParam int numPersonas,
             @RequestParam double apoyoDesplazamiento, @RequestParam int numViajesPorPersona,
             @RequestParam double valorTransporte) {
         // Buscar la programa por su ID
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
 
         // Verificar si la programa existe
         if (presupuesto.isPresent()) {
@@ -55,6 +58,11 @@ public class EgresosViajesController {
 
             // Guardar el egreso general en el presupuesto
             presupuesto.get().getEgresosViaje().add(egresoViaje);
+
+            int idPresupuesto = egresoViaje.getPresupuesto().getId();
+            double valorNuevo = egresoViaje.getValorTotal();
+
+            presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, 0);
 
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
@@ -79,12 +87,13 @@ public class EgresosViajesController {
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam String descripcion,
             @RequestParam int numPersonas,
             @RequestParam double apoyoDesplazamiento, @RequestParam int numViajesPorPersona,
-            @RequestParam double valorTransporte,
-            @RequestParam int idPresupuesto) {
+            @RequestParam double valorTransporte) {
         Optional<EgresosViajes> egresoViaje = egresoViajeRepository.findById(id);
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
 
-        if (egresoViaje.isPresent() && presupuesto.isPresent()) {
+        if (egresoViaje.isPresent()) {
+
+            double valorAnterior = egresoViaje.get().getValorTotal();
+
             EgresosViajes egresoViajeActualizado = egresoViaje.get();
 
             egresoViajeActualizado.setDescripcion(descripcion);
@@ -95,17 +104,28 @@ public class EgresosViajesController {
             egresoViajeActualizado
                     .setValorTotal((valorTransporte * numPersonas * numViajesPorPersona) + apoyoDesplazamiento);
 
-            egresoViajeActualizado.setPresupuesto(presupuesto.get());
+            int idPresupuesto = egresoViajeActualizado.getPresupuesto().getId();
+            double valorNuevo = egresoViajeActualizado.getValorTotal();
 
             egresoViajeRepository.save(egresoViajeActualizado);
+
+            presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
             return "Egreso de viaje actualizado";
         } else {
             return "Error: Egreso de viaje o Presupuesto no encontrado";
         }
     }
 
+    // Antes de eliminar el egreso, se debe actualizar el total de egresos del
+    // presupuesto
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
+        Optional<EgresosViajes> egresoViaje = egresoViajeRepository.findById(id);
+
+        int idPresupuesto = egresoViaje.get().getPresupuesto().getId();
+        double valorAnterior = egresoViaje.get().getValorTotal();
+
+        presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, 0, valorAnterior);
         egresoViajeRepository.deleteById(id);
         return "Egreso de viaje eliminado";
     }

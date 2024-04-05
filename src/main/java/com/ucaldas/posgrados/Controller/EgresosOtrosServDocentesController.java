@@ -35,13 +35,16 @@ public class EgresosOtrosServDocentesController {
     @Autowired
     private TipoCostoRepository tipoCostoRepository;
 
-    @PostMapping("/crearParaPresupuesto")
-    public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String servicio,
+    @Autowired
+    private PresupuestoController presupuestoController;
+
+    @PostMapping("/crear")
+    public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam String servicio,
             @RequestParam String descripcion,
             @RequestParam int numHoras, @RequestParam double valorTotal,
             @RequestParam int idTipoCosto) {
         // Buscar la programa por su ID
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
         Optional<TipoCosto> tipoCosto = tipoCostoRepository.findById(idTipoCosto);
 
         // Verificar si la programa existe
@@ -61,6 +64,11 @@ public class EgresosOtrosServDocentesController {
 
             // Guardar el egreso general en el presupuesto
             presupuesto.get().getEgresosOtrosServDocentes().add(egresosOtrosServDocentes);
+
+            int idPresupuesto = egresosOtrosServDocentes.getPresupuesto().getId();
+            double valorNuevo = egresosOtrosServDocentes.getValorTotal();
+
+            presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, 0);
 
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
@@ -83,14 +91,16 @@ public class EgresosOtrosServDocentesController {
 
     @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam int idTipoCosto,
-            @RequestParam int idPresupuesto, @RequestParam String servicio, @RequestParam String descripcion,
+            @RequestParam String servicio, @RequestParam String descripcion,
             @RequestParam int numHoras, @RequestParam double valorTotal) {
 
         Optional<EgresosOtrosServDocentes> egreso = egresoOtrosServDocenteRepository.findById(id);
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
         Optional<TipoCosto> tipoCosto = tipoCostoRepository.findById(idTipoCosto);
 
-        if (egreso.isPresent() && presupuesto.isPresent() && tipoCosto.isPresent()) {
+        if (egreso.isPresent() && tipoCosto.isPresent()) {
+
+            double valorAnterior = egreso.get().getValorTotal();
+
             EgresosOtrosServDocentes egresosOtrosServDocentesActualizado = egreso.get();
             egresosOtrosServDocentesActualizado.setServicio(servicio);
             egresosOtrosServDocentesActualizado.setDescripcion(descripcion);
@@ -98,9 +108,13 @@ public class EgresosOtrosServDocentesController {
             egresosOtrosServDocentesActualizado.setValorTotal(valorTotal);
 
             egresosOtrosServDocentesActualizado.setTipoCosto(tipoCosto.get());
-            egresosOtrosServDocentesActualizado.setPresupuesto(presupuesto.get());
+
+            int idPresupuesto = egresosOtrosServDocentesActualizado.getPresupuesto().getId();
+            double valorNuevo = egresosOtrosServDocentesActualizado.getValorTotal();
 
             egresoOtrosServDocenteRepository.save(egresosOtrosServDocentesActualizado);
+
+            presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
             return "Egreso de otros servicios docentes actualizado";
         } else {
             return "Error: Egreso de otros servicios docentes no encontrado";
@@ -109,6 +123,12 @@ public class EgresosOtrosServDocentesController {
 
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
+
+        Optional<EgresosOtrosServDocentes> egreso = egresoOtrosServDocenteRepository.findById(id);
+        int idPresupuesto = egreso.get().getPresupuesto().getId();
+        double valorAnterior = egreso.get().getValorTotal();
+
+        presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, 0, valorAnterior);
         egresoOtrosServDocenteRepository.deleteById(id);
         return "Egreso de otros servicios docentes eliminado";
     }

@@ -35,12 +35,12 @@ public class EgresosDescuentosController {
     @Autowired
     private TipoDescuentoRepository tipoDescuentoRepository;
 
-    @PostMapping("/crearParaPresupuesto")
-    public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam int numEstudiantes,
+    @PostMapping("/crear")
+    public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam int numEstudiantes,
             @RequestParam double valor, @RequestParam int numPeriodos, @RequestParam double totalDescuento,
             @RequestParam int idTipoDescuento) {
         // Buscar la programa por su ID
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
         Optional<TipoDescuento> tipoDescuento = tipoDescuentoRepository.findById(idTipoDescuento);
 
         // Verificar si la programa existe
@@ -79,24 +79,21 @@ public class EgresosDescuentosController {
         return egresoDescuentoRepository.findById(id);
     }
 
-    @PutMapping(path = "/actualizarParaPresupuesto")
+    @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam int numEstudiantes,
             @RequestParam double valor,
-            @RequestParam int numPeriodos, @RequestParam double totalDescuento, @RequestParam int idTipoDescuento,
-            @RequestParam int idPresupuesto) {
+            @RequestParam int numPeriodos, @RequestParam double totalDescuento, @RequestParam int idTipoDescuento) {
 
         Optional<EgresosDescuentos> egreso = egresoDescuentoRepository.findById(id);
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
         Optional<TipoDescuento> tipoDescuento = tipoDescuentoRepository.findById(idTipoDescuento);
 
-        if (egreso.isPresent() && presupuesto.isPresent() && tipoDescuento.isPresent()) {
+        if (egreso.isPresent() && tipoDescuento.isPresent()) {
             EgresosDescuentos egresosDescuentosActualizado = egreso.get();
             egresosDescuentosActualizado.setNumEstudiantes(numEstudiantes);
             egresosDescuentosActualizado.setValor(valor);
             egresosDescuentosActualizado.setNumPeriodos(numPeriodos);
             egresosDescuentosActualizado.setTotalDescuento(valor * numEstudiantes * numPeriodos);
             egresosDescuentosActualizado.setTipoDescuento(tipoDescuento.get());
-            egresosDescuentosActualizado.setPresupuesto(presupuesto.get());
 
             egresoDescuentoRepository.save(egresosDescuentosActualizado);
             return "Egreso de descuento actualizado";

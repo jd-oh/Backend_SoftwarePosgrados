@@ -35,15 +35,18 @@ public class EgresosServDocentesController {
     @Autowired
     private TipoCompensacionRepository tipoCompensacionRepository;
 
-    @PostMapping("/crearParaPresupuesto")
-    public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String nombreMateria,
+    @Autowired
+    private PresupuestoController presupuestoController;
+
+    @PostMapping("/crear")
+    public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam String nombreMateria,
             @RequestParam boolean esDocentePlanta,
             @RequestParam String nombreDocente, @RequestParam String escalafon, @RequestParam String titulo,
             @RequestParam int horasTeoricasMat,
             @RequestParam int horasPracticasMat, @RequestParam double valorHoraProfesor,
             @RequestParam int idTipoCompensacion) {
         // Buscar la programa por su ID
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
         Optional<TipoCompensacion> tipoCompensacion = tipoCompensacionRepository.findById(idTipoCompensacion);
 
         // Verificar si la programa existe
@@ -67,8 +70,8 @@ public class EgresosServDocentesController {
             egresosServDocentes.setPresupuesto(presupuesto.get());
             egresosServDocentes.setTipoCompensacion(tipoCompensacion.get());
 
-            // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
-            // aprobado o no
+            // Si el gasto hace parte de un presupuesto, la ejecución debe ser null siempre
+            // y viceversa
             egresosServDocentes.setEjecucionPresupuestal(null);
 
             // Guardar el egreso general en el presupuesto
@@ -95,16 +98,15 @@ public class EgresosServDocentesController {
 
     @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam int idTipoCompensacion,
-            @RequestParam int idPresupuesto, @RequestParam String nombreMateria, @RequestParam boolean esDocentePlanta,
+            @RequestParam String nombreMateria, @RequestParam boolean esDocentePlanta,
             @RequestParam String nombreDocente, @RequestParam String escalafon, @RequestParam String titulo,
             @RequestParam int horasTeoricasMat, @RequestParam int horasPracticasMat,
             @RequestParam double valorHoraProfesor) {
 
         Optional<EgresosServDocentes> egreso = egresoServDocenteRepository.findById(id);
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
         Optional<TipoCompensacion> tipoCompensacion = tipoCompensacionRepository.findById(idTipoCompensacion);
 
-        if (egreso.isPresent() && presupuesto.isPresent() && tipoCompensacion.isPresent()) {
+        if (egreso.isPresent() && tipoCompensacion.isPresent()) {
             EgresosServDocentes egresosServDocentesActualizado = egreso.get();
 
             egresosServDocentesActualizado.setNombreMateria(nombreMateria);
@@ -123,9 +125,9 @@ public class EgresosServDocentesController {
                     .setTotalPagoProfesor(valorHoraProfesor * egresosServDocentesActualizado.getTotalHorasProfesor());
 
             egresosServDocentesActualizado.setTipoCompensacion(tipoCompensacion.get());
-            egresosServDocentesActualizado.setPresupuesto(presupuesto.get());
-
+            int idPresupuesto = egresosServDocentesActualizado.getPresupuesto().getId();
             egresoServDocenteRepository.save(egresosServDocentesActualizado);
+
             return "Egreso de servicios docentes actualizado";
         } else {
             return "Error: Egreso de servicios docentes no encontrado";

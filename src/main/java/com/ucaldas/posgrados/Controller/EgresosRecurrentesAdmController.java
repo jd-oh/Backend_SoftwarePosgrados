@@ -30,12 +30,15 @@ public class EgresosRecurrentesAdmController {
     @Autowired
     private EgresosRecurrentesAdmRepository egresoRecurrenteAdmRepository;
 
-    @PostMapping("/crearParaPresupuesto")
-    public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam String unidad,
+    @Autowired
+    private PresupuestoController presupuestoController;
+
+    @PostMapping("/crear")
+    public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam String unidad,
             @RequestParam String cargo,
             @RequestParam double valorHora, @RequestParam int numHoras) {
         // Buscar la programa por su ID
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
 
         // Verificar si la programa existe
         if (presupuesto.isPresent()) {
@@ -55,6 +58,11 @@ public class EgresosRecurrentesAdmController {
 
             // Guardar el egreso general en el presupuesto
             presupuesto.get().getEgresosRecurrentesAdm().add(egresoRecurrenteAdm);
+
+            int idPresupuesto = presupuesto.get().getId();
+            double valorNuevo = egresoRecurrenteAdm.getValorTotal();
+
+            presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, valorNuevo, 0);
 
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
@@ -78,12 +86,13 @@ public class EgresosRecurrentesAdmController {
     @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam String unidad,
             @RequestParam String cargo,
-            @RequestParam double valorHora, @RequestParam int numHoras,
-            @RequestParam int idPresupuesto) {
+            @RequestParam double valorHora, @RequestParam int numHoras) {
         Optional<EgresosRecurrentesAdm> egresoRecurrenteAdm = egresoRecurrenteAdmRepository.findById(id);
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
 
-        if (egresoRecurrenteAdm.isPresent() && presupuesto.isPresent()) {
+        if (egresoRecurrenteAdm.isPresent()) {
+
+            double valorAnterior = egresoRecurrenteAdm.get().getValorTotal();
+
             EgresosRecurrentesAdm egresoRecurrenteAdmActualizado = egresoRecurrenteAdm.get();
             egresoRecurrenteAdmActualizado.setUnidad(unidad);
             egresoRecurrenteAdmActualizado.setCargo(cargo);
@@ -91,9 +100,12 @@ public class EgresosRecurrentesAdmController {
             egresoRecurrenteAdmActualizado.setNumHoras(numHoras);
             egresoRecurrenteAdmActualizado.setValorTotal(valorHora * numHoras);
 
-            egresoRecurrenteAdmActualizado.setPresupuesto(presupuesto.get());
-
             egresoRecurrenteAdmRepository.save(egresoRecurrenteAdmActualizado);
+
+            int idPresupuesto = egresoRecurrenteAdmActualizado.getPresupuesto().getId();
+            double valorNuevo = egresoRecurrenteAdmActualizado.getValorTotal();
+            presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, valorNuevo,
+                    valorAnterior);
             return "Egreso recurrente administracion actualizado";
         } else {
             return "Error: Egreso recurrente administracion o Presupuesto no encontrado";
@@ -102,6 +114,11 @@ public class EgresosRecurrentesAdmController {
 
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
+
+        Optional<EgresosRecurrentesAdm> egresoRecurrenteAdm = egresoRecurrenteAdmRepository.findById(id);
+        int idPresupuesto = egresoRecurrenteAdm.get().getPresupuesto().getId();
+        double valorAnterior = egresoRecurrenteAdm.get().getValorTotal();
+        presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, 0, valorAnterior);
         egresoRecurrenteAdmRepository.deleteById(id);
         return "Egreso recurrente administracion eliminado";
     }
