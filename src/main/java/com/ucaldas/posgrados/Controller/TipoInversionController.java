@@ -2,7 +2,10 @@ package com.ucaldas.posgrados.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,7 +33,7 @@ public class TipoInversionController {
 
     }
 
-    @PostMapping(path = "/eliminar")
+    @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         tipoInversionRepository.deleteById(id);
@@ -38,7 +41,7 @@ public class TipoInversionController {
 
     }
 
-    @PostMapping(path = "/actualizar")
+    @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam String nombreTipo) {
 
         TipoInversion tipoInversion = tipoInversionRepository.findById(id).get();
@@ -49,7 +52,7 @@ public class TipoInversionController {
 
     }
 
-    @PostMapping(path = "/listar")
+    @GetMapping(path = "/listar")
     public @ResponseBody Iterable<TipoInversion> listar() {
 
         return tipoInversionRepository.findAllByOrderByNombreTipoAsc();
