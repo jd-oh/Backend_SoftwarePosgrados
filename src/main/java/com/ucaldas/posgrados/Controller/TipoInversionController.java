@@ -29,7 +29,7 @@ public class TipoInversionController {
         tipoInversion.setNombreTipo(nombreTipo);
 
         tipoInversionRepository.save(tipoInversion);
-        return "Tipo de descuento guardado";
+        return "Tipo de inversion guardado";
 
     }
 
@@ -37,7 +37,7 @@ public class TipoInversionController {
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         tipoInversionRepository.deleteById(id);
-        return "Tipo de descuento eliminado";
+        return "Tipo de inversion eliminado";
 
     }
 
@@ -48,7 +48,7 @@ public class TipoInversionController {
         tipoInversion.setNombreTipo(nombreTipo);
 
         tipoInversionRepository.save(tipoInversion);
-        return "Tipo de descuento actualizado";
+        return "Tipo de inversion actualizado";
 
     }
 
