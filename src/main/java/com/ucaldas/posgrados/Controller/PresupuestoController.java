@@ -18,6 +18,8 @@ import com.ucaldas.posgrados.Repository.PresupuestoRepository;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @CrossOrigin
@@ -79,6 +81,21 @@ public class PresupuestoController {
             observaciones.ifPresent(presupuesto.get()::setObservaciones); // Si observaciones no es null, entonces se
                                                                           // asigna a presupuesto
             presupuesto.get().setCohorte(cohorte.get());
+            presupuestoRepository.save(presupuesto.get());
+            return "OK";
+        } else {
+            return "Error: Presupuesto no encontrado";
+        }
+    }
+
+    // Cambia el estado de un presupuesto a "revision".
+    // En un futuro se enviará al decano para su aprobación
+    @PutMapping(path = "/enviarParaRevision")
+    public @ResponseBody String enviarParaRevision(@RequestParam int id) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
+
+        if (presupuesto.isPresent()) {
+            presupuesto.get().setEstado("revision");
             presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
