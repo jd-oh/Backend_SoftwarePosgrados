@@ -31,7 +31,7 @@ public class PresupuestoController {
     private PresupuestoRepository presupuestoRepository;
 
     @PostMapping("/crear")
-    public @ResponseBody String crear(@RequestParam int idCohorte, @RequestParam String observaciones) {
+    public @ResponseBody String crear(@RequestParam int idCohorte) {
         // Buscar la programa por su ID
         Optional<Cohorte> cohorte = cohorteRepository.findById(idCohorte);
 
@@ -39,7 +39,7 @@ public class PresupuestoController {
         if (cohorte.isPresent()) {
             Presupuesto presupuesto = new Presupuesto();
 
-            presupuesto.setObservaciones(observaciones);
+            presupuesto.setObservaciones("");
             presupuesto.setIngresosTotales(0);
             presupuesto.setEgresosProgramaTotales(0);
             presupuesto.setEgresosRecurrentesUniversidadTotales(0);
@@ -69,13 +69,15 @@ public class PresupuestoController {
     }
 
     @PutMapping(path = "/actualizar")
-    public @ResponseBody String actualizar(@RequestParam int id, @RequestParam String observaciones,
+    public @ResponseBody String actualizar(@RequestParam int id,
+            @RequestParam(required = false) Optional<String> observaciones,
             @RequestParam int idCohorte) {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
         Optional<Cohorte> cohorte = cohorteRepository.findById(idCohorte);
 
         if (presupuesto.isPresent() && cohorte.isPresent()) {
-            presupuesto.get().setObservaciones(observaciones);
+            observaciones.ifPresent(presupuesto.get()::setObservaciones); // Si observaciones no es null, entonces se
+                                                                          // asigna a presupuesto
             presupuesto.get().setCohorte(cohorte.get());
             presupuestoRepository.save(presupuesto.get());
             return "OK";
