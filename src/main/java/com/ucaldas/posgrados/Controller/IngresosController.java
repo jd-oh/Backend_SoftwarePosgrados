@@ -88,11 +88,11 @@ public class IngresosController {
             ingresoActualizado.setConcepto(concepto);
             ingresoActualizado.setValor(valor);
 
-            ingresoRepository.save(ingresoActualizado);
-
             int idPresupuesto = ingresoActualizado.getPresupuesto().getId();
             double valorNuevo = ingresoActualizado.getValor();
             presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, valorAnterior, "ingreso");
+
+            ingresoRepository.save(ingresoActualizado);
 
             return "OK";
         } else {

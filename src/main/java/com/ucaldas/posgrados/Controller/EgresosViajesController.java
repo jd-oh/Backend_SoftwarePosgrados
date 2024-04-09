@@ -107,9 +107,9 @@ public class EgresosViajesController {
             int idPresupuesto = egresoViajeActualizado.getPresupuesto().getId();
             double valorNuevo = egresoViajeActualizado.getValorTotal();
 
-            egresoViajeRepository.save(egresoViajeActualizado);
-
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
+
+            egresoViajeRepository.save(egresoViajeActualizado);
             return "OK";
         } else {
             return "Error: Egreso de viaje o Presupuesto no encontrado";

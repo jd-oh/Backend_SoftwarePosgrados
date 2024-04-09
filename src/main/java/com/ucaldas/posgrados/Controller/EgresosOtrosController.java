@@ -111,9 +111,8 @@ public class EgresosOtrosController {
             int idPresupuesto = egresosOtrosActualizado.getPresupuesto().getId();
             double valorNuevo = egresosOtrosActualizado.getValorTotal();
 
-            egresoOtroRepository.save(egresosOtrosActualizado);
-
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
+            egresoOtroRepository.save(egresosOtrosActualizado);
             return "OK";
         } else {
             return "Error: Egreso de otros no encontrado";

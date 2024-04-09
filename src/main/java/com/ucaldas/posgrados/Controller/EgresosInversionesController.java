@@ -103,12 +103,13 @@ public class EgresosInversionesController {
             egresosInversionesActualizado.setTipoInversion(tipoInversion.get());
 
             int idPresupuesto = egresosInversionesActualizado.getPresupuesto().getId();
-            egresoInversionRepository.save(egresosInversionesActualizado);
 
             double valorNuevo = egresosInversionesActualizado.getValor();
 
             presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, valorNuevo,
                     valorAnterior);
+
+            egresoInversionRepository.save(egresosInversionesActualizado);
             return "OK";
         } else {
             return "Error: Egreso de descuento no encontrado";

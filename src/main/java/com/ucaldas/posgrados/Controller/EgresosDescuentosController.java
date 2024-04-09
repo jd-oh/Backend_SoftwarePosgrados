@@ -104,11 +104,10 @@ public class EgresosDescuentosController {
             egresosDescuentosActualizado.setTotalDescuento(valor * numEstudiantes * numPeriodos);
             egresosDescuentosActualizado.setTipoDescuento(tipoDescuento.get());
 
-            egresoDescuentoRepository.save(egresosDescuentosActualizado);
-
             int idPresupuesto = egresosDescuentosActualizado.getPresupuesto().getId();
             double valorNuevo = egresosDescuentosActualizado.getTotalDescuento();
             presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, valorAnterior, "egreso");
+            egresoDescuentoRepository.save(egresosDescuentosActualizado);
             return "OK";
         } else {
             return "Error: Egreso de descuento no encontrado";

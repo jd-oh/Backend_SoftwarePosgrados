@@ -110,19 +110,6 @@ public class PresupuestoController {
         return "Presupuesto eliminado";
     }
 
-    @PutMapping(path = "/cambiarEstado")
-    public @ResponseBody String cambiarEstado(@RequestParam int id, @RequestParam String estado) {
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
-
-        if (presupuesto.isPresent()) {
-            presupuesto.get().setEstado(estado);
-            presupuestoRepository.save(presupuesto.get());
-            return "OK";
-        } else {
-            return "Error: Presupuesto no encontrado";
-        }
-    }
-
     // Se utiliza para actualizar el atributo ingresosTotales de la clase
     // Presupuesto
     public String actualizarIngresosTotales(int idPresupuesto,
@@ -131,9 +118,11 @@ public class PresupuestoController {
 
         if (presupuesto.isPresent() && tipo.equals("ingreso")) {
             presupuesto.get().setIngresosTotales(presupuesto.get().getIngresosTotales() - antiguoValor + nuevoValor);
+            actualizarBalanceGeneral(idPresupuesto);
             return "OK";
         } else if (presupuesto.isPresent() && tipo.equals("descuento")) {
             presupuesto.get().setIngresosTotales(presupuesto.get().getIngresosTotales() - nuevoValor + antiguoValor);
+            actualizarBalanceGeneral(idPresupuesto);
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
@@ -147,9 +136,8 @@ public class PresupuestoController {
     // Cuando se modifica: antiguo valor será el valor que se quiere modificar y
     // nuevo valor será el valor nuevo
     // Cuando se elimina: nuevo valor será 0
-    @PutMapping(path = "/actualizarEgresosProgramaTotales")
-    public @ResponseBody String actualizarEgresosProgramaTotales(@RequestParam int id,
-            @RequestParam double nuevoValor, @RequestParam double antiguoValor) {
+    public String actualizarEgresosProgramaTotales(int id,
+            double nuevoValor, double antiguoValor) {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
 
         if (presupuesto.isPresent()) {
@@ -157,6 +145,8 @@ public class PresupuestoController {
             presupuesto.get().setEgresosProgramaTotales(
                     presupuesto.get().getEgresosProgramaTotales() - antiguoValor + nuevoValor);
 
+            actualizarBalanceGeneral(id);
+
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
@@ -170,14 +160,31 @@ public class PresupuestoController {
     // Cuando se modifica: antiguo valor será el valor que se quiere modificar y
     // nuevo valor será el valor nuevo
     // Cuando se elimina: nuevo valor será 0
-    @PutMapping(path = "/actualizarEgresosRecurrentesUniversidadTotales")
-    public @ResponseBody String actualizarEgresosRecurrentesUniversidadTotales(@RequestParam int id,
-            @RequestParam double nuevoValor, @RequestParam double antiguoValor) {
+    public String actualizarEgresosRecurrentesUniversidadTotales(int id,
+            double nuevoValor, double antiguoValor) {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
 
         if (presupuesto.isPresent()) {
             presupuesto.get().setEgresosRecurrentesUniversidadTotales(
                     presupuesto.get().getEgresosRecurrentesUniversidadTotales() - antiguoValor + nuevoValor);
+
+            actualizarBalanceGeneral(id);
+            return "OK";
+        } else {
+            return "Error: Presupuesto no encontrado";
+        }
+    }
+
+    // Cuando se crea un presupuesto, ingresos y los egresos tienen un valor de 0,
+    // por lo que no habrán excepciones al momento de realizar la operación
+    public String actualizarBalanceGeneral(int id) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
+
+        if (presupuesto.isPresent()) {
+            presupuesto.get().setBalanceGeneral(presupuesto.get().getIngresosTotales()
+                    - presupuesto.get().getEgresosProgramaTotales()
+                    - presupuesto.get().getEgresosRecurrentesUniversidadTotales());
+
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
@@ -193,7 +200,8 @@ public class PresupuestoController {
             double descuentosTotal = presupuesto.get().getEgresosDescuentos().stream()
                     .mapToDouble(i -> i.getTotalDescuento()).sum();
             presupuesto.get().setIngresosTotales(ingresosTotal - descuentosTotal);
-            presupuestoRepository.save(presupuesto.get());
+
+            actualizarBalanceGeneral(id);
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
@@ -228,7 +236,7 @@ public class PresupuestoController {
 
             presupuesto.get().setEgresosProgramaTotales(egresosTotal);
 
-            presupuestoRepository.save(presupuesto.get());
+            actualizarBalanceGeneral(id);
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";

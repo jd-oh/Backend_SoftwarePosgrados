@@ -112,9 +112,9 @@ public class EgresosOtrosServDocentesController {
             int idPresupuesto = egresosOtrosServDocentesActualizado.getPresupuesto().getId();
             double valorNuevo = egresosOtrosServDocentesActualizado.getValorTotal();
 
-            egresoOtrosServDocenteRepository.save(egresosOtrosServDocentesActualizado);
-
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
+
+            egresoOtrosServDocenteRepository.save(egresosOtrosServDocentesActualizado);
             return "OK";
         } else {
             return "Error: Egreso de otros servicios docentes no encontrado";

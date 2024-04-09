@@ -100,12 +100,12 @@ public class EgresosRecurrentesAdmController {
             egresoRecurrenteAdmActualizado.setNumHoras(numHoras);
             egresoRecurrenteAdmActualizado.setValorTotal(valorHora * numHoras);
 
-            egresoRecurrenteAdmRepository.save(egresoRecurrenteAdmActualizado);
-
             int idPresupuesto = egresoRecurrenteAdmActualizado.getPresupuesto().getId();
             double valorNuevo = egresoRecurrenteAdmActualizado.getValorTotal();
             presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, valorNuevo,
                     valorAnterior);
+
+            egresoRecurrenteAdmRepository.save(egresoRecurrenteAdmActualizado);
             return "OK";
         } else {
             return "Error: Egreso recurrente administracion o Presupuesto no encontrado";

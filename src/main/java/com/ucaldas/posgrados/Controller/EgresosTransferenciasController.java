@@ -114,9 +114,9 @@ public class EgresosTransferenciasController {
 
             double valorNuevo = egresosTransferenciasActualizado.getValorTotal();
 
-            egresoTransferenciaRepository.save(egresosTransferenciasActualizado);
-
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
+
+            egresoTransferenciaRepository.save(egresosTransferenciasActualizado);
             return "OK";
         } else {
             return "Error: Egreso de descuento no encontrado";
