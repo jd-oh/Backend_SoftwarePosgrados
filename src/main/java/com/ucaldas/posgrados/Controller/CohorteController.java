@@ -61,7 +61,7 @@ public class CohorteController {
     @GetMapping(path = "/listar")
     public @ResponseBody Iterable<Cohorte> listarTodos() {
 
-        return cohorteRepository.findAllByOrderByNumeroAsc();
+        return cohorteRepository.findAllByOrderByFechaDesc();
     }
 
     @GetMapping(path = "/buscar")

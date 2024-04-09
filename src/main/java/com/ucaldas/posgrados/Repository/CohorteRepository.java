@@ -8,4 +8,6 @@ public interface CohorteRepository extends CrudRepository<Cohorte, Integer> {
 
     Iterable<Cohorte> findAllByOrderByNumeroAsc();
 
+    Iterable<Cohorte> findAllByOrderByFechaDesc();
+
 }

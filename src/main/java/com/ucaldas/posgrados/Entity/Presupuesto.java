@@ -39,6 +39,8 @@ public class Presupuesto {
     // (ServDocentes parcial)
     private double egresosRecurrentesUniversidadTotales;
 
+    private double balanceGeneral;
+
     @OneToMany(mappedBy = "presupuesto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosDescuentos> egresosDescuentos;
@@ -225,6 +227,14 @@ public class Presupuesto {
 
     public void setEgresosTransferencias(Set<EgresosTransferencias> egresosTransferencias) {
         this.egresosTransferencias = egresosTransferencias;
+    }
+
+    public double getBalanceGeneral() {
+        return balanceGeneral;
+    }
+
+    public void setBalanceGeneral(double balanceGeneral) {
+        this.balanceGeneral = balanceGeneral;
     }
 
 }
