@@ -115,7 +115,7 @@ public class EgresosGeneralesController {
              * }
              */
 
-            return "Egreso general guardado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -156,7 +156,7 @@ public class EgresosGeneralesController {
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
 
             egresoGeneralRepository.save(egresosGeneralesActualizado);
-            return "Egreso general actualizado";
+            return "OK";
         } else {
             return "Error: Egreso general no encontrado";
         }
@@ -166,12 +166,17 @@ public class EgresosGeneralesController {
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         Optional<EgresosGenerales> egreso = egresoGeneralRepository.findById(id);
+
+        if (!egreso.isPresent()) {
+            return "Error: Egreso general no encontrado";
+        }
+
         int idPresupuesto = egreso.get().getPresupuesto().getId();
         double valorAnterior = egreso.get().getValorTotal();
 
         presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, 0, valorAnterior);
         egresoGeneralRepository.deleteById(id);
-        return "Egreso general eliminado";
+        return "OK";
     }
 
 }

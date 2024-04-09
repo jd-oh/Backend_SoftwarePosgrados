@@ -52,7 +52,7 @@ public class PresupuestoController {
             presupuesto.setCohorte(cohorte.get());
 
             presupuestoRepository.save(presupuesto);
-            return "Presupuesto guardado";
+            return "OK";
         } else {
             return "Error: Cohorte no encontrada";
         }
@@ -78,7 +78,7 @@ public class PresupuestoController {
             presupuesto.get().setObservaciones(observaciones);
             presupuesto.get().setCohorte(cohorte.get());
             presupuestoRepository.save(presupuesto.get());
-            return "Presupuesto actualizado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -97,7 +97,7 @@ public class PresupuestoController {
         if (presupuesto.isPresent()) {
             presupuesto.get().setEstado(estado);
             presupuestoRepository.save(presupuesto.get());
-            return "Estado del presupuesto actualizado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -114,7 +114,7 @@ public class PresupuestoController {
             presupuesto.get().setIngresosTotales(ingresosTotal - descuentosTotal);
 
             presupuestoRepository.save(presupuesto.get());
-            return "Ingresos totales actualizados";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -138,7 +138,7 @@ public class PresupuestoController {
             System.out.println("Antiguo valor: " + antiguoValor);
             System.out.println("Nuevo valor: " + nuevoValor);
             System.out.println("Egresos programa totales despues: " + presupuesto.get().getEgresosProgramaTotales());
-            return "Egresos programa totales actualizados";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -159,7 +159,7 @@ public class PresupuestoController {
         if (presupuesto.isPresent()) {
             presupuesto.get().setEgresosRecurrentesUniversidadTotales(
                     presupuesto.get().getEgresosRecurrentesUniversidadTotales() - antiguoValor + nuevoValor);
-            return "Egresos recurrentes universidad totales actualizados";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -196,7 +196,7 @@ public class PresupuestoController {
             presupuesto.get().setEgresosProgramaTotales(egresosTotal);
 
             presupuestoRepository.save(presupuesto.get());
-            return "Egresos totales recalculados";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -221,7 +221,7 @@ public class PresupuestoController {
 
             presupuesto.get().setEgresosRecurrentesUniversidadTotales(egresosTotal);
             presupuestoRepository.save(presupuesto.get());
-            return "Egresos recurrentes totales recalculados";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }

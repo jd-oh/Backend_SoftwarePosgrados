@@ -69,7 +69,7 @@ public class EgresosInversionesController {
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
 
-            return "Egreso de descuento guardado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -109,7 +109,7 @@ public class EgresosInversionesController {
 
             presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, valorNuevo,
                     valorAnterior);
-            return "Egreso de descuento actualizado";
+            return "OK";
         } else {
             return "Error: Egreso de descuento no encontrado";
         }
@@ -119,12 +119,17 @@ public class EgresosInversionesController {
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         Optional<EgresosInversiones> egreso = egresoInversionRepository.findById(id);
+
+        if (!egreso.isPresent()) {
+            return "Error: Egreso de descuento no encontrado";
+        }
+
         int idPresupuesto = egreso.get().getPresupuesto().getId();
         double valorAnterior = egreso.get().getValor();
 
         presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, 0, valorAnterior);
         egresoInversionRepository.deleteById(id);
-        return "Egreso de descuento eliminado";
+        return "OK";
     }
 
 }

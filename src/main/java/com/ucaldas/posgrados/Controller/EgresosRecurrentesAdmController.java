@@ -67,7 +67,7 @@ public class EgresosRecurrentesAdmController {
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
 
-            return "Egreso recurrente administracion guardado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -106,7 +106,7 @@ public class EgresosRecurrentesAdmController {
             double valorNuevo = egresoRecurrenteAdmActualizado.getValorTotal();
             presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, valorNuevo,
                     valorAnterior);
-            return "Egreso recurrente administracion actualizado";
+            return "OK";
         } else {
             return "Error: Egreso recurrente administracion o Presupuesto no encontrado";
         }
@@ -116,11 +116,15 @@ public class EgresosRecurrentesAdmController {
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         Optional<EgresosRecurrentesAdm> egresoRecurrenteAdm = egresoRecurrenteAdmRepository.findById(id);
+
+        if (!egresoRecurrenteAdm.isPresent()) {
+            return "Error: Egreso recurrente administracion no encontrado";
+        }
         int idPresupuesto = egresoRecurrenteAdm.get().getPresupuesto().getId();
         double valorAnterior = egresoRecurrenteAdm.get().getValorTotal();
         presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, 0, valorAnterior);
         egresoRecurrenteAdmRepository.deleteById(id);
-        return "Egreso recurrente administracion eliminado";
+        return "OK";
     }
 
 }

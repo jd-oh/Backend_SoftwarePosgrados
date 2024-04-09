@@ -76,7 +76,7 @@ public class EgresosTransferenciasController {
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
 
-            return "Egreso de descuento guardado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -117,7 +117,7 @@ public class EgresosTransferenciasController {
             egresoTransferenciaRepository.save(egresosTransferenciasActualizado);
 
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
-            return "Egreso de descuento actualizado";
+            return "OK";
         } else {
             return "Error: Egreso de descuento no encontrado";
         }
@@ -127,12 +127,16 @@ public class EgresosTransferenciasController {
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         Optional<EgresosTransferencias> egreso = egresoTransferenciaRepository.findById(id);
+
+        if (!egreso.isPresent()) {
+            return "Error: Egreso de transferencia no encontrado";
+        }
         int idPresupuesto = egreso.get().getPresupuesto().getId();
         double valorAnterior = egreso.get().getValorTotal();
 
         presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, 0, valorAnterior);
         egresoTransferenciaRepository.deleteById(id);
-        return "Egreso de descuento eliminado";
+        return "OK";
     }
 
 }

@@ -67,7 +67,7 @@ public class EgresosViajesController {
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
 
-            return "Egreso de viaje guardado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -110,7 +110,7 @@ public class EgresosViajesController {
             egresoViajeRepository.save(egresoViajeActualizado);
 
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
-            return "Egreso de viaje actualizado";
+            return "OK";
         } else {
             return "Error: Egreso de viaje o Presupuesto no encontrado";
         }
@@ -122,12 +122,16 @@ public class EgresosViajesController {
     public @ResponseBody String eliminar(@RequestParam int id) {
         Optional<EgresosViajes> egresoViaje = egresoViajeRepository.findById(id);
 
+        if (!egresoViaje.isPresent()) {
+            return "Error: Egreso de viaje no encontrado";
+        }
+
         int idPresupuesto = egresoViaje.get().getPresupuesto().getId();
         double valorAnterior = egresoViaje.get().getValorTotal();
 
         presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, 0, valorAnterior);
         egresoViajeRepository.deleteById(id);
-        return "Egreso de viaje eliminado";
+        return "OK";
     }
 
 }

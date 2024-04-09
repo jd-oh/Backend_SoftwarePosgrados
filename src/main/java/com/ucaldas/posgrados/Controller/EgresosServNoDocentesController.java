@@ -73,7 +73,7 @@ public class EgresosServNoDocentesController {
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
 
-            return "Egreso de servicio no docente guardado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -116,7 +116,7 @@ public class EgresosServNoDocentesController {
             egresoServNoDocenteRepository.save(egresosServNoDocentesActualizado);
 
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
-            return "Egreso de servicio no docente actualizado";
+            return "OK";
         } else {
             return "Error: Egreso de servicio no docente no encontrado";
         }
@@ -126,12 +126,16 @@ public class EgresosServNoDocentesController {
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         Optional<EgresosServNoDocentes> egreso = egresoServNoDocenteRepository.findById(id);
+
+        if (!egreso.isPresent()) {
+            return "Error: Egreso de servicio no docente no encontrado";
+        }
         double valorAnterior = egreso.get().getValorTotal();
         int idPresupuesto = egreso.get().getPresupuesto().getId();
 
         presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, 0, valorAnterior);
         egresoServNoDocenteRepository.deleteById(id);
-        return "Egreso de servicio no docente eliminado";
+        return "OK";
     }
 
 }

@@ -72,7 +72,7 @@ public class EgresosOtrosController {
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
 
-            return "Egreso de otros guardado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -114,7 +114,7 @@ public class EgresosOtrosController {
             egresoOtroRepository.save(egresosOtrosActualizado);
 
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
-            return "Egreso de otros actualizado";
+            return "OK";
         } else {
             return "Error: Egreso de otros no encontrado";
         }
@@ -123,13 +123,17 @@ public class EgresosOtrosController {
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
         Optional<EgresosOtros> egreso = egresoOtroRepository.findById(id);
+
+        if (!egreso.isPresent()) {
+            return "Error: Egreso de otros no encontrado";
+        }
         double valorAnterior = egreso.get().getValorTotal();
         int idPresupuesto = egreso.get().getPresupuesto().getId();
 
         egresoOtroRepository.deleteById(id);
 
         presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, 0, valorAnterior);
-        return "Egreso de otros eliminado";
+        return "OK";
     }
 
 }

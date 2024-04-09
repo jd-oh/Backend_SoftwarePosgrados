@@ -63,7 +63,7 @@ public class EgresosDescuentosController {
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
 
-            return "Egreso de descuento guardado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -96,7 +96,7 @@ public class EgresosDescuentosController {
             egresosDescuentosActualizado.setTipoDescuento(tipoDescuento.get());
 
             egresoDescuentoRepository.save(egresosDescuentosActualizado);
-            return "Egreso de descuento actualizado";
+            return "OK";
         } else {
             return "Error: Egreso de descuento no encontrado";
         }
@@ -104,8 +104,12 @@ public class EgresosDescuentosController {
 
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
+
+        if (!egresoDescuentoRepository.existsById(id)) {
+            return "Error: Egreso de descuento no encontrado";
+        }
         egresoDescuentoRepository.deleteById(id);
-        return "Egreso de descuento eliminado";
+        return "OK";
     }
 
 }

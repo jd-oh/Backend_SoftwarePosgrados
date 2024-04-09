@@ -80,7 +80,7 @@ public class EgresosServDocentesController {
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
 
-            return "Egreso de servicios docentes guardado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -128,7 +128,7 @@ public class EgresosServDocentesController {
             int idPresupuesto = egresosServDocentesActualizado.getPresupuesto().getId();
             egresoServDocenteRepository.save(egresosServDocentesActualizado);
 
-            return "Egreso de servicios docentes actualizado";
+            return "OK";
         } else {
             return "Error: Egreso de servicios docentes no encontrado";
         }
@@ -136,8 +136,9 @@ public class EgresosServDocentesController {
 
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
+
         egresoServDocenteRepository.deleteById(id);
-        return "Egreso de servicios docentes eliminado";
+        return "OK";
     }
 
 }

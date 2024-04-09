@@ -53,7 +53,7 @@ public class IngresosController {
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
 
-            return "Ingreso guardado";
+            return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
@@ -80,7 +80,7 @@ public class IngresosController {
             ingresoActualizado.setValor(valor);
 
             ingresoRepository.save(ingresoActualizado);
-            return "Ingreso actualizado";
+            return "OK";
         } else {
             return "Error: Ingreso o Presupuesto no encontrado";
         }
@@ -89,7 +89,7 @@ public class IngresosController {
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
         ingresoRepository.deleteById(id);
-        return "Ingreso eliminado";
+        return "OK";
     }
 
 }
