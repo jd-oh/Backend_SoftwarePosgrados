@@ -45,6 +45,7 @@ public class PresupuestoController {
             presupuesto.setIngresosTotales(0);
             presupuesto.setEgresosProgramaTotales(0);
             presupuesto.setEgresosRecurrentesUniversidadTotales(0);
+            presupuesto.setBalanceGeneral(0);
 
             // Siempre se crea como borrador, para que puedan ser ingresados los valores de
             // los gastos e ingresos, después de este paso se puede cambiar el estado
@@ -122,21 +123,22 @@ public class PresupuestoController {
         }
     }
 
-    @PutMapping(path = "/actualizarIngresosTotales")
-    public @ResponseBody String actualizarIngresosTotales(@RequestParam int id) {
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
+    // Se utiliza para actualizar el atributo ingresosTotales de la clase
+    // Presupuesto
+    public String actualizarIngresosTotales(int idPresupuesto,
+            double nuevoValor, double antiguoValor, String tipo) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
 
-        if (presupuesto.isPresent()) {
-            double ingresosTotal = presupuesto.get().getIngresos().stream().mapToDouble(i -> i.getValor()).sum();
-            double descuentosTotal = presupuesto.get().getEgresosDescuentos().stream().mapToDouble(i -> i.getValor())
-                    .sum();
-            presupuesto.get().setIngresosTotales(ingresosTotal - descuentosTotal);
-
-            presupuestoRepository.save(presupuesto.get());
+        if (presupuesto.isPresent() && tipo.equals("ingreso")) {
+            presupuesto.get().setIngresosTotales(presupuesto.get().getIngresosTotales() - antiguoValor + nuevoValor);
+            return "OK";
+        } else if (presupuesto.isPresent() && tipo.equals("descuento")) {
+            presupuesto.get().setIngresosTotales(presupuesto.get().getIngresosTotales() - nuevoValor + antiguoValor);
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
+
     }
 
     // Se utiliza para actualizar el atributo egresosProgramaTotales de la clase
@@ -151,12 +153,10 @@ public class PresupuestoController {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
 
         if (presupuesto.isPresent()) {
-            System.out.println("Egresos programa totales antes: " + presupuesto.get().getEgresosProgramaTotales());
+
             presupuesto.get().setEgresosProgramaTotales(
                     presupuesto.get().getEgresosProgramaTotales() - antiguoValor + nuevoValor);
-            System.out.println("Antiguo valor: " + antiguoValor);
-            System.out.println("Nuevo valor: " + nuevoValor);
-            System.out.println("Egresos programa totales despues: " + presupuesto.get().getEgresosProgramaTotales());
+
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
@@ -184,8 +184,22 @@ public class PresupuestoController {
         }
     }
 
-    // Cada vez que se crea un gasto se llama a este método para que recalcule todo
-    // de nuevo
+    @PutMapping(path = "/recalcularIngresosTotales")
+    public @ResponseBody String recalcularIngresosTotales(@RequestParam int id) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
+
+        if (presupuesto.isPresent()) {
+            double ingresosTotal = presupuesto.get().getIngresos().stream().mapToDouble(i -> i.getValor()).sum();
+            double descuentosTotal = presupuesto.get().getEgresosDescuentos().stream()
+                    .mapToDouble(i -> i.getTotalDescuento()).sum();
+            presupuesto.get().setIngresosTotales(ingresosTotal - descuentosTotal);
+            presupuestoRepository.save(presupuesto.get());
+            return "OK";
+        } else {
+            return "Error: Presupuesto no encontrado";
+        }
+    }
+
     @PutMapping(path = "/recalcularEgresosProgramaTotales")
     public @ResponseBody String recalcularEgresosProgramaTotales(@RequestParam int id) {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
@@ -221,8 +235,6 @@ public class PresupuestoController {
         }
     }
 
-    // Cada vez que se crea un gasto se llama a este método para que recalcule todo
-    // de nuevo
     @PutMapping(path = "/recalcularEgresosRecurrentesUniversidadTotales")
     public @ResponseBody String recalcularEgresosRecurrentesUniversidadTotales(@RequestParam int id) {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);

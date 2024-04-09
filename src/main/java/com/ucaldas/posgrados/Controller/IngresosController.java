@@ -30,6 +30,9 @@ public class IngresosController {
     @Autowired
     private IngresosRepository ingresoRepository;
 
+    @Autowired
+    private PresupuestoController presupuestoController;
+
     @PostMapping("/crear")
     public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam String concepto,
             @RequestParam double valor) {
@@ -49,6 +52,11 @@ public class IngresosController {
 
             // Guardar el egreso general en el presupuesto
             presupuesto.get().getIngresos().add(ingreso);
+
+            int idPresupuesto = presupuesto.get().getId();
+            double valorNuevo = ingreso.getValor();
+
+            presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, 0, "ingreso");
 
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
@@ -75,11 +83,17 @@ public class IngresosController {
         Optional<Ingresos> ingreso = ingresoRepository.findById(id);
 
         if (ingreso.isPresent()) {
+            double valorAnterior = ingreso.get().getValor();
             Ingresos ingresoActualizado = ingreso.get();
             ingresoActualizado.setConcepto(concepto);
             ingresoActualizado.setValor(valor);
 
             ingresoRepository.save(ingresoActualizado);
+
+            int idPresupuesto = ingresoActualizado.getPresupuesto().getId();
+            double valorNuevo = ingresoActualizado.getValor();
+            presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, valorAnterior, "ingreso");
+
             return "OK";
         } else {
             return "Error: Ingreso o Presupuesto no encontrado";
@@ -88,6 +102,17 @@ public class IngresosController {
 
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
+
+        Optional<Ingresos> ingreso = ingresoRepository.findById(id);
+
+        if (!ingreso.isPresent()) {
+            return "Error: Ingreso no encontrado";
+        }
+
+        int idPresupuesto = ingreso.get().getPresupuesto().getId();
+        double valorAnterior = ingreso.get().getValor();
+
+        presupuestoController.actualizarIngresosTotales(idPresupuesto, 0, valorAnterior, "ingreso");
         ingresoRepository.deleteById(id);
         return "OK";
     }
