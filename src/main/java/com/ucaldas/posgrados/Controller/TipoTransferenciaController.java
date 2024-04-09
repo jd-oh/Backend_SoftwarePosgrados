@@ -2,7 +2,10 @@ package com.ucaldas.posgrados.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,30 +29,30 @@ public class TipoTransferenciaController {
         tipoTransferencia.setNombreTipo(nombreTipo);
 
         tipoTransferenciaRepository.save(tipoTransferencia);
-        return "Tipo de descuento guardado";
+        return "Tipo de transferencia guardado";
 
     }
 
-    @PostMapping(path = "/eliminar")
+    @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         tipoTransferenciaRepository.deleteById(id);
-        return "Tipo de descuento eliminado";
+        return "Tipo de transferencia eliminado";
 
     }
 
-    @PostMapping(path = "/actualizar")
+    @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam String nombreTipo) {
 
         TipoTransferencia tipoTransferencia = tipoTransferenciaRepository.findById(id).get();
         tipoTransferencia.setNombreTipo(nombreTipo);
 
         tipoTransferenciaRepository.save(tipoTransferencia);
-        return "Tipo de descuento actualizado";
+        return "Tipo de transferencia actualizado";
 
     }
 
-    @PostMapping(path = "/listar")
+    @GetMapping(path = "/listar")
     public @ResponseBody Iterable<TipoTransferencia> listar() {
 
         return tipoTransferenciaRepository.findAllByOrderByNombreTipoAsc();
