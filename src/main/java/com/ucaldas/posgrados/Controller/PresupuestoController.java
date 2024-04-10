@@ -69,6 +69,12 @@ public class PresupuestoController {
         return presupuestoRepository.findById(id);
     }
 
+    // Buscar el presupuesto por cohorte
+    @GetMapping("/buscarPorCohorte")
+    public @ResponseBody Optional<Presupuesto> buscarPorCohorte(@RequestParam int idCohorte) {
+        return presupuestoRepository.findByCohorteId(idCohorte);
+    }
+
     @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id,
             @RequestParam(required = false) Optional<String> observaciones,

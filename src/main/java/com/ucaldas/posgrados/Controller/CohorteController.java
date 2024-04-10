@@ -65,8 +65,8 @@ public class CohorteController {
     }
 
     @GetMapping(path = "/buscar")
-    public @ResponseBody String buscarPorId(@RequestParam int id) {
-        return cohorteRepository.findById(id).get().toString();
+    public @ResponseBody Optional<Cohorte> buscarPorId(@RequestParam int id) {
+        return cohorteRepository.findById(id);
     }
 
     @DeleteMapping(path = "/eliminar")
