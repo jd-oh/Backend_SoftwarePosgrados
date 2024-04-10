@@ -8,4 +8,6 @@ public interface IngresosRepository extends CrudRepository<Ingresos, Integer> {
 
     Iterable<Ingresos> findAllByOrderByPresupuestoAsc();
 
+    Iterable<Ingresos> findByPresupuestoId(int idPresupuesto);
+
 }

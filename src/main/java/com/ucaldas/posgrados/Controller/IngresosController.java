@@ -72,6 +72,12 @@ public class IngresosController {
         return ingresoRepository.findAllByOrderByPresupuestoAsc();
     }
 
+    // Listar por presupuesto
+    @GetMapping("/listarPorPresupuesto")
+    public @ResponseBody Iterable<Ingresos> listarPorPresupuesto(@RequestParam int idPresupuesto) {
+        return ingresoRepository.findByPresupuestoId(idPresupuesto);
+    }
+
     @GetMapping("/buscar")
     public @ResponseBody Optional<Ingresos> buscar(@RequestParam int id) {
         return ingresoRepository.findById(id);
