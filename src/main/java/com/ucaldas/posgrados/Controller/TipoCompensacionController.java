@@ -29,7 +29,7 @@ public class TipoCompensacionController {
         tipoCompensacion.setNombreTipo(nombreTipo);
 
         tipoCompensacionRepository.save(tipoCompensacion);
-        return "Tipo de compensacion guardado";
+        return "OK";
 
     }
 
@@ -37,7 +37,7 @@ public class TipoCompensacionController {
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         tipoCompensacionRepository.deleteById(id);
-        return "Tipo de compensacion eliminado";
+        return "OK";
 
     }
 
@@ -48,7 +48,7 @@ public class TipoCompensacionController {
         tipoCompensacion.setNombreTipo(nombreTipo);
 
         tipoCompensacionRepository.save(tipoCompensacion);
-        return "Tipo de compensacion actualizado";
+        return "OK";
 
     }
 

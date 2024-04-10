@@ -46,7 +46,7 @@ public class DepartamentoController {
             departamento.setFacultad(facultad.get());
 
             departamentoRepository.save(departamento);
-            return "Departamento guardado";
+            return "OK";
         } else {
             return "Error: Facultad no encontrada";
         }
@@ -66,7 +66,7 @@ public class DepartamentoController {
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminarPorId(@RequestParam int id) {
         departamentoRepository.deleteById(id);
-        return "Departamento eliminado";
+        return "OK";
     }
 
     @PutMapping(path = "/actualizar")
@@ -85,7 +85,7 @@ public class DepartamentoController {
             departamentoActualizado.setFacultad(facultad.get());
 
             departamentoRepository.save(departamentoActualizado);
-            return "Departamento actualizado";
+            return "OK";
         } else {
             return "Error: Facultad o Departamento no encontrados";
         }

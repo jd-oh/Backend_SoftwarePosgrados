@@ -29,7 +29,7 @@ public class TipoDescuentoController {
         tipoDescuento.setNombreTipo(nombreTipo);
 
         tipoDescuentoRepository.save(tipoDescuento);
-        return "Tipo de descuento guardado";
+        return "OK";
 
     }
 
@@ -37,7 +37,7 @@ public class TipoDescuentoController {
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         tipoDescuentoRepository.deleteById(id);
-        return "Tipo de descuento eliminado";
+        return "OK";
 
     }
 
@@ -48,7 +48,7 @@ public class TipoDescuentoController {
         tipoDescuento.setNombreTipo(nombreTipo);
 
         tipoDescuentoRepository.save(tipoDescuento);
-        return "Tipo de descuento actualizado";
+        return "OK";
 
     }
 

@@ -46,7 +46,7 @@ public class ProgramaController {
             programa.setDepartamento(departamento.get());
 
             programaRepository.save(programa);
-            return "Programa guardado";
+            return "OK";
         } else {
             return "Error: Departamento no encontrado";
         }
@@ -66,7 +66,7 @@ public class ProgramaController {
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminarPorId(@RequestParam int id) {
         programaRepository.deleteById(id);
-        return "Programa eliminado";
+        return "OK";
     }
 
     @PutMapping(path = "/actualizar")
@@ -85,7 +85,7 @@ public class ProgramaController {
             programaActualizado.setDepartamento(departamento.get());
 
             programaRepository.save(programaActualizado);
-            return "Programa actualizado";
+            return "OK";
         } else {
             return "Error: Departamento o Programa no encontrados";
         }

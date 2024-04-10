@@ -32,7 +32,7 @@ public class FacultadController {
         facultad.setNombre(nombre);
 
         facultadRepository.save(facultad);
-        return "Facultad guardada";
+        return "FOK";
 
     }
 
@@ -52,7 +52,7 @@ public class FacultadController {
     public @ResponseBody String eliminarPorId(@RequestParam int id) {
 
         facultadRepository.deleteById(id);
-        return "Facultad eliminado";
+        return "OK";
     }
 
     @PutMapping(path = "/actualizar")
@@ -63,7 +63,7 @@ public class FacultadController {
         facultad.setNombre(nombre);
 
         facultadRepository.save(facultad);
-        return "Facultad actualizado";
+        return "OK";
     }
 
 }

@@ -29,7 +29,7 @@ public class TipoCostoController {
         tipoCosto.setNombreTipo(nombreTipo);
 
         tipoCostoRepository.save(tipoCosto);
-        return "Tipo de costo guardado";
+        return "OK";
 
     }
 
@@ -37,7 +37,7 @@ public class TipoCostoController {
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         tipoCostoRepository.deleteById(id);
-        return "Tipo de costo eliminado";
+        return "OK";
 
     }
 
@@ -48,7 +48,7 @@ public class TipoCostoController {
         tipoCosto.setNombreTipo(nombreTipo);
 
         tipoCostoRepository.save(tipoCosto);
-        return "Tipo de costo actualizado";
+        return "OK";
 
     }
 

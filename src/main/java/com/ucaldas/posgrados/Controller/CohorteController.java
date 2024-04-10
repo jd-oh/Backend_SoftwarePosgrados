@@ -51,7 +51,7 @@ public class CohorteController {
             cohorte.setPrograma(programa.get());
 
             cohorteRepository.save(cohorte);
-            return "Cohorte guardada";
+            return "OK";
         } else {
             return "Error: Programa no encontrado";
         }
@@ -72,7 +72,7 @@ public class CohorteController {
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminarPorId(@RequestParam int id) {
         cohorteRepository.deleteById(id);
-        return "Cohorte eliminada";
+        return "OK";
     }
 
     @PutMapping(path = "/actualizar")
@@ -94,7 +94,7 @@ public class CohorteController {
             cohorteActualizado.setPrograma(programa.get());
 
             cohorteRepository.save(cohorteActualizado);
-            return "Cohorte actualizada";
+            return "OK";
         } else {
             return "Error: Programa o Cohorte no encontrados";
         }

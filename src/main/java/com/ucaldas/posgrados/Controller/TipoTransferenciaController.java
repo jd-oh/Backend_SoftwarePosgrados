@@ -29,7 +29,7 @@ public class TipoTransferenciaController {
         tipoTransferencia.setNombreTipo(nombreTipo);
 
         tipoTransferenciaRepository.save(tipoTransferencia);
-        return "Tipo de transferencia guardado";
+        return "OK";
 
     }
 
@@ -37,7 +37,7 @@ public class TipoTransferenciaController {
     public @ResponseBody String eliminar(@RequestParam int id) {
 
         tipoTransferenciaRepository.deleteById(id);
-        return "Tipo de transferencia eliminado";
+        return "OK";
 
     }
 
@@ -48,7 +48,7 @@ public class TipoTransferenciaController {
         tipoTransferencia.setNombreTipo(nombreTipo);
 
         tipoTransferenciaRepository.save(tipoTransferencia);
-        return "Tipo de transferencia actualizado";
+        return "OK";
 
     }
 
