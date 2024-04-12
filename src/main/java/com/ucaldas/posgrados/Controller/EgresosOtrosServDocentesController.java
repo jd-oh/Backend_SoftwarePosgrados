@@ -137,4 +137,10 @@ public class EgresosOtrosServDocentesController {
         return "OK";
     }
 
+    // Listar por presupuesto
+    @GetMapping("/listarPorPresupuesto")
+    public @ResponseBody Iterable<EgresosOtrosServDocentes> listarPorPresupuesto(@RequestParam int idPresupuesto) {
+        return egresoOtrosServDocenteRepository.findByPresupuestoId(idPresupuesto);
+    }
+
 }

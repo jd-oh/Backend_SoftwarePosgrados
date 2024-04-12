@@ -127,4 +127,10 @@ public class EgresosRecurrentesAdmController {
         return "OK";
     }
 
+    // Listar por presupuesto
+    @GetMapping("/listarPorPresupuesto")
+    public @ResponseBody Iterable<EgresosRecurrentesAdm> listarPorPresupuesto(@RequestParam int idPresupuesto) {
+        return egresoRecurrenteAdmRepository.findByPresupuestoId(idPresupuesto);
+    }
+
 }

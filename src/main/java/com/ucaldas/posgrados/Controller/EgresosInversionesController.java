@@ -133,4 +133,10 @@ public class EgresosInversionesController {
         return "OK";
     }
 
+    // Listar por presupuesto
+    @GetMapping("/listarPorPresupuesto")
+    public @ResponseBody Iterable<EgresosInversiones> listarPorPresupuesto(@RequestParam int idPresupuesto) {
+        return egresoInversionRepository.findByPresupuestoId(idPresupuesto);
+    }
+
 }

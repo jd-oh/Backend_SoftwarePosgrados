@@ -8,4 +8,6 @@ public interface EgresosRecurrentesAdmRepository extends CrudRepository<EgresosR
 
     Iterable<EgresosRecurrentesAdm> findAllByOrderByPresupuestoAsc();
 
+    Iterable<EgresosRecurrentesAdm> findByPresupuestoId(int idPresupuesto);
+
 }

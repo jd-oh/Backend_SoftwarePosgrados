@@ -135,4 +135,10 @@ public class EgresosOtrosController {
         return "OK";
     }
 
+    // Listar por presupuesto
+    @GetMapping("/listarPorPresupuesto")
+    public @ResponseBody Iterable<EgresosOtros> listarPorPresupuesto(@RequestParam int idPresupuesto) {
+        return egresoOtroRepository.findByPresupuestoId(idPresupuesto);
+    }
+
 }

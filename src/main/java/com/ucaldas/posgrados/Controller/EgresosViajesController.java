@@ -134,4 +134,10 @@ public class EgresosViajesController {
         return "OK";
     }
 
+    // Listar por presupuesto
+    @GetMapping("/listarPorPresupuesto")
+    public @ResponseBody Iterable<EgresosViajes> listarPorPresupuesto(@RequestParam int idPresupuesto) {
+        return egresoViajeRepository.findByPresupuestoId(idPresupuesto);
+    }
+
 }

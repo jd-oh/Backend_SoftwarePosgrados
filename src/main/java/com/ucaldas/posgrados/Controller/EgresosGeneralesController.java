@@ -179,4 +179,10 @@ public class EgresosGeneralesController {
         return "OK";
     }
 
+    // Listar por presupuesto
+    @GetMapping("/listarPorPresupuesto")
+    public @ResponseBody Iterable<EgresosGenerales> listarPorPresupuesto(@RequestParam int idPresupuesto) {
+        return egresoGeneralRepository.findByPresupuestoId(idPresupuesto);
+    }
+
 }

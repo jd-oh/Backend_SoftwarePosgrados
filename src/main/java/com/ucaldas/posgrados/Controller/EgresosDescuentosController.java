@@ -114,6 +114,12 @@ public class EgresosDescuentosController {
         }
     }
 
+    // Listar por presupuesto
+    @GetMapping("/listarPorPresupuesto")
+    public @ResponseBody Iterable<EgresosDescuentos> listarPorPresupuesto(@RequestParam int idPresupuesto) {
+        return egresoDescuentoRepository.findByPresupuestoId(idPresupuesto);
+    }
+
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
 

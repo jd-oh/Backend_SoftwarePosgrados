@@ -8,4 +8,6 @@ public interface EgresosOtrosRepository extends CrudRepository<EgresosOtros, Int
 
     Iterable<EgresosOtros> findAllByOrderByPresupuestoAsc();
 
+    Iterable<EgresosOtros> findByPresupuestoId(int idPresupuesto);
+
 }
