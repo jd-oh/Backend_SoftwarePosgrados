@@ -39,7 +39,9 @@ public class EgresosViajesController {
             @RequestParam double apoyoDesplazamiento, @RequestParam int numViajesPorPersona,
             @RequestParam double valorTransporte) {
         // Buscar la programa por su ID
+        System.out.println("prep: " + idPresupuestoEjecucion);
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
+        System.out.println(presupuesto);
 
         // Verificar si la programa existe
         if (presupuesto.isPresent()) {
@@ -50,6 +52,7 @@ public class EgresosViajesController {
             egresoViaje.setApoyoDesplazamiento(apoyoDesplazamiento);
             egresoViaje.setNumViajesPorPersona(numViajesPorPersona);
             egresoViaje.setValorTransporte(valorTransporte);
+            egresoViaje.setPresupuesto(presupuesto.get());
             egresoViaje.setValorTotal((valorTransporte * numPersonas * numViajesPorPersona) + apoyoDesplazamiento);
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
@@ -59,7 +62,7 @@ public class EgresosViajesController {
             // Guardar el egreso general en el presupuesto
             presupuesto.get().getEgresosViaje().add(egresoViaje);
 
-            int idPresupuesto = egresoViaje.getPresupuesto().getId();
+            int idPresupuesto = idPresupuestoEjecucion;
             double valorNuevo = egresoViaje.getValorTotal();
 
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, 0);

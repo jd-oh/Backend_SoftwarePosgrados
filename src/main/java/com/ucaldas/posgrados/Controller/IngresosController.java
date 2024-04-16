@@ -33,6 +33,9 @@ public class IngresosController {
     @Autowired
     private PresupuestoController presupuestoController;
 
+    @Autowired
+    private EgresosTransferenciasController egresosTransferenciasController;
+
     @PostMapping("/crear")
     public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam String concepto,
             @RequestParam double valor) {
@@ -41,6 +44,7 @@ public class IngresosController {
 
         // Verificar si la programa existe
         if (presupuesto.isPresent()) {
+
             Ingresos ingreso = new Ingresos();
             ingreso.setConcepto(concepto);
             ingreso.setValor(valor);
@@ -57,6 +61,13 @@ public class IngresosController {
             double valorNuevo = ingreso.getValor();
 
             presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, 0, "ingreso");
+
+            // Si existen egresos de transferencias entonces llamamos al metodo
+            // 'actualizarIngresosTotales'
+            if (egresosTransferenciasController.listar().iterator().hasNext()) {
+                egresosTransferenciasController.actualizarValoresTransferenciasPorIngresos();
+
+            }
 
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
@@ -89,6 +100,7 @@ public class IngresosController {
         Optional<Ingresos> ingreso = ingresoRepository.findById(id);
 
         if (ingreso.isPresent()) {
+
             double valorAnterior = ingreso.get().getValor();
             Ingresos ingresoActualizado = ingreso.get();
             ingresoActualizado.setConcepto(concepto);
@@ -97,6 +109,12 @@ public class IngresosController {
             int idPresupuesto = ingresoActualizado.getPresupuesto().getId();
             double valorNuevo = ingresoActualizado.getValor();
             presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, valorAnterior, "ingreso");
+
+            // Si existen egresos de transferencias entonces llamamos al metodo
+            // 'actualizarIngresosTotales'
+            if (egresosTransferenciasController.listar().iterator().hasNext()) {
+                egresosTransferenciasController.actualizarValoresTransferenciasPorIngresos();
+            }
 
             ingresoRepository.save(ingresoActualizado);
 
@@ -119,7 +137,14 @@ public class IngresosController {
         double valorAnterior = ingreso.get().getValor();
 
         presupuestoController.actualizarIngresosTotales(idPresupuesto, 0, valorAnterior, "ingreso");
+
+        // Si existen egresos de transferencias entonces llamamos al metodo
+        // 'actualizarIngresosTotales'
+        if (egresosTransferenciasController.listar().iterator().hasNext()) {
+            egresosTransferenciasController.actualizarValoresTransferenciasPorIngresos();
+        }
         ingresoRepository.deleteById(id);
+
         return "OK";
     }
 

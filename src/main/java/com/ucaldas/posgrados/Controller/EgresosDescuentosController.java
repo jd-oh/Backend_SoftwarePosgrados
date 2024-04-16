@@ -38,6 +38,9 @@ public class EgresosDescuentosController {
     @Autowired
     private PresupuestoController presupuestoController;
 
+    @Autowired
+    private EgresosTransferenciasController egresosTransferenciasController;
+
     @PostMapping("/crear")
     public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam int numEstudiantes,
             @RequestParam double valor, @RequestParam int numPeriodos,
@@ -67,6 +70,12 @@ public class EgresosDescuentosController {
             double valorNuevo = egresosDescuentos.getTotalDescuento();
 
             presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, 0, "descuento");
+
+            // Si existen egresos de transferencias entonces llamamos al metodo
+            // 'actualizarIngresosTotales'
+            if (egresosTransferenciasController.listar().iterator().hasNext()) {
+                egresosTransferenciasController.actualizarValoresTransferenciasPorIngresos();
+            }
 
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
@@ -107,7 +116,14 @@ public class EgresosDescuentosController {
             int idPresupuesto = egresosDescuentosActualizado.getPresupuesto().getId();
             double valorNuevo = egresosDescuentosActualizado.getTotalDescuento();
             presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, valorAnterior, "egreso");
+
+            // Si existen egresos de transferencias entonces llamamos al metodo
+            // 'actualizarIngresosTotales'
+            if (egresosTransferenciasController.listar().iterator().hasNext()) {
+                egresosTransferenciasController.actualizarValoresTransferenciasPorIngresos();
+            }
             egresoDescuentoRepository.save(egresosDescuentosActualizado);
+
             return "OK";
         } else {
             return "Error: Egreso de descuento no encontrado";
@@ -134,7 +150,14 @@ public class EgresosDescuentosController {
 
         presupuestoController.actualizarIngresosTotales(idPresupuesto, 0, valorAnterior, "egreso");
 
+        // Si existen egresos de transferencias entonces llamamos al metodo
+        // 'actualizarIngresosTotales'
+        if (egresosTransferenciasController.listar().iterator().hasNext()) {
+            egresosTransferenciasController.actualizarValoresTransferenciasPorIngresos();
+        }
+
         egresoDescuentoRepository.deleteById(id);
+
         return "OK";
     }
 

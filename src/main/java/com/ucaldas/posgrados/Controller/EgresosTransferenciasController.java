@@ -92,6 +92,18 @@ public class EgresosTransferenciasController {
         return egresoTransferenciaRepository.findById(id);
     }
 
+    // Este metodo se hizo para que cuando se edite o se cree un ingreso después de
+    // haber creado una transferencia,
+    // se actualice el valor total de la transferencia, ya que este depende del
+    // ingreso total del presupuesto
+    public void actualizarValoresTransferenciasPorIngresos() {
+        Iterable<EgresosTransferencias> egresosTransferencias = egresoTransferenciaRepository.findAll();
+        for (EgresosTransferencias egreso : egresosTransferencias) {
+            egreso.setValorTotal(egreso.getPresupuesto().getIngresosTotales() * egreso.getPorcentaje() / 100);
+            egresoTransferenciaRepository.save(egreso);
+        }
+    }
+
     @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam int id, @RequestParam String descripcion,
             @RequestParam double porcentaje,
