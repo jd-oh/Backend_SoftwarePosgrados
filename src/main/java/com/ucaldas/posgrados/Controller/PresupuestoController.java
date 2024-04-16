@@ -151,6 +151,7 @@ public class PresupuestoController {
 
             actualizarBalanceGeneral(id);
 
+            presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
@@ -173,6 +174,8 @@ public class PresupuestoController {
                     presupuesto.get().getEgresosRecurrentesUniversidadTotales() - antiguoValor + nuevoValor);
 
             actualizarBalanceGeneral(id);
+
+            presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
@@ -189,6 +192,7 @@ public class PresupuestoController {
                     - presupuesto.get().getEgresosProgramaTotales()
                     - presupuesto.get().getEgresosRecurrentesUniversidadTotales());
 
+            presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";

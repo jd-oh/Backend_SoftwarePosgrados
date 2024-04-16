@@ -115,7 +115,7 @@ public class EgresosDescuentosController {
 
             int idPresupuesto = egresosDescuentosActualizado.getPresupuesto().getId();
             double valorNuevo = egresosDescuentosActualizado.getTotalDescuento();
-            presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, valorAnterior, "egreso");
+            presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, valorAnterior, "descuento");
 
             // Si existen egresos de transferencias entonces llamamos al metodo
             // 'actualizarIngresosTotales'
@@ -148,7 +148,7 @@ public class EgresosDescuentosController {
         int idPresupuesto = egreso.get().getPresupuesto().getId();
         double valorAnterior = egreso.get().getTotalDescuento();
 
-        presupuestoController.actualizarIngresosTotales(idPresupuesto, 0, valorAnterior, "egreso");
+        presupuestoController.actualizarIngresosTotales(idPresupuesto, 0, valorAnterior, "descuento");
 
         // Si existen egresos de transferencias entonces llamamos al metodo
         // 'actualizarIngresosTotales'
