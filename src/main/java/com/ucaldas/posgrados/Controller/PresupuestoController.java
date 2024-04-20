@@ -111,7 +111,7 @@ public class PresupuestoController {
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
         presupuestoRepository.deleteById(id);
-        return "Presupuesto eliminado";
+        return "OK";
     }
 
     // Se utiliza para actualizar el atributo ingresosTotales de la clase
@@ -132,6 +132,17 @@ public class PresupuestoController {
             return "Error: Presupuesto no encontrado";
         }
 
+    }
+
+    @GetMapping(path = "/ingresosTotales")
+    public @ResponseBody double ingresosTotales(@RequestParam int id) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
+
+        if (presupuesto.isPresent()) {
+            return presupuesto.get().getIngresosTotales();
+        } else {
+            return 0;
+        }
     }
 
     // Se utiliza para actualizar el atributo egresosProgramaTotales de la clase
