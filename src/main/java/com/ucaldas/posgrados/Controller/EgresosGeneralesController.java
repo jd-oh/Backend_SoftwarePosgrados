@@ -185,4 +185,19 @@ public class EgresosGeneralesController {
         return egresoGeneralRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    @GetMapping("/totalEgresosGenerales")
+    public @ResponseBody double totalEgresosGenerales() {
+        double total = 0;
+        Iterable<EgresosGenerales> egresosGenerales = egresoGeneralRepository.findAll();
+
+        // Si no hay egresos generales
+        if (!egresosGenerales.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosGenerales egresoGeneral : egresosGenerales) {
+            total += egresoGeneral.getValorTotal();
+        }
+        return total;
+    }
+
 }

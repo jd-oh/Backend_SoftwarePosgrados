@@ -157,4 +157,19 @@ public class EgresosTransferenciasController {
         return egresoTransferenciaRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    @GetMapping("/totalEgresosTransferencias")
+    public @ResponseBody double totalEgresosTransferencias() {
+        Iterable<EgresosTransferencias> egresosTransferencias = egresoTransferenciaRepository.findAll();
+        double total = 0;
+
+        if (!egresosTransferencias.iterator().hasNext()) {
+            return 0;
+        }
+
+        for (EgresosTransferencias egreso : egresosTransferencias) {
+            total += egreso.getValorTotal();
+        }
+        return total;
+    }
+
 }

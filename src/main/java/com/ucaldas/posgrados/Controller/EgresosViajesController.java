@@ -143,4 +143,20 @@ public class EgresosViajesController {
         return egresoViajeRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    @GetMapping("/totalEgresosViajes")
+    public @ResponseBody double totalEgresosViajes() {
+        Iterable<EgresosViajes> egresosViajes = egresoViajeRepository.findAll();
+        double total = 0;
+
+        if (!egresosViajes.iterator().hasNext()) {
+            return total;
+        }
+
+        for (EgresosViajes egresoViaje : egresosViajes) {
+            total += egresoViaje.getValorTotal();
+        }
+
+        return total;
+    }
+
 }

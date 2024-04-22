@@ -161,4 +161,18 @@ public class EgresosDescuentosController {
         return "OK";
     }
 
+    @GetMapping("/totalEgresosDescuentos")
+    public @ResponseBody double totalEgresosDescuentos() {
+        double total = 0;
+        Iterable<EgresosDescuentos> egresosDescuentos = egresoDescuentoRepository.findAll();
+
+        // Si no hay egresos de descuentos
+        if (!egresosDescuentos.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosDescuentos egresoDescuento : egresosDescuentos) {
+            total += egresoDescuento.getTotalDescuento();
+        }
+        return total;
+    }
 }

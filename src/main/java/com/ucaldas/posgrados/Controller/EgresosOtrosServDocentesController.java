@@ -143,4 +143,18 @@ public class EgresosOtrosServDocentesController {
         return egresoOtrosServDocenteRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    @GetMapping("/totalEgresosOtros")
+    public @ResponseBody double totalEgresosOtros() {
+        double total = 0;
+        Iterable<EgresosOtrosServDocentes> egresosOtrosServDocentes = egresoOtrosServDocenteRepository.findAll();
+
+        // Si no hay egresos de otros
+        if (!egresosOtrosServDocentes.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosOtrosServDocentes egresoOtro : egresosOtrosServDocentes) {
+            total += egresoOtro.getValorTotal();
+        }
+        return total;
+    }
 }

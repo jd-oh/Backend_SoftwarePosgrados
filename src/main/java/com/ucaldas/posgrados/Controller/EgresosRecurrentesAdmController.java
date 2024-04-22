@@ -133,4 +133,19 @@ public class EgresosRecurrentesAdmController {
         return egresoRecurrenteAdmRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    @GetMapping("/totalEgresosRecurrentesAdm")
+    public @ResponseBody double totalEgresosRecurrentesAdm() {
+        double total = 0;
+        Iterable<EgresosRecurrentesAdm> egresosRecurrentesAdm = egresoRecurrenteAdmRepository.findAll();
+
+        // Si no hay egresos de otros
+        if (!egresosRecurrentesAdm.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosRecurrentesAdm egresoRecurrenteAdm : egresosRecurrentesAdm) {
+            total += egresoRecurrenteAdm.getValorTotal();
+        }
+        return total;
+    }
+
 }

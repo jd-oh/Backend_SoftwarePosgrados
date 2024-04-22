@@ -139,4 +139,17 @@ public class EgresosInversionesController {
         return egresoInversionRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    @GetMapping("/totalEgresosInversiones")
+    public @ResponseBody double totalEgresosInversiones() {
+        double total = 0;
+        Iterable<EgresosInversiones> egresosInversiones = egresoInversionRepository.findAll();
+
+        if (!egresosInversiones.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosInversiones egreso : egresosInversiones) {
+            total += egreso.getValor();
+        }
+        return total;
+    }
 }
