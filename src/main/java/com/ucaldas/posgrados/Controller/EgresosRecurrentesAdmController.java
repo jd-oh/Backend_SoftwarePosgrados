@@ -134,9 +134,10 @@ public class EgresosRecurrentesAdmController {
     }
 
     @GetMapping("/totalEgresosRecurrentesAdm")
-    public @ResponseBody double totalEgresosRecurrentesAdm() {
+    public @ResponseBody double totalEgresosRecurrentesAdm(int idPresupuesto) {
         double total = 0;
-        Iterable<EgresosRecurrentesAdm> egresosRecurrentesAdm = egresoRecurrenteAdmRepository.findAll();
+        Iterable<EgresosRecurrentesAdm> egresosRecurrentesAdm = egresoRecurrenteAdmRepository
+                .findByPresupuestoId(idPresupuesto);
 
         // Si no hay egresos de otros
         if (!egresosRecurrentesAdm.iterator().hasNext()) {

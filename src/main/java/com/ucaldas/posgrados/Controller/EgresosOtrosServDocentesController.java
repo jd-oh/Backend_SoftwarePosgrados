@@ -144,9 +144,10 @@ public class EgresosOtrosServDocentesController {
     }
 
     @GetMapping("/totalEgresosOtros")
-    public @ResponseBody double totalEgresosOtros() {
+    public @ResponseBody double totalEgresosOtros(int idPresupuesto) {
         double total = 0;
-        Iterable<EgresosOtrosServDocentes> egresosOtrosServDocentes = egresoOtrosServDocenteRepository.findAll();
+        Iterable<EgresosOtrosServDocentes> egresosOtrosServDocentes = egresoOtrosServDocenteRepository
+                .findByPresupuestoId(idPresupuesto);
 
         // Si no hay egresos de otros
         if (!egresosOtrosServDocentes.iterator().hasNext()) {

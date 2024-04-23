@@ -162,9 +162,9 @@ public class EgresosDescuentosController {
     }
 
     @GetMapping("/totalEgresosDescuentos")
-    public @ResponseBody double totalEgresosDescuentos() {
+    public @ResponseBody double totalEgresosDescuentos(int idPresupuesto) {
         double total = 0;
-        Iterable<EgresosDescuentos> egresosDescuentos = egresoDescuentoRepository.findAll();
+        Iterable<EgresosDescuentos> egresosDescuentos = egresoDescuentoRepository.findByPresupuestoId(idPresupuesto);
 
         // Si no hay egresos de descuentos
         if (!egresosDescuentos.iterator().hasNext()) {

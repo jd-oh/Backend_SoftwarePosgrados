@@ -186,10 +186,9 @@ public class EgresosGeneralesController {
     }
 
     @GetMapping("/totalEgresosGenerales")
-    public @ResponseBody double totalEgresosGenerales() {
+    public @ResponseBody double totalEgresosGenerales(int idPresupuesto) {
         double total = 0;
-        Iterable<EgresosGenerales> egresosGenerales = egresoGeneralRepository.findAll();
-
+        Iterable<EgresosGenerales> egresosGenerales = egresoGeneralRepository.findByPresupuestoId(idPresupuesto);
         // Si no hay egresos generales
         if (!egresosGenerales.iterator().hasNext()) {
             return total;

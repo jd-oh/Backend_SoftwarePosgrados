@@ -158,8 +158,9 @@ public class EgresosTransferenciasController {
     }
 
     @GetMapping("/totalEgresosTransferencias")
-    public @ResponseBody double totalEgresosTransferencias() {
-        Iterable<EgresosTransferencias> egresosTransferencias = egresoTransferenciaRepository.findAll();
+    public @ResponseBody double totalEgresosTransferencias(int idPresupuesto) {
+        Iterable<EgresosTransferencias> egresosTransferencias = egresoTransferenciaRepository
+                .findByPresupuestoId(idPresupuesto);
         double total = 0;
 
         if (!egresosTransferencias.iterator().hasNext()) {

@@ -144,8 +144,10 @@ public class EgresosViajesController {
     }
 
     @GetMapping("/totalEgresosViajes")
-    public @ResponseBody double totalEgresosViajes() {
-        Iterable<EgresosViajes> egresosViajes = egresoViajeRepository.findAll();
+    // Total de egresos de viajes por presupuesto
+    public @ResponseBody double totalEgresosViajes(int idPresupuesto) {
+
+        Iterable<EgresosViajes> egresosViajes = egresoViajeRepository.findByPresupuestoId(idPresupuesto);
         double total = 0;
 
         if (!egresosViajes.iterator().hasNext()) {
