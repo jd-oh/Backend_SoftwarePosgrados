@@ -143,8 +143,8 @@ public class EgresosOtrosServDocentesController {
         return egresoOtrosServDocenteRepository.findByPresupuestoId(idPresupuesto);
     }
 
-    @GetMapping("/totalEgresosOtros")
-    public @ResponseBody double totalEgresosOtros(int idPresupuesto) {
+    @GetMapping("/totalEgresosOtrosServDocentes")
+    public @ResponseBody double totalEgresosOtrosServDocentes(int idPresupuesto) {
         double total = 0;
         Iterable<EgresosOtrosServDocentes> egresosOtrosServDocentes = egresoOtrosServDocenteRepository
                 .findByPresupuestoId(idPresupuesto);
