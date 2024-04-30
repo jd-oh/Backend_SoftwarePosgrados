@@ -16,8 +16,8 @@ public class Programa {
     private String nombre;
 
     @ManyToOne
-    @JoinColumn(name = "idDepartamento", referencedColumnName = "id")
-    private Departamento departamento;
+    @JoinColumn(name = "idFacultad", referencedColumnName = "id")
+    private Facultad facultad;
 
     public int getId() {
         return id;
@@ -35,12 +35,12 @@ public class Programa {
         this.nombre = nombre;
     }
 
-    public Departamento getDepartamento() {
-        return departamento;
+    public Facultad getFacultad() {
+        return facultad;
     }
 
-    public void setDepartamento(Departamento departamento) {
-        this.departamento = departamento;
+    public void setFacultad(Facultad facultad) {
+        this.facultad = facultad;
     }
 
 }

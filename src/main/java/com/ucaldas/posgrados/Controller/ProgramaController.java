@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ucaldas.posgrados.Entity.Programa;
-import com.ucaldas.posgrados.Entity.Departamento;
+import com.ucaldas.posgrados.Entity.Facultad;
 import com.ucaldas.posgrados.Repository.ProgramaRepository;
-import com.ucaldas.posgrados.Repository.DepartamentoRepository;
+import com.ucaldas.posgrados.Repository.FacultadRepository;
 
 @RestController
 @CrossOrigin
@@ -30,25 +30,25 @@ public class ProgramaController {
     private ProgramaRepository programaRepository;
 
     @Autowired
-    private DepartamentoRepository departamentoRepository;
+    private FacultadRepository facultadRepository;
 
     @PostMapping(path = "/crear")
-    public @ResponseBody String crear(@RequestParam String nombre, @RequestParam int idDepartamento) {
+    public @ResponseBody String crear(@RequestParam String nombre, @RequestParam int idFacultad) {
 
-        // Buscar la departamento por su ID
-        Optional<Departamento> departamento = departamentoRepository.findById(idDepartamento);
+        // Buscar la facultad por su ID
+        Optional<Facultad> facultad = facultadRepository.findById(idFacultad);
 
-        // Verificar si la departamento existe
-        if (departamento.isPresent()) {
+        // Verificar si la facultad existe
+        if (facultad.isPresent()) {
             Programa programa = new Programa();
             programa.setNombre(nombre);
-            // Asignar la departamento al programa
-            programa.setDepartamento(departamento.get());
+            // Asignar la facultad al programa
+            programa.setFacultad(facultad.get());
 
             programaRepository.save(programa);
             return "OK";
         } else {
-            return "Error: Departamento no encontrado";
+            return "Error: Facultad no encontrado";
         }
 
     }
@@ -71,23 +71,23 @@ public class ProgramaController {
 
     @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam String nombre, @RequestParam int idPrograma,
-            @RequestParam int idDepartamento) {
+            @RequestParam int idFacultad) {
 
-        // Buscar la departamento por su ID
-        Optional<Departamento> departamento = departamentoRepository.findById(idDepartamento);
+        // Buscar la facultad por su ID
+        Optional<Facultad> facultad = facultadRepository.findById(idFacultad);
         Optional<Programa> programa = programaRepository.findById(idPrograma);
 
-        // Verificar si la departamento y el programa existen
-        if (departamento.isPresent() && programa.isPresent()) {
+        // Verificar si la facultad y el programa existen
+        if (facultad.isPresent() && programa.isPresent()) {
             Programa programaActualizado = programa.get();
             programaActualizado.setNombre(nombre);
-            // Asignar la departamento al programa
-            programaActualizado.setDepartamento(departamento.get());
+            // Asignar la facultad al programa
+            programaActualizado.setFacultad(facultad.get());
 
             programaRepository.save(programaActualizado);
             return "OK";
         } else {
-            return "Error: Departamento o Programa no encontrados";
+            return "Error: Facultad o Programa no encontrados";
         }
 
     }

@@ -148,4 +148,17 @@ public class IngresosController {
         return "OK";
     }
 
+    @GetMapping("/totalIngresos")
+    public @ResponseBody double totalIngresos(int idPresupuesto) {
+        double totalIngresos = 0;
+        Iterable<Ingresos> ingresos = ingresoRepository.findByPresupuestoId(idPresupuesto);
+        if (!ingresos.iterator().hasNext()) {
+            return totalIngresos;
+        }
+        for (Ingresos ingreso : ingresos) {
+            totalIngresos += ingreso.getValor();
+        }
+        return totalIngresos;
+    }
+
 }
