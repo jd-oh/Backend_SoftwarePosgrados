@@ -32,7 +32,7 @@ public class FacultadController {
         facultad.setNombre(nombre);
 
         facultadRepository.save(facultad);
-        return "FOK";
+        return "OK";
 
     }
 
