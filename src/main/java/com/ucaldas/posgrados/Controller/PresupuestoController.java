@@ -110,8 +110,19 @@ public class PresupuestoController {
 
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
-        presupuestoRepository.deleteById(id);
-        return "OK";
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
+
+        if (presupuesto.isPresent()) {
+            Presupuesto presupuestoEliminado = presupuesto.get();
+            presupuestoEliminado.setEstado("eliminado");
+
+            presupuestoRepository.save(presupuestoEliminado);
+
+            return "OK";
+        } else {
+            return "Error: Presupuesto no encontrado";
+        }
+
     }
 
     // Se utiliza para actualizar el atributo ingresosTotales de la clase
