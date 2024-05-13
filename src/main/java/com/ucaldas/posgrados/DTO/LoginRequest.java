@@ -1,4 +1,4 @@
-package com.ucaldas.posgrados.Auth;
+package com.ucaldas.posgrados.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

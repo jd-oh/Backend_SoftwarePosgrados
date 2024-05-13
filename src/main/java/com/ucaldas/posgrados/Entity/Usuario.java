@@ -1,4 +1,4 @@
-package com.ucaldas.posgrados.User;
+package com.ucaldas.posgrados.Entity;
 
 import java.util.Collection;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.ucaldas.posgrados.User;
+package com.ucaldas.posgrados.Entity;
 
 public enum Rol {
     ADMIN,

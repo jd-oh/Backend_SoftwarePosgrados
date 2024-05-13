@@ -1,4 +1,4 @@
-package com.ucaldas.posgrados.Auth;
+package com.ucaldas.posgrados.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -9,10 +9,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ucaldas.posgrados.DTO.AuthResponse;
+import com.ucaldas.posgrados.DTO.LoginRequest;
+import com.ucaldas.posgrados.DTO.RegisterRequest;
+import com.ucaldas.posgrados.Entity.Rol;
+import com.ucaldas.posgrados.Entity.Usuario;
 import com.ucaldas.posgrados.Jwt.JwtService;
-import com.ucaldas.posgrados.User.Rol;
-import com.ucaldas.posgrados.User.Usuario;
-import com.ucaldas.posgrados.User.UsuarioRepository;
+import com.ucaldas.posgrados.Repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
 

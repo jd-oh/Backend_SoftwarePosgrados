@@ -1,6 +1,11 @@
-package com.ucaldas.posgrados.Auth;
+package com.ucaldas.posgrados.Controller;
 
 import org.springframework.web.bind.annotation.RestController;
+
+import com.ucaldas.posgrados.DTO.AuthResponse;
+import com.ucaldas.posgrados.DTO.LoginRequest;
+import com.ucaldas.posgrados.DTO.RegisterRequest;
+import com.ucaldas.posgrados.Services.AuthService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +47,6 @@ public class AutenticacionController {
 
         String username = nombreUsuario + "." + apellidoUsuario + numero; // nombre.apellidoXX
         RegisterRequest registerRequest = new RegisterRequest(nombre, apellido, email, username, password);
-
         return ResponseEntity.ok(authService.registro(registerRequest));
     }
 
