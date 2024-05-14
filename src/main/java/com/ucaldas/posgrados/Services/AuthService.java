@@ -35,6 +35,7 @@ public class AuthService {
                                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                                                 loginRequest.getPassword()));
                 UserDetails usuario = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow();
+
                 String token = jwtService.getToken(usuario);
                 return AuthResponse.builder()
                                 .token(token)
@@ -49,7 +50,10 @@ public class AuthService {
                                 .apellido(registerRequest.getApellido())
                                 .email(registerRequest.getEmail())
                                 .rol(Rol.USUARIO)
+                                .enabled(true)
                                 .build();
+
+                userRepository.save(usuario);
 
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(registerRequest.getEmail());
@@ -58,7 +62,6 @@ public class AuthService {
                                 + "Tu contraseña es: " + registerRequest.getPassword());
                 mailSender.send(message);
 
-                userRepository.save(usuario);
                 return AuthResponse.builder()
                                 .token(jwtService.getToken(usuario))
                                 .build();
@@ -74,4 +77,15 @@ public class AuthService {
                                 .build();
         }
 
+        public String cambiarPassword(String username, String password) {
+                Usuario usuario = userRepository.findByUsername(username).orElseThrow();
+                usuario.setPassword(passwordEncoder.encode(password));
+                userRepository.save(usuario);
+                return "OK";
+        }
+
+        public String cambiarPasswordConToken(String token, String password) {
+                String username = jwtService.getUsernameFromToken(token);
+                return cambiarPassword(username, password);
+        }
 }

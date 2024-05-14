@@ -40,6 +40,7 @@ public class Usuario implements UserDetails {
     String password;
     @Enumerated(EnumType.STRING)
     Rol rol;
+    boolean enabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -63,6 +64,6 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }
