@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,7 +48,7 @@ public class UsuarioController {
         return ResponseEntity.ok("Usuario activado");
     }
 
-    @PostMapping("editarDatosBasicos")
+    @PutMapping("editarDatosBasicos")
     public ResponseEntity<String> editarDatosBasicos(@RequestParam int id, @RequestParam String nombre,
             @RequestParam String apellido,
             @RequestParam String email) {
