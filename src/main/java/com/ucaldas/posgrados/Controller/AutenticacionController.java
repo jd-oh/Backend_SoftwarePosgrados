@@ -67,9 +67,4 @@ public class AutenticacionController {
         return ResponseEntity.ok(authService.cambiarPasswordConToken(token, password));
     }
 
-    @GetMapping(value = "/listarUsuarios")
-    public ResponseEntity<?> listarUsuarios() {
-        return ResponseEntity.ok(usuarioRepository.findAll());
-    }
-
 }
