@@ -5,16 +5,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ucaldas.posgrados.DTO.AuthResponse;
 import com.ucaldas.posgrados.DTO.LoginRequest;
 import com.ucaldas.posgrados.DTO.RegisterRequest;
-import com.ucaldas.posgrados.Repository.UsuarioRepository;
 import com.ucaldas.posgrados.Services.AuthService;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
@@ -23,9 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class AutenticacionController {
 
     private final AuthService authService;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     @PostMapping(value = "/login")
     public ResponseEntity<AuthResponse> login(@RequestParam String username, @RequestParam String password) {
