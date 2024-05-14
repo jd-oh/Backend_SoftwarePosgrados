@@ -50,4 +50,9 @@ public class AutenticacionController {
         return ResponseEntity.ok(authService.registro(registerRequest));
     }
 
+    @PostMapping(value = "/refrescarToken")
+    public ResponseEntity<AuthResponse> refrescarToken(@RequestParam String token) {
+        return ResponseEntity.ok(authService.refrescarToken(token));
+    }
+
 }

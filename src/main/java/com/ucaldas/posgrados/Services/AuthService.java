@@ -65,4 +65,13 @@ public class AuthService {
 
         }
 
+        // Refrescar token
+        public AuthResponse refrescarToken(String token) {
+                String username = jwtService.getUsernameFromToken(token);
+                UserDetails usuario = userRepository.findByUsername(username).orElseThrow();
+                return AuthResponse.builder()
+                                .token(jwtService.getToken(usuario))
+                                .build();
+        }
+
 }
