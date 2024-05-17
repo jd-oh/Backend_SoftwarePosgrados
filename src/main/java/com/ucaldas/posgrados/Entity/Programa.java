@@ -19,6 +19,8 @@ public class Programa {
     @JoinColumn(name = "idFacultad", referencedColumnName = "id")
     private Facultad facultad;
 
+    private boolean priorizado;
+
     public int getId() {
         return id;
     }
@@ -41,6 +43,14 @@ public class Programa {
 
     public void setFacultad(Facultad facultad) {
         this.facultad = facultad;
+    }
+
+    public boolean isPriorizado() {
+        return priorizado;
+    }
+
+    public void setPriorizado(boolean priorizado) {
+        this.priorizado = priorizado;
     }
 
 }

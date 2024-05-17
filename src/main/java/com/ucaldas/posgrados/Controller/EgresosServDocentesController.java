@@ -157,8 +157,26 @@ public class EgresosServDocentesController {
         if (!egresosServDocentes.iterator().hasNext()) {
             return total;
         }
-        for (EgresosServDocentes egresoRecurrenteAdm : egresosServDocentes) {
-            total += egresoRecurrenteAdm.getTotalPagoProfesor();
+        for (EgresosServDocentes egresoServDocente : egresosServDocentes) {
+            total += egresoServDocente.getTotalPagoProfesor();
+        }
+        return total;
+    }
+
+    @GetMapping("/totalEgresosServDocentesDePlanta")
+    public @ResponseBody double totalEgresosServDocentesDePlanta(int idPresupuesto) {
+        double total = 0;
+        Iterable<EgresosServDocentes> egresosServDocentes = egresoServDocenteRepository
+                .findByPresupuestoId(idPresupuesto);
+
+        // Si no hay egresos de otros
+        if (!egresosServDocentes.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosServDocentes egresoServDocente : egresosServDocentes) {
+            if (egresoServDocente.isEsDocentePlanta()) {
+                total += egresoServDocente.getTotalPagoProfesor();
+            }
         }
         return total;
     }

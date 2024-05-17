@@ -88,4 +88,14 @@ public class AuthService {
                 String username = jwtService.getUsernameFromToken(token);
                 return cambiarPassword(username, password);
         }
+
+        public String olvideMiPassword(String email) {
+                Usuario usuario = userRepository.findByEmail(email).orElseThrow();
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(email);
+                message.setSubject("Recuperar contraseña");
+                message.setText("Tu contraseña es: " + usuario.getPassword());
+                mailSender.send(message);
+                return "OK";
+        }
 }

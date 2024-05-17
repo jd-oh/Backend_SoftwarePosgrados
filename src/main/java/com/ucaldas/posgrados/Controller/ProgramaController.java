@@ -33,7 +33,8 @@ public class ProgramaController {
     private FacultadRepository facultadRepository;
 
     @PostMapping(path = "/crear")
-    public @ResponseBody String crear(@RequestParam String nombre, @RequestParam int idFacultad) {
+    public @ResponseBody String crear(@RequestParam String nombre, @RequestParam int idFacultad,
+            @RequestParam boolean priorizado) {
 
         // Buscar la facultad por su ID
         Optional<Facultad> facultad = facultadRepository.findById(idFacultad);
@@ -44,6 +45,19 @@ public class ProgramaController {
             programa.setNombre(nombre);
             // Asignar la facultad al programa
             programa.setFacultad(facultad.get());
+
+            // Asegurarse de que no haya otro programa que ya sea priorizado en la misma
+            // facultad
+            if (priorizado) {
+                Iterable<Programa> programas = programaRepository.findAllByFacultad(facultad.get());
+                for (Programa p : programas) {
+                    if (p.isPriorizado()) {
+                        return "Error: Ya existe un programa priorizado en la facultad";
+                    }
+                }
+
+                programa.setPriorizado(true);
+            }
 
             programaRepository.save(programa);
             return "OK";
@@ -71,7 +85,7 @@ public class ProgramaController {
 
     @PutMapping(path = "/actualizar")
     public @ResponseBody String actualizar(@RequestParam String nombre, @RequestParam int idPrograma,
-            @RequestParam int idFacultad) {
+            @RequestParam int idFacultad, @RequestParam boolean priorizado) {
 
         // Buscar la facultad por su ID
         Optional<Facultad> facultad = facultadRepository.findById(idFacultad);
@@ -83,6 +97,21 @@ public class ProgramaController {
             programaActualizado.setNombre(nombre);
             // Asignar la facultad al programa
             programaActualizado.setFacultad(facultad.get());
+
+            // Asegurarse de que no haya otro programa que ya sea priorizado en la misma
+            // facultad
+            if (priorizado) {
+                Iterable<Programa> programas = programaRepository.findAllByFacultad(facultad.get());
+                for (Programa p : programas) {
+                    if (p.isPriorizado() && p.getId() != idPrograma) {
+                        return "Error: Ya existe un programa priorizado en la facultad";
+                    }
+                }
+
+                programaActualizado.setPriorizado(true);
+            } else {
+                programaActualizado.setPriorizado(false);
+            }
 
             programaRepository.save(programaActualizado);
             return "OK";

@@ -61,4 +61,9 @@ public class AutenticacionController {
         return ResponseEntity.ok(authService.cambiarPasswordConToken(token, password));
     }
 
+    @PostMapping(value = "olvideMiPassword")
+    public ResponseEntity<String> olvideMiPassword(@RequestParam String email) {
+        return ResponseEntity.ok(authService.olvideMiPassword(email));
+    }
+
 }
