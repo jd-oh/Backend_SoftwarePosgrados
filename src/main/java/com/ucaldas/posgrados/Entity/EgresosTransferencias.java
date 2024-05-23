@@ -8,8 +8,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class EgresosTransferencias {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,60 +39,8 @@ public class EgresosTransferencias {
 
     private double valorTotal;
 
-    public int getId() {
-        return id;
-    }
+    private String fechaHoraCreacion;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public double getPorcentaje() {
-        return porcentaje;
-    }
-
-    public void setPorcentaje(double porcentaje) {
-        this.porcentaje = porcentaje;
-    }
-
-    public Presupuesto getPresupuesto() {
-        return presupuesto;
-    }
-
-    public void setPresupuesto(Presupuesto presupuesto) {
-        this.presupuesto = presupuesto;
-    }
-
-    public EjecucionPresupuestal getEjecucionPresupuestal() {
-        return ejecucionPresupuestal;
-    }
-
-    public void setEjecucionPresupuestal(EjecucionPresupuestal ejecucionPresupuestal) {
-        this.ejecucionPresupuestal = ejecucionPresupuestal;
-    }
-
-    public TipoTransferencia getTipoTransferencia() {
-        return tipoTransferencia;
-    }
-
-    public void setTipoTransferencia(TipoTransferencia tipoTransferencia) {
-        this.tipoTransferencia = tipoTransferencia;
-    }
-
-    public double getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(double valorTotal) {
-        this.valorTotal = valorTotal;
-    }
+    private String fechaHoraUltimaModificacion;
 
 }

@@ -84,6 +84,7 @@ public class EgresosGeneralesController {
 
             egresosGenerales.setPresupuesto(presupuesto.get());
             egresosGenerales.setTipoCosto(tipoCosto.get());
+            egresosGenerales.setFechaHoraCreacion("creado: " + java.time.LocalDateTime.now().toString());
 
             // if (presupuesto.isPresent()) {
             // Si el gasto hace parte de un presupuesto, la ejecución debe ser null siempre
@@ -147,6 +148,7 @@ public class EgresosGeneralesController {
             egresosGeneralesActualizado.setValorUnitario(valorUnitario);
             egresosGeneralesActualizado.setCantidad(cantidad);
             egresosGeneralesActualizado.setValorTotal(cantidad * valorUnitario);
+            egresosGeneralesActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
 
             egresosGeneralesActualizado.setTipoCosto(tipoCosto.get());
             int idPresupuesto = egresosGeneralesActualizado.getPresupuesto().getId();

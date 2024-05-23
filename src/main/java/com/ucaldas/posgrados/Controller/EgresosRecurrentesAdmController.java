@@ -51,6 +51,7 @@ public class EgresosRecurrentesAdmController {
             egresoRecurrenteAdm.setValorTotal(valorHora * numHoras);
 
             egresoRecurrenteAdm.setPresupuesto(presupuesto.get());
+            egresoRecurrenteAdm.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
@@ -99,6 +100,7 @@ public class EgresosRecurrentesAdmController {
             egresoRecurrenteAdmActualizado.setValorHora(valorHora);
             egresoRecurrenteAdmActualizado.setNumHoras(numHoras);
             egresoRecurrenteAdmActualizado.setValorTotal(valorHora * numHoras);
+            egresoRecurrenteAdmActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
 
             int idPresupuesto = egresoRecurrenteAdmActualizado.getPresupuesto().getId();
             double valorNuevo = egresoRecurrenteAdmActualizado.getValorTotal();

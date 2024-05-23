@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -21,10 +22,19 @@ public class AutenticacionController {
 
     private final AuthService authService;
 
-    @PostMapping(value = "/login")
+    @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestParam String username, @RequestParam String password) {
         LoginRequest loginRequest = new LoginRequest(username, password);
-        return ResponseEntity.ok(authService.login(loginRequest));
+        AuthResponse authResponse = authService.login(loginRequest);
+
+        // Verifica si la autenticación fue exitosa
+        if (authResponse != null && authResponse.getToken() != null) {
+
+            return ResponseEntity.ok(authResponse);
+        } else {
+            // Maneja el caso de autenticación fallida
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @PostMapping(value = "/registro")

@@ -56,6 +56,7 @@ public class EgresosOtrosController {
 
             egresosOtros.setPresupuesto(presupuesto.get());
             egresosOtros.setTipoCosto(tipoCosto.get());
+            egresosOtros.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
@@ -107,6 +108,7 @@ public class EgresosOtrosController {
             egresosOtrosActualizado.setValorTotal(cantidad * valorUnitario);
 
             egresosOtrosActualizado.setTipoCosto(tipoCosto.get());
+            egresosOtrosActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
 
             int idPresupuesto = egresosOtrosActualizado.getPresupuesto().getId();
             double valorNuevo = egresosOtrosActualizado.getValorTotal();

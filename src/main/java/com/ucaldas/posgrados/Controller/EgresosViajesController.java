@@ -55,6 +55,8 @@ public class EgresosViajesController {
             egresoViaje.setPresupuesto(presupuesto.get());
             egresoViaje.setValorTotal((valorTransporte * numPersonas * numViajesPorPersona) + apoyoDesplazamiento);
 
+            egresoViaje.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
+
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
             egresoViaje.setEjecucionPresupuestal(null);
@@ -107,6 +109,7 @@ public class EgresosViajesController {
             egresoViajeActualizado
                     .setValorTotal((valorTransporte * numPersonas * numViajesPorPersona) + apoyoDesplazamiento);
 
+            egresoViajeActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
             int idPresupuesto = egresoViajeActualizado.getPresupuesto().getId();
             double valorNuevo = egresoViajeActualizado.getValorTotal();
 

@@ -65,6 +65,8 @@ public class EgresosTransferenciasController {
             // aprobado o no
             egresosTransferencias.setEjecucionPresupuestal(null);
 
+            egresosTransferencias.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
+
             // Guardar el egreso general en el presupuesto
             presupuesto.get().getEgresosTransferencias().add(egresosTransferencias);
 
@@ -123,6 +125,9 @@ public class EgresosTransferenciasController {
             egresosTransferenciasActualizado.setDescripcion(descripcion);
             egresosTransferenciasActualizado.setPorcentaje(porcentaje);
             egresosTransferenciasActualizado.setValorTotal(presupuesto.get().getIngresosTotales() * porcentaje / 100);
+            egresosTransferenciasActualizado.setTipoTransferencia(tipoTransferencia.get());
+
+            egresosTransferenciasActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
 
             double valorNuevo = egresosTransferenciasActualizado.getValorTotal();
 

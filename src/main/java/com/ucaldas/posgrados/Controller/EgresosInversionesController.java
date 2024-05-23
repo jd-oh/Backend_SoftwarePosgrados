@@ -53,6 +53,7 @@ public class EgresosInversionesController {
             egresosInversiones.setValor(valor);
             egresosInversiones.setPresupuesto(presupuesto.get());
             egresosInversiones.setTipoInversion(tipoInversion.get());
+            egresosInversiones.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
@@ -101,6 +102,7 @@ public class EgresosInversionesController {
             egresosInversionesActualizado.setConcepto(concepto);
             egresosInversionesActualizado.setValor(valor);
             egresosInversionesActualizado.setTipoInversion(tipoInversion.get());
+            egresosInversionesActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
 
             int idPresupuesto = egresosInversionesActualizado.getPresupuesto().getId();
 

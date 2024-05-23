@@ -8,8 +8,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class EgresosRecurrentesAdm {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,68 +39,7 @@ public class EgresosRecurrentesAdm {
 
     private double valorTotal;
 
-    public int getId() {
-        return id;
-    }
+    private String fechaHoraCreacion;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUnidad() {
-        return unidad;
-    }
-
-    public void setUnidad(String unidad) {
-        this.unidad = unidad;
-    }
-
-    public String getCargo() {
-        return cargo;
-    }
-
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
-    }
-
-    public Presupuesto getPresupuesto() {
-        return presupuesto;
-    }
-
-    public void setPresupuesto(Presupuesto presupuesto) {
-        this.presupuesto = presupuesto;
-    }
-
-    public EjecucionPresupuestal getEjecucionPresupuestal() {
-        return ejecucionPresupuestal;
-    }
-
-    public void setEjecucionPresupuestal(EjecucionPresupuestal ejecucionPresupuestal) {
-        this.ejecucionPresupuestal = ejecucionPresupuestal;
-    }
-
-    public double getValorHora() {
-        return valorHora;
-    }
-
-    public void setValorHora(double valorHora) {
-        this.valorHora = valorHora;
-    }
-
-    public int getNumHoras() {
-        return numHoras;
-    }
-
-    public void setNumHoras(int numHoras) {
-        this.numHoras = numHoras;
-    }
-
-    public double getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(double valorTotal) {
-        this.valorTotal = valorTotal;
-    }
-
+    private String fechaHoraUltimaModificacion;
 }

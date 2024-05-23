@@ -8,8 +8,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class EgresosViajes {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,76 +41,7 @@ public class EgresosViajes {
 
     private double valorTotal;
 
-    public int getId() {
-        return id;
-    }
+    private String fechaHoraCreacion;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public double getValorTransporte() {
-        return valorTransporte;
-    }
-
-    public void setValorTransporte(double valorTransporte) {
-        this.valorTransporte = valorTransporte;
-    }
-
-    public int getNumPersonas() {
-        return numPersonas;
-    }
-
-    public void setNumPersonas(int numPersonas) {
-        this.numPersonas = numPersonas;
-    }
-
-    public double getApoyoDesplazamiento() {
-        return apoyoDesplazamiento;
-    }
-
-    public void setApoyoDesplazamiento(double apoyoDesplazamiento) {
-        this.apoyoDesplazamiento = apoyoDesplazamiento;
-    }
-
-    public int getNumViajesPorPersona() {
-        return numViajesPorPersona;
-    }
-
-    public void setNumViajesPorPersona(int numViajesPorPersona) {
-        this.numViajesPorPersona = numViajesPorPersona;
-    }
-
-    public Presupuesto getPresupuesto() {
-        return presupuesto;
-    }
-
-    public void setPresupuesto(Presupuesto presupuesto) {
-        this.presupuesto = presupuesto;
-    }
-
-    public EjecucionPresupuestal getEjecucionPresupuestal() {
-        return ejecucionPresupuestal;
-    }
-
-    public void setEjecucionPresupuestal(EjecucionPresupuestal ejecucionPresupuestal) {
-        this.ejecucionPresupuestal = ejecucionPresupuestal;
-    }
-
-    public double getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(double valorTotal) {
-        this.valorTotal = valorTotal;
-    }
-
+    private String fechaHoraUltimaModificacion;
 }

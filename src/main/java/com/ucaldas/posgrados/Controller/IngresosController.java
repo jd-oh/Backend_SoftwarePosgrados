@@ -49,6 +49,7 @@ public class IngresosController {
             ingreso.setConcepto(concepto);
             ingreso.setValor(valor);
             ingreso.setPresupuesto(presupuesto.get());
+            ingreso.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
@@ -105,6 +106,7 @@ public class IngresosController {
             Ingresos ingresoActualizado = ingreso.get();
             ingresoActualizado.setConcepto(concepto);
             ingresoActualizado.setValor(valor);
+            ingresoActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
 
             int idPresupuesto = ingresoActualizado.getPresupuesto().getId();
             double valorNuevo = ingresoActualizado.getValor();

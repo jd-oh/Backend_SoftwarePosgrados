@@ -49,6 +49,8 @@ public class PresupuestoController {
             // los gastos e ingresos, después de este paso se puede cambiar el estado
             presupuesto.setEstado("borrador");
 
+            presupuesto.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
+
             // Asignar la programa al cohorte
             presupuesto.setCohorte(cohorte.get());
 
@@ -86,6 +88,8 @@ public class PresupuestoController {
             observaciones.ifPresent(presupuesto.get()::setObservaciones); // Si observaciones no es null, entonces se
                                                                           // asigna a presupuesto
             presupuesto.get().setCohorte(cohorte.get());
+
+            presupuesto.get().setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
             presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
@@ -101,6 +105,21 @@ public class PresupuestoController {
 
         if (presupuesto.isPresent()) {
             presupuesto.get().setEstado("revision");
+            presupuesto.get().setFechaHoraEnviadoRevision(java.time.LocalDateTime.now().toString());
+            presupuestoRepository.save(presupuesto.get());
+            return "OK";
+        } else {
+            return "Error: Presupuesto no encontrado";
+        }
+    }
+
+    @PutMapping(path = "/aprobar")
+    public @ResponseBody String aprobar(@RequestParam int id) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
+
+        if (presupuesto.isPresent()) {
+            presupuesto.get().setEstado("aprobado");
+            presupuesto.get().setFechaHoraAprobado(java.time.LocalDateTime.now().toString());
             presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {

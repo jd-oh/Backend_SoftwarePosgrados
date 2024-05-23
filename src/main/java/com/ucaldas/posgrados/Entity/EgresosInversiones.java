@@ -8,8 +8,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class EgresosInversiones {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,52 +37,8 @@ public class EgresosInversiones {
     @JoinColumn(name = "idTipoInversion", referencedColumnName = "id")
     private TipoInversion tipoInversion;
 
-    public int getId() {
-        return id;
-    }
+    private String fechaHoraCreacion;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getConcepto() {
-        return concepto;
-    }
-
-    public void setConcepto(String concepto) {
-        this.concepto = concepto;
-    }
-
-    public double getValor() {
-        return valor;
-    }
-
-    public void setValor(double valor) {
-        this.valor = valor;
-    }
-
-    public Presupuesto getPresupuesto() {
-        return presupuesto;
-    }
-
-    public void setPresupuesto(Presupuesto presupuesto) {
-        this.presupuesto = presupuesto;
-    }
-
-    public EjecucionPresupuestal getEjecucionPresupuestal() {
-        return ejecucionPresupuestal;
-    }
-
-    public void setEjecucionPresupuestal(EjecucionPresupuestal ejecucionPresupuestal) {
-        this.ejecucionPresupuestal = ejecucionPresupuestal;
-    }
-
-    public TipoInversion getTipoInversion() {
-        return tipoInversion;
-    }
-
-    public void setTipoInversion(TipoInversion tipoInversion) {
-        this.tipoInversion = tipoInversion;
-    }
+    private String fechaHoraUltimaModificacion;
 
 }

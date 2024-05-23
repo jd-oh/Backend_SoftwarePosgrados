@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ucaldas.posgrados.Entity.Presupuesto;
+import com.ucaldas.posgrados.Entity.Programa;
 import com.ucaldas.posgrados.Entity.TipoCompensacion;
+import com.ucaldas.posgrados.Entity.Cohorte;
 import com.ucaldas.posgrados.Entity.EgresosServDocentes;
 import com.ucaldas.posgrados.Repository.PresupuestoRepository;
 import com.ucaldas.posgrados.Repository.TipoCompensacionRepository;
@@ -67,6 +69,8 @@ public class EgresosServDocentesController {
 
             egresosServDocentes.setTotalPagoProfesor(valorHoraProfesor * egresosServDocentes.getTotalHorasProfesor());
 
+            egresosServDocentes.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
+
             egresosServDocentes.setPresupuesto(presupuesto.get());
             egresosServDocentes.setTipoCompensacion(tipoCompensacion.get());
 
@@ -76,6 +80,22 @@ public class EgresosServDocentesController {
 
             // Guardar el egreso general en el presupuesto
             presupuesto.get().getEgresosServDocentes().add(egresosServDocentes);
+
+            int idPresupuesto = idPresupuestoEjecucion;
+            double valorNuevo = egresosServDocentes.getTotalPagoProfesor();
+
+            Cohorte cohorte = presupuesto.get().getCohorte();
+            Programa programa = cohorte.getPrograma();
+
+            // Si el docente es de planta y además el programa es priorizado, se actualiza
+            // el total de egresos de la universidad
+            // Si el docente no es de planta, se actualiza el total de egresos del programa.
+            // No importa si es priorizado o no
+            if (egresosServDocentes.isEsDocentePlanta() && programa.isPriorizado()) {
+                presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, valorNuevo, 0);
+            } else {
+                presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, 0);
+            }
 
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
@@ -105,8 +125,12 @@ public class EgresosServDocentesController {
 
         Optional<EgresosServDocentes> egreso = egresoServDocenteRepository.findById(id);
         Optional<TipoCompensacion> tipoCompensacion = tipoCompensacionRepository.findById(idTipoCompensacion);
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(egreso.get().getPresupuesto().getId());
 
         if (egreso.isPresent() && tipoCompensacion.isPresent()) {
+
+            double valorAnterior = egreso.get().getTotalPagoProfesor();
+
             EgresosServDocentes egresosServDocentesActualizado = egreso.get();
 
             egresosServDocentesActualizado.setNombreMateria(nombreMateria);
@@ -116,6 +140,7 @@ public class EgresosServDocentesController {
             egresosServDocentesActualizado.setTitulo(titulo);
             egresosServDocentesActualizado.setHorasTeoricasMat(horasTeoricasMat);
             egresosServDocentesActualizado.setHorasPracticasMat(horasPracticasMat);
+            egresosServDocentesActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
 
             egresosServDocentesActualizado.setTotalHorasProfesor(horasPracticasMat + horasTeoricasMat);
 
@@ -126,6 +151,22 @@ public class EgresosServDocentesController {
 
             egresosServDocentesActualizado.setTipoCompensacion(tipoCompensacion.get());
             int idPresupuesto = egresosServDocentesActualizado.getPresupuesto().getId();
+            double valorNuevo = egresosServDocentesActualizado.getTotalPagoProfesor();
+
+            Cohorte cohorte = presupuesto.get().getCohorte();
+            Programa programa = cohorte.getPrograma();
+
+            // Si el docente es de planta y además el programa es priorizado, se actualiza
+            // el total de egresos de la universidad
+            // Si el docente no es de planta, se actualiza el total de egresos del programa.
+            // No importa si es priorizado o no
+            if (egresosServDocentesActualizado.isEsDocentePlanta() && programa.isPriorizado()) {
+                presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, valorNuevo,
+                        valorAnterior);
+            } else {
+                presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, valorAnterior);
+            }
+
             egresoServDocenteRepository.save(egresosServDocentesActualizado);
 
             return "OK";
@@ -137,6 +178,22 @@ public class EgresosServDocentesController {
     @DeleteMapping(path = "/eliminar")
     public @ResponseBody String eliminar(@RequestParam int id) {
 
+        Optional<EgresosServDocentes> egreso = egresoServDocenteRepository.findById(id);
+
+        if (!egreso.isPresent()) {
+            return "Error: Egreso de transferencia no encontrado";
+        }
+        int idPresupuesto = egreso.get().getPresupuesto().getId();
+        double valorAnterior = egreso.get().getTotalPagoProfesor();
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(egreso.get().getPresupuesto().getId());
+        Cohorte cohorte = presupuesto.get().getCohorte();
+        Programa programa = cohorte.getPrograma();
+
+        if (egreso.get().isEsDocentePlanta() && programa.isPriorizado()) {
+            presupuestoController.actualizarEgresosRecurrentesUniversidadTotales(idPresupuesto, 0, valorAnterior);
+        } else {
+            presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, 0, valorAnterior);
+        }
         egresoServDocenteRepository.deleteById(id);
         return "OK";
     }

@@ -8,8 +8,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class EgresosOtrosServDocentes {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,75 +45,7 @@ public class EgresosOtrosServDocentes {
 
     private double valorTotal;
 
-    public int getId() {
-        return id;
-    }
+    private String fechaHoraCreacion;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getServicio() {
-        return servicio;
-    }
-
-    public void setServicio(String servicio) {
-        this.servicio = servicio;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public Presupuesto getPresupuesto() {
-        return presupuesto;
-    }
-
-    public void setPresupuesto(Presupuesto presupuesto) {
-        this.presupuesto = presupuesto;
-    }
-
-    public EjecucionPresupuestal getEjecucionPresupuestal() {
-        return ejecucionPresupuestal;
-    }
-
-    public void setEjecucionPresupuestal(EjecucionPresupuestal ejecucionPresupuestal) {
-        this.ejecucionPresupuestal = ejecucionPresupuestal;
-    }
-
-    public TipoCompensacion getTipoCompensacion() {
-        return tipoCompensacion;
-    }
-
-    public void setTipoCompensacion(TipoCompensacion tipoCompensacion) {
-        this.tipoCompensacion = tipoCompensacion;
-    }
-
-    public TipoCosto getTipoCosto() {
-        return tipoCosto;
-    }
-
-    public void setTipoCosto(TipoCosto tipoCosto) {
-        this.tipoCosto = tipoCosto;
-    }
-
-    public int getNumHoras() {
-        return numHoras;
-    }
-
-    public void setNumHoras(int numHoras) {
-        this.numHoras = numHoras;
-    }
-
-    public double getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(double valorTotal) {
-        this.valorTotal = valorTotal;
-    }
+    private String fechaHoraUltimaModificacion;
 }

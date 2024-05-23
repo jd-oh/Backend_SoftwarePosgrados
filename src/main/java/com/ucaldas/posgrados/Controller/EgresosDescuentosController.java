@@ -58,6 +58,8 @@ public class EgresosDescuentosController {
             egresosDescuentos.setTotalDescuento(valor * numEstudiantes * numPeriodos);
             egresosDescuentos.setPresupuesto(presupuesto.get());
             egresosDescuentos.setTipoDescuento(tipoDescuento.get());
+            // La fecha y hora se asigna en el momento de la creación con la del sistema
+            egresosDescuentos.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
@@ -112,7 +114,7 @@ public class EgresosDescuentosController {
             egresosDescuentosActualizado.setNumPeriodos(numPeriodos);
             egresosDescuentosActualizado.setTotalDescuento(valor * numEstudiantes * numPeriodos);
             egresosDescuentosActualizado.setTipoDescuento(tipoDescuento.get());
-
+            egresosDescuentosActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
             int idPresupuesto = egresosDescuentosActualizado.getPresupuesto().getId();
             double valorNuevo = egresosDescuentosActualizado.getTotalDescuento();
             presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, valorAnterior, "descuento");

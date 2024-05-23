@@ -57,6 +57,7 @@ public class EgresosOtrosServDocentesController {
             egresosOtrosServDocentes.setDescripcion(descripcion);
             egresosOtrosServDocentes.setNumHoras(numHoras);
             egresosOtrosServDocentes.setValorTotal(valorTotal);
+            egresosOtrosServDocentes.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
             // aprobado o no
@@ -106,6 +107,8 @@ public class EgresosOtrosServDocentesController {
             egresosOtrosServDocentesActualizado.setDescripcion(descripcion);
             egresosOtrosServDocentesActualizado.setNumHoras(numHoras);
             egresosOtrosServDocentesActualizado.setValorTotal(valorTotal);
+            egresosOtrosServDocentesActualizado
+                    .setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
 
             egresosOtrosServDocentesActualizado.setTipoCosto(tipoCosto.get());
 

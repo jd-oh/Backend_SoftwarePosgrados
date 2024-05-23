@@ -8,8 +8,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class EgresosDescuentos {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,68 +39,8 @@ public class EgresosDescuentos {
     @JoinColumn(name = "idTipoDescuento", referencedColumnName = "id")
     private TipoDescuento tipoDescuento;
 
-    public int getId() {
-        return id;
-    }
+    private String fechaHoraCreacion;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getNumEstudiantes() {
-        return numEstudiantes;
-    }
-
-    public void setNumEstudiantes(int numEstudiantes) {
-        this.numEstudiantes = numEstudiantes;
-    }
-
-    public double getValor() {
-        return valor;
-    }
-
-    public void setValor(double valor) {
-        this.valor = valor;
-    }
-
-    public int getNumPeriodos() {
-        return numPeriodos;
-    }
-
-    public void setNumPeriodos(int numPeriodos) {
-        this.numPeriodos = numPeriodos;
-    }
-
-    public double getTotalDescuento() {
-        return totalDescuento;
-    }
-
-    public void setTotalDescuento(double totalDescuento) {
-        this.totalDescuento = totalDescuento;
-    }
-
-    public Presupuesto getPresupuesto() {
-        return presupuesto;
-    }
-
-    public void setPresupuesto(Presupuesto presupuesto) {
-        this.presupuesto = presupuesto;
-    }
-
-    public EjecucionPresupuestal getEjecucionPresupuestal() {
-        return ejecucionPresupuestal;
-    }
-
-    public void setEjecucionPresupuestal(EjecucionPresupuestal ejecucionPresupuestal) {
-        this.ejecucionPresupuestal = ejecucionPresupuestal;
-    }
-
-    public TipoDescuento getTipoDescuento() {
-        return tipoDescuento;
-    }
-
-    public void setTipoDescuento(TipoDescuento tipoDescuento) {
-        this.tipoDescuento = tipoDescuento;
-    }
+    private String fechaHoraUltimaModificacion;
 
 }
