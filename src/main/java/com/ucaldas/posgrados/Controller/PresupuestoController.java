@@ -30,6 +30,9 @@ public class PresupuestoController {
     @Autowired
     private PresupuestoRepository presupuestoRepository;
 
+    @Autowired
+    private EjecucionPresupuestalController ejecucionPresupuestalController;
+
     @PostMapping("/crear")
     public @ResponseBody String crear(@RequestParam int idCohorte) {
         // Buscar la programa por su ID
@@ -120,6 +123,11 @@ public class PresupuestoController {
         if (presupuesto.isPresent()) {
             presupuesto.get().setEstado("aprobado");
             presupuesto.get().setFechaHoraAprobado(java.time.LocalDateTime.now().toString());
+
+            // Cómo ya está aprobado el presupuesto, se crea una ejecución presupuestal por
+            // ahora vacía (sólo tiene el id del presupuesto)
+            ejecucionPresupuestalController.crear(id);
+
             presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {

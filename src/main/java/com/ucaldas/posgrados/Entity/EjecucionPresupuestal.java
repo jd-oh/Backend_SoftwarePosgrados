@@ -39,47 +39,47 @@ public class EjecucionPresupuestal {
 
     private double balanceGeneral;
 
-    @OneToMany(mappedBy = "ejecucion_presupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<EgresosDescuentos> egresosDescuentos;
 
-    @OneToMany(mappedBy = "ejecucion_presupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<Ingresos> ingresos;
 
-    @OneToMany(mappedBy = "presupuesto")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<EgresosInversiones> egresosInversiones;
 
-    @OneToMany(mappedBy = "presupuesto")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<EgresosOtros> egresosOtros;
 
-    @OneToMany(mappedBy = "presupuesto")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<EgresosOtrosServDocentes> egresosOtrosServDocentes;
 
-    @OneToMany(mappedBy = "presupuesto")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<EgresosServDocentes> egresosServDocentes;
 
-    @OneToMany(mappedBy = "presupuesto")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<EgresosServNoDocentes> egresosServNoDocentes;
 
-    @OneToMany(mappedBy = "presupuesto")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<EgresosGenerales> egresosGenerales;
 
-    @OneToMany(mappedBy = "presupuesto")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<EgresosRecurrentesAdm> egresosRecurrentesAdm;
 
-    @OneToMany(mappedBy = "presupuesto")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<EgresosViajes> egresosViaje;
 
-    @OneToMany(mappedBy = "presupuesto")
+    @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
     private Set<EgresosTransferencias> egresosTransferencias;
 
