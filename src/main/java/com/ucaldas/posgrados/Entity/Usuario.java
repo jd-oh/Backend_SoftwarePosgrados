@@ -9,11 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -38,13 +38,17 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     String username;
     String password;
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "idRol", referencedColumnName = "id")
     Rol rol;
+    @ManyToOne
+    @JoinColumn(name = "idFacultad", referencedColumnName = "id")
+    Facultad facultad;
     boolean enabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(rol.name()));
+        return List.of(new SimpleGrantedAuthority(rol.getNombre()));
     }
 
     @Override

@@ -12,9 +12,12 @@ import org.springframework.stereotype.Service;
 import com.ucaldas.posgrados.DTO.AuthResponse;
 import com.ucaldas.posgrados.DTO.LoginRequest;
 import com.ucaldas.posgrados.DTO.RegisterRequest;
+import com.ucaldas.posgrados.Entity.Facultad;
 import com.ucaldas.posgrados.Entity.Rol;
 import com.ucaldas.posgrados.Entity.Usuario;
 import com.ucaldas.posgrados.Jwt.JwtService;
+import com.ucaldas.posgrados.Repository.FacultadRepository;
+import com.ucaldas.posgrados.Repository.RolRepository;
 import com.ucaldas.posgrados.Repository.UsuarioRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,11 +27,14 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
         private final UsuarioRepository userRepository;
+        private final RolRepository rolRepository;
+        private final FacultadRepository facultadRepository;
         private final JwtService jwtService;
         private final PasswordEncoder passwordEncoder;
         private final AuthenticationManager authenticacionManager;
         @Autowired
         private final JavaMailSender mailSender;
+        private final String urlCambiarPassword = "http://localhost:8080/autenticacion/cambiarPassword";
 
         public AuthResponse login(LoginRequest loginRequest) {
                 authenticacionManager.authenticate(
@@ -43,13 +49,16 @@ public class AuthService {
         }
 
         public AuthResponse registro(RegisterRequest registerRequest) {
+                Rol rol = rolRepository.findById(registerRequest.getIdRol()).orElseThrow();
+                Facultad facultad = facultadRepository.findById(registerRequest.getIdFacultad()).orElseThrow();
                 Usuario usuario = Usuario.builder()
                                 .username(registerRequest.getUsername())
                                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                                 .nombre(registerRequest.getNombre())
                                 .apellido(registerRequest.getApellido())
                                 .email(registerRequest.getEmail())
-                                .rol(Rol.USUARIO)
+                                .rol(rol)
+                                .facultad(facultad)
                                 .enabled(true)
                                 .build();
 
@@ -59,7 +68,9 @@ public class AuthService {
                 message.setTo(registerRequest.getEmail());
                 message.setSubject("Bienvenido a nuestra plataforma de posgrados");
                 message.setText("Tu nombre de usuario es: " + registerRequest.getUsername() + "\n"
-                                + "Tu contraseña es: " + registerRequest.getPassword());
+                                + "Tu contraseña es: " + registerRequest.getPassword() + "\n"
+                                + "Para cambiar tu contraseña, haz clic en el siguiente enlace: "
+                                + urlCambiarPassword);
                 mailSender.send(message);
 
                 return AuthResponse.builder()
@@ -94,7 +105,8 @@ public class AuthService {
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(email);
                 message.setSubject("Recuperar contraseña");
-                message.setText("Tu contraseña es: " + usuario.getPassword());
+                message.setText("Cambie la contraseña haciendo clic en el siguiente enlace: "
+                                + urlCambiarPassword + "?token=" + jwtService.getToken(usuario));
                 mailSender.send(message);
                 return "OK";
         }

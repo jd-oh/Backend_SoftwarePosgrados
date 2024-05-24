@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.passay.*;
+import org.passay.CharacterData;
 
 @RestController
 @RequestMapping("/autenticacion")
@@ -39,7 +41,8 @@ public class AutenticacionController {
 
     @PostMapping(value = "/registro")
     public ResponseEntity<AuthResponse> registro(@RequestParam String nombre, @RequestParam String apellido,
-            @RequestParam String email, @RequestParam String password) {
+            @RequestParam String email, @RequestParam int idRol,
+            @RequestParam int idFacultad) {
 
         // numero al azar de dos cifras
         int numero = (int) (Math.random() * 90 + 10);
@@ -55,8 +58,12 @@ public class AutenticacionController {
         String apellidoUsuario = apellidoArray[0];
         apellidoUsuario = apellidoUsuario.toLowerCase();
 
+        // Crear una contraseña aleatoria
+        String password = generarPassword();
+
         String username = nombreUsuario + "." + apellidoUsuario + numero; // nombre.apellidoXX
-        RegisterRequest registerRequest = new RegisterRequest(nombre, apellido, email, username, password);
+        RegisterRequest registerRequest = new RegisterRequest(nombre, apellido, email, username, password, idRol,
+                idFacultad);
         return ResponseEntity.ok(authService.registro(registerRequest));
     }
 
@@ -74,6 +81,39 @@ public class AutenticacionController {
     @PostMapping(value = "olvideMiPassword")
     public ResponseEntity<String> olvideMiPassword(@RequestParam String email) {
         return ResponseEntity.ok(authService.olvideMiPassword(email));
+    }
+
+    private String generarPassword() {
+        PasswordGenerator generator = new PasswordGenerator();
+
+        CharacterData upperCaseChars = EnglishCharacterData.UpperCase;
+        CharacterRule upperCaseRule = new CharacterRule(upperCaseChars);
+        upperCaseRule.setNumberOfCharacters(1);
+
+        CharacterData lowerCaseChars = EnglishCharacterData.LowerCase;
+        CharacterRule lowerCaseRule = new CharacterRule(lowerCaseChars);
+        lowerCaseRule.setNumberOfCharacters(1);
+
+        CharacterData digitChars = EnglishCharacterData.Digit;
+        CharacterRule digitRule = new CharacterRule(digitChars);
+        digitRule.setNumberOfCharacters(1);
+
+        CharacterData specialChars = new CharacterData() {
+            public String getErrorCode() {
+                return "ERROR_CODE";
+            }
+
+            public String getCharacters() {
+                return "!@#$%^&*()_+";
+            }
+        };
+        CharacterRule splCharRule = new CharacterRule(specialChars);
+        splCharRule.setNumberOfCharacters(1);
+
+        String password = generator.generatePassword(8, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
+
+        System.out.println(password);
+        return password;
     }
 
 }
