@@ -29,6 +29,7 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(authRequest -> authRequest
                                                 .requestMatchers("/autenticacion/**").permitAll()
                                                 .requestMatchers("/rol/**").permitAll()
+                                                .requestMatchers("/**").permitAll()
                                                 // Se debe estar autenticado para acceder a cualquier otra ruta que no
                                                 // sea login o registro
                                                 .anyRequest().authenticated())

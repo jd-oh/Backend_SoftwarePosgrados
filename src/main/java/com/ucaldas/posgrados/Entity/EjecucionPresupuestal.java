@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,47 +40,47 @@ public class EjecucionPresupuestal {
 
     private double balanceGeneral;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosDescuentos> egresosDescuentos;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<Ingresos> ingresos;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosInversiones> egresosInversiones;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosOtros> egresosOtros;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosOtrosServDocentes> egresosOtrosServDocentes;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosServDocentes> egresosServDocentes;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosServNoDocentes> egresosServNoDocentes;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosGenerales> egresosGenerales;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosRecurrentesAdm> egresosRecurrentesAdm;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosViajes> egresosViaje;
 
-    @OneToMany(mappedBy = "ejecucionPresupuestal")
+    @OneToMany(mappedBy = "ejecucionPresupuestal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<EgresosTransferencias> egresosTransferencias;
 
