@@ -84,22 +84,28 @@ public class EgresosGeneralesController {
 
             egresosGenerales.setPresupuesto(presupuesto.get());
             egresosGenerales.setTipoCosto(tipoCosto.get());
-            egresosGenerales.setFechaHoraCreacion("creado: " + java.time.LocalDateTime.now().toString());
+            egresosGenerales.setFechaHoraCreacion("creado: " +
+                    java.time.LocalDateTime.now().getDayOfMonth() + "/" + java.time.LocalDateTime.now().getMonthValue()
+                    + "/" + java.time.LocalDateTime.now().getYear() + " " + java.time.LocalDateTime.now().getHour()
+                    + ":" + java.time.LocalDateTime.now().getMinute() + ":"
+                    + java.time.LocalDateTime.now().getSecond());
+            egresosGenerales.setFechaHoraUltimaModificacion("No ha sido modificado");
 
             // if (presupuesto.isPresent()) {
             // Si el gasto hace parte de un presupuesto, la ejecución debe ser null siempre
             egresosGenerales.setEjecucionPresupuestal(null);
-
-            // Guardar el egreso general en el presupuesto
-            presupuesto.get().getEgresosGenerales().add(egresosGenerales);
 
             int idPresupuesto = egresosGenerales.getPresupuesto().getId();
             double valorNuevo = egresosGenerales.getValorTotal();
 
             presupuestoController.actualizarEgresosProgramaTotales(idPresupuesto, valorNuevo, 0);
 
+            // Guardar el egreso general en el presupuesto
+            presupuesto.get().getEgresosGenerales().add(egresosGenerales);
+
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
+            egresoGeneralRepository.save(egresosGenerales);
             /*
              * } else {
              * // Si el gasto hace parte de una ejecución, el presupuesto debe ser null

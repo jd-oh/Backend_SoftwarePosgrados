@@ -36,4 +36,6 @@ public class Ingresos {
     private String fechaHoraCreacion;
 
     private String fechaHoraUltimaModificacion;
+
+    private EtiquetaEgresoIngreso etiquetaEgresoIngreso;
 }

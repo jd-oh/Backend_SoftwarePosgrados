@@ -28,6 +28,9 @@ public class EjecucionPresupuestal {
     @JoinColumn(name = "idPresupuesto", referencedColumnName = "id")
     private Presupuesto presupuesto;
 
+    // Son todos los ingresos menos los descuentos
+    private double ingresosTotales;
+
     // Incluye gastos personales(ServDocentes parcial, ServNoDocentes total,
     // OtrosServDocentes total)
     // gastos generales, otros gastos, transferencias y gastos de viaje
@@ -41,46 +44,46 @@ public class EjecucionPresupuestal {
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<EgresosDescuentos> egresosDescuentos;
+    private Set<EgresosDescuentos> egresosDescuentosEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<Ingresos> ingresos;
+    private Set<Ingresos> ingresosEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<EgresosInversiones> egresosInversiones;
+    private Set<EgresosInversiones> egresosInversionesEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<EgresosOtros> egresosOtros;
+    private Set<EgresosOtros> egresosOtrosEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<EgresosOtrosServDocentes> egresosOtrosServDocentes;
+    private Set<EgresosOtrosServDocentes> egresosOtrosServDocentesEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<EgresosServDocentes> egresosServDocentes;
+    private Set<EgresosServDocentes> egresosServDocentesEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<EgresosServNoDocentes> egresosServNoDocentes;
+    private Set<EgresosServNoDocentes> egresosServNoDocentesEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<EgresosGenerales> egresosGenerales;
+    private Set<EgresosGenerales> egresosGeneralesEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<EgresosRecurrentesAdm> egresosRecurrentesAdm;
+    private Set<EgresosRecurrentesAdm> egresosRecurrentesAdmEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<EgresosViajes> egresosViaje;
+    private Set<EgresosViajes> egresosViajeEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
-    private Set<EgresosTransferencias> egresosTransferencias;
+    private Set<EgresosTransferencias> egresosTransferenciasEjecucion;
 
 }

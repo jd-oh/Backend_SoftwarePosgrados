@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ucaldas.posgrados.Entity.Presupuesto;
 import com.ucaldas.posgrados.Entity.TipoDescuento;
 import com.ucaldas.posgrados.Entity.EgresosDescuentos;
+import com.ucaldas.posgrados.Entity.EjecucionPresupuestal;
+import com.ucaldas.posgrados.Entity.EtiquetaEgresoIngreso;
 import com.ucaldas.posgrados.Repository.PresupuestoRepository;
 import com.ucaldas.posgrados.Repository.TipoDescuentoRepository;
 import com.ucaldas.posgrados.Repository.EgresosDescuentosRepository;
+import com.ucaldas.posgrados.Repository.EjecucionPresupuestalRepository;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,6 +36,9 @@ public class EgresosDescuentosController {
     private EgresosDescuentosRepository egresoDescuentoRepository;
 
     @Autowired
+    private EjecucionPresupuestalRepository ejecucionPresupuestalRepository;
+
+    @Autowired
     private TipoDescuentoRepository tipoDescuentoRepository;
 
     @Autowired
@@ -42,11 +48,11 @@ public class EgresosDescuentosController {
     private EgresosTransferenciasController egresosTransferenciasController;
 
     @PostMapping("/crear")
-    public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam int numEstudiantes,
+    public @ResponseBody String crear(@RequestParam int idPresupuesto, @RequestParam int numEstudiantes,
             @RequestParam double valor, @RequestParam int numPeriodos,
             @RequestParam int idTipoDescuento) {
         // Buscar la programa por su ID
-        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
         Optional<TipoDescuento> tipoDescuento = tipoDescuentoRepository.findById(idTipoDescuento);
 
         // Verificar si la programa existe
@@ -60,15 +66,17 @@ public class EgresosDescuentosController {
             egresosDescuentos.setTipoDescuento(tipoDescuento.get());
             // La fecha y hora se asigna en el momento de la creación con la del sistema
             egresosDescuentos.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
+            egresosDescuentos.setFechaHoraUltimaModificacion("No ha sido modificado");
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
-            // aprobado o no
+            // aprobado o no.
+            // La etiqueta también es nula porque se usa en la ejecución presupuestal
             egresosDescuentos.setEjecucionPresupuestal(null);
+            egresosDescuentos.setEtiquetaEgresoIngreso(null);
 
             // Guardar el egreso general en el presupuesto
             presupuesto.get().getEgresosDescuentos().add(egresosDescuentos);
 
-            int idPresupuesto = presupuesto.get().getId();
             double valorNuevo = egresosDescuentos.getTotalDescuento();
 
             presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, 0, "descuento");
@@ -86,6 +94,92 @@ public class EgresosDescuentosController {
         } else {
             return "Error: Presupuesto no encontrado";
         }
+    }
+
+    /*
+     * Se crea un egreso en la ejecución presupuestal exactamente igual al que se
+     * presupuestó.
+     * Se hace nulo el presupuesto porque ejecución presupuestal ya tiene un
+     * presupuesto asociado
+     */
+    @PostMapping("/crearEgresoEjecucionMismoValor")
+    public @ResponseBody String crearEgresoEjecucionMismoValor(@RequestParam int idEjecucionPresupuestal,
+            @RequestParam int idEgreso) {
+
+        EjecucionPresupuestal ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(idEjecucionPresupuestal)
+                .orElseThrow();
+
+        EgresosDescuentos egresoDescuento = egresoDescuentoRepository.findById(idEgreso).orElseThrow();
+
+        EgresosDescuentos egresoDescuentoNuevo = egresoDescuento;
+
+        egresoDescuentoNuevo.setEjecucionPresupuestal(ejecucionPresupuestal);
+        egresoDescuentoNuevo.setPresupuesto(null);
+        egresoDescuentoNuevo.setEtiquetaEgresoIngreso(EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR);
+
+        egresoDescuentoRepository.save(egresoDescuentoNuevo);
+
+        return "OK";
+
+    }
+
+    /*
+     * Se crea un egreso en la ejecución presupuestal con valores diferentes a los
+     * presupuestados
+     * Se hace nulo el presupuesto porque ejecución presupuestal ya tiene un
+     * presupuesto asociado
+     * 
+     */
+    @PostMapping("/crearEgresoEjecucionDiferenteValor")
+    public @ResponseBody String crearEgresoEjecucionDiferenteValor(@RequestParam int idEjecucionPresupuestal,
+            @RequestParam int numEstudiantes,
+            @RequestParam double valor, @RequestParam int numPeriodos,
+            @RequestParam int idTipoDescuento) {
+
+        EjecucionPresupuestal ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(idEjecucionPresupuestal)
+                .orElseThrow();
+
+        TipoDescuento tipoDescuento = tipoDescuentoRepository.findById(idTipoDescuento).orElseThrow();
+
+        guardarValoresEgresoEjecucion(numEstudiantes, valor, numPeriodos, ejecucionPresupuestal, tipoDescuento,
+                EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR);
+
+        return "OK";
+    }
+
+    private void guardarValoresEgresoEjecucion(int numEstudiantes, double valor, int numPeriodos,
+            EjecucionPresupuestal ejecucionPresupuestal, TipoDescuento tipoDescuento, EtiquetaEgresoIngreso etiqueta) {
+        EgresosDescuentos egresoDescuento = new EgresosDescuentos();
+
+        egresoDescuento.setEjecucionPresupuestal(ejecucionPresupuestal);
+        egresoDescuento.setPresupuesto(null);
+        egresoDescuento.setNumEstudiantes(numEstudiantes);
+        egresoDescuento.setValor(valor);
+        egresoDescuento.setNumPeriodos(numPeriodos);
+        egresoDescuento.setTotalDescuento(valor * numEstudiantes * numPeriodos);
+        egresoDescuento.setTipoDescuento(tipoDescuento);
+        egresoDescuento.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
+        egresoDescuento.setFechaHoraUltimaModificacion("No ha sido modificado");
+        egresoDescuento.setEtiquetaEgresoIngreso(etiqueta);
+
+        egresoDescuentoRepository.save(egresoDescuento);
+    }
+
+    @PostMapping("/crearEgresoFueraDelPresupuesto")
+    public @ResponseBody String crearEgresoFueraDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
+            @RequestParam int numEstudiantes,
+            @RequestParam double valor, @RequestParam int numPeriodos,
+            @RequestParam int idTipoDescuento) {
+
+        EjecucionPresupuestal ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(idEjecucionPresupuestal)
+                .orElseThrow();
+
+        TipoDescuento tipoDescuento = tipoDescuentoRepository.findById(idTipoDescuento).orElseThrow();
+
+        guardarValoresEgresoEjecucion(numEstudiantes, valor, numPeriodos, ejecucionPresupuestal, tipoDescuento,
+                EtiquetaEgresoIngreso.FUERADELPRESUPUESTO);
+
+        return "OK";
     }
 
     @GetMapping("/listar")

@@ -31,6 +31,7 @@ public class EgresosRecurrentesAdm {
 
     @ManyToOne
     @JoinColumn(name = "idEjecucionPresupuestal", referencedColumnName = "id")
+    @JsonBackReference
     private EjecucionPresupuestal ejecucionPresupuestal;
 
     private double valorHora;
@@ -42,4 +43,6 @@ public class EgresosRecurrentesAdm {
     private String fechaHoraCreacion;
 
     private String fechaHoraUltimaModificacion;
+
+    private EtiquetaEgresoIngreso etiquetaEgresoIngreso;
 }

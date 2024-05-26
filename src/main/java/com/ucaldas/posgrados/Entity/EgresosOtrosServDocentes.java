@@ -31,6 +31,7 @@ public class EgresosOtrosServDocentes {
 
     @ManyToOne
     @JoinColumn(name = "idEjecucionPresupuestal", referencedColumnName = "id")
+    @JsonBackReference
     private EjecucionPresupuestal ejecucionPresupuestal;
 
     @ManyToOne
@@ -48,4 +49,6 @@ public class EgresosOtrosServDocentes {
     private String fechaHoraCreacion;
 
     private String fechaHoraUltimaModificacion;
+
+    private EtiquetaEgresoIngreso etiquetaEgresoIngreso;
 }

@@ -52,7 +52,13 @@ public class PresupuestoController {
             // los gastos e ingresos, después de este paso se puede cambiar el estado
             presupuesto.setEstado("borrador");
 
-            presupuesto.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
+            presupuesto.setFechaHoraCreacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " " + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute()
+                    + ":" + java.time.LocalDateTime.now().getSecond());
+            presupuesto.setFechaHoraUltimaModificacion("No ha sido modificado");
+            presupuesto.setFechaHoraEnviadoRevision("No ha sido enviado a revisión");
+            presupuesto.setFechaHoraAprobado("No ha sido enviado a revisión");
 
             // Asignar la programa al cohorte
             presupuesto.setCohorte(cohorte.get());
@@ -88,6 +94,10 @@ public class PresupuestoController {
         Optional<Cohorte> cohorte = cohorteRepository.findById(idCohorte);
 
         if (presupuesto.isPresent() && cohorte.isPresent()) {
+            // Comprobar que el estado del presupuesto sea "borrador"
+            if (!presupuesto.get().getEstado().equals("borrador")) {
+                return "Error: No se puede modificar el presupuesto porque no está en estado de borrador";
+            }
             observaciones.ifPresent(presupuesto.get()::setObservaciones); // Si observaciones no es null, entonces se
                                                                           // asigna a presupuesto
             presupuesto.get().setCohorte(cohorte.get());
@@ -107,6 +117,12 @@ public class PresupuestoController {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
 
         if (presupuesto.isPresent()) {
+
+            // Comprobar que el presupuesto esté en estado "borrador"
+            if (!presupuesto.get().getEstado().equals("borrador")) {
+                return "Error: No se puede enviar a revisión porque el presupuesto no está en estado de borrador";
+            }
+
             presupuesto.get().setEstado("revision");
             presupuesto.get().setFechaHoraEnviadoRevision(java.time.LocalDateTime.now().toString());
             presupuestoRepository.save(presupuesto.get());
@@ -121,6 +137,11 @@ public class PresupuestoController {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
 
         if (presupuesto.isPresent()) {
+
+            // Comprobar que el presupuesto esté en estado "revision"
+            if (!presupuesto.get().getEstado().equals("revision")) {
+                return "Error: No se puede aprobar porque el presupuesto no está en estado de revisión";
+            }
             presupuesto.get().setEstado("aprobado");
             presupuesto.get().setFechaHoraAprobado(java.time.LocalDateTime.now().toString());
 
@@ -241,6 +262,7 @@ public class PresupuestoController {
                     - presupuesto.get().getEgresosProgramaTotales()
                     - presupuesto.get().getEgresosRecurrentesUniversidadTotales());
 
+            // Hay un error acá
             presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
