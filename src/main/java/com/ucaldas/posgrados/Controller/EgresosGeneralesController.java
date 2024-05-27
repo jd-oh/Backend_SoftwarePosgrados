@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ucaldas.posgrados.Entity.Presupuesto;
 import com.ucaldas.posgrados.Entity.TipoCosto;
 import com.ucaldas.posgrados.Entity.EgresosGenerales;
+import com.ucaldas.posgrados.Entity.EjecucionPresupuestal;
+import com.ucaldas.posgrados.Entity.EtiquetaEgresoIngreso;
 import com.ucaldas.posgrados.Repository.PresupuestoRepository;
 import com.ucaldas.posgrados.Repository.TipoCostoRepository;
 import com.ucaldas.posgrados.Repository.EgresosGeneralesRepository;
+import com.ucaldas.posgrados.Repository.EjecucionPresupuestalRepository;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,15 +41,8 @@ public class EgresosGeneralesController {
     @Autowired
     private PresupuestoController presupuestoController;
 
-    /*
-     * 
-     * @Autowired
-     * private EjecucionPresupuestalRepository ejecucionPresupuestalRepository;
-     * 
-     * 
-     * @Autowired
-     * private EjecucionPresupuestalController ejecucionPresupuestalController;
-     */
+    @Autowired
+    private EjecucionPresupuestalRepository ejecucionPresupuestalRepository;
 
     /**
      * Crea un egreso general para un presupuesto o una ejecución presupuestal
@@ -64,17 +60,11 @@ public class EgresosGeneralesController {
     public @ResponseBody String crear(@RequestParam int idPresupuestoEjecucion, @RequestParam String concepto,
             @RequestParam double valorUnitario,
             @RequestParam int cantidad, @RequestParam int idTipoCosto) {
-        // Buscar la programa por su ID
+
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuestoEjecucion);
-        // Optional<EjecucionPresupuestal> ejecucion =
-        // ejecucionPresupuestalRepository.findById(idPresupuestoEjecucion);
 
         Optional<TipoCosto> tipoCosto = tipoCostoRepository.findById(idTipoCosto);
 
-        // Verificar si el presupuesto o la ejecución existen (XOR) y si el tipo de
-        // costo existe
-        // if ((presupuesto.isPresent() && tipoCosto.isPresent()) ^
-        // (ejecucion.isPresent() && tipoCosto.isPresent())) {
         if (presupuesto.isPresent() && tipoCosto.isPresent()) {
             EgresosGenerales egresosGenerales = new EgresosGenerales();
             egresosGenerales.setConcepto(concepto);
@@ -84,16 +74,19 @@ public class EgresosGeneralesController {
 
             egresosGenerales.setPresupuesto(presupuesto.get());
             egresosGenerales.setTipoCosto(tipoCosto.get());
-            egresosGenerales.setFechaHoraCreacion("creado: " +
-                    java.time.LocalDateTime.now().getDayOfMonth() + "/" + java.time.LocalDateTime.now().getMonthValue()
-                    + "/" + java.time.LocalDateTime.now().getYear() + " " + java.time.LocalDateTime.now().getHour()
-                    + ":" + java.time.LocalDateTime.now().getMinute() + ":"
+            // La fecha y hora se asigna en el momento de la creación con la del sistema
+            egresosGenerales.setFechaHoraCreacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " "
+                    + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute() + ":"
                     + java.time.LocalDateTime.now().getSecond());
             egresosGenerales.setFechaHoraUltimaModificacion("No ha sido modificado");
 
-            // if (presupuesto.isPresent()) {
-            // Si el gasto hace parte de un presupuesto, la ejecución debe ser null siempre
+            // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
+            // aprobado o no.
+            // La etiqueta también es nula porque se usa en la ejecución presupuestal
             egresosGenerales.setEjecucionPresupuestal(null);
+            egresosGenerales.setEtiquetaEgresoIngreso(null);
 
             int idPresupuesto = egresosGenerales.getPresupuesto().getId();
             double valorNuevo = egresosGenerales.getValorTotal();
@@ -105,27 +98,104 @@ public class EgresosGeneralesController {
 
             // Guardar el Presupuesto actualizado
             presupuestoRepository.save(presupuesto.get());
-            egresoGeneralRepository.save(egresosGenerales);
-            /*
-             * } else {
-             * // Si el gasto hace parte de una ejecución, el presupuesto debe ser null
-             * siempre
-             * egresosGenerales.setPresupuesto(null);
-             * 
-             * // Guardar el egreso general en la ejecución
-             * ejecucion.get().getEgresosGenerales().add(egresosGenerales);
-             * presupuestoController.actualizarEgresosProgramaTotales(presupuesto.get().
-             * getId());
-             * 
-             * // Guardar el Presupuesto actualizado
-             * presupuestoRepository.save(presupuesto.get());
-             * }
-             */
 
             return "OK";
         } else {
             return "Error: Presupuesto no encontrado";
         }
+    }
+
+    /*
+     * Se crea un egreso en la ejecución presupuestal de un elemento que se tuvo en
+     * cuenta en el presupuesto.
+     * En el frontend habrá una lista de egresos del presupuesto en la sección de
+     * descuentos. Cuando se elija uno, se cargará
+     * toda la información de este en los campos, si se guarda así tal como está
+     * entonces se pondrá la etiqueta MISMOVALOR, en cambio
+     * si se cambia algún valor entonces se pondrá la etiqueta OTROVALOR.
+     * 
+     */
+    @PostMapping("/crearEgresoEjecucionDelPresupuesto")
+    public @ResponseBody String crearEgresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
+            @RequestParam String concepto,
+            @RequestParam double valorUnitario,
+            @RequestParam int cantidad, @RequestParam int idTipoCosto, @RequestParam int idEgreso) {
+
+        EjecucionPresupuestal ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(idEjecucionPresupuestal)
+                .orElseThrow();
+
+        TipoCosto tipoCosto = tipoCostoRepository.findById(idTipoCosto).orElseThrow();
+
+        EgresosGenerales egresoGeneral = new EgresosGenerales();
+
+        egresoGeneral = guardarValoresEgresoEjecucion(egresoGeneral, concepto, valorUnitario, cantidad,
+                ejecucionPresupuestal, tipoCosto);
+
+        EgresosGenerales egresoDelPresupuesto = egresoGeneralRepository.findById(idEgreso).orElseThrow();
+
+        // Si todos los datos del egresoDelPresupuesto son iguales a los que se quieren
+        // guardar en este nuevo egreso, entonces poner la etiqueta MISMOVALOR, pues
+        // significa que es el mismo que se presupuestó
+        if (egresoDelPresupuesto.getConcepto().equals(concepto)
+                && egresoDelPresupuesto.getValorUnitario() == valorUnitario
+                && egresoDelPresupuesto.getCantidad() == cantidad
+                && egresoDelPresupuesto.getTipoCosto().getId() == idTipoCosto) {
+            egresoGeneral.setEtiquetaEgresoIngreso(EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR);
+        } else {
+            egresoGeneral.setEtiquetaEgresoIngreso(EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR);
+        }
+
+        egresoGeneralRepository.save(egresoGeneral);
+
+        return "OK";
+    }
+
+    /*
+     * Guarda los valores en un objeto del tipo del egreso.
+     */
+
+    private EgresosGenerales guardarValoresEgresoEjecucion(EgresosGenerales egresoGeneral, String concepto,
+            double valorUnitario,
+            int cantidad, EjecucionPresupuestal ejecucionPresupuestal, TipoCosto tipoCosto) {
+
+        egresoGeneral.setConcepto(concepto);
+        egresoGeneral.setValorUnitario(valorUnitario);
+        egresoGeneral.setCantidad(cantidad);
+        egresoGeneral.setValorTotal(cantidad * valorUnitario);
+
+        egresoGeneral.setFechaHoraCreacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear() + " "
+                + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute() + ":"
+                + java.time.LocalDateTime.now().getSecond());
+        egresoGeneral.setFechaHoraUltimaModificacion("No ha sido modificado");
+        return egresoGeneral;
+    }
+
+    /*
+     * Se crea un egreso en la ejecución presupuestal de un elemento que no se tuvo
+     * en cuenta en el presupuesto. (Valores en blanco)
+     */
+    @PostMapping("/crearEgresoFueraDelPresupuesto")
+    public @ResponseBody String crearEgresoFueraDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
+            @RequestParam String concepto,
+            @RequestParam double valorUnitario,
+            @RequestParam int cantidad, @RequestParam int idTipoCosto) {
+
+        EjecucionPresupuestal ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(idEjecucionPresupuestal)
+                .orElseThrow();
+
+        TipoCosto tipoCosto = tipoCostoRepository.findById(idTipoCosto).orElseThrow();
+
+        EgresosGenerales egresoGeneral = new EgresosGenerales();
+
+        egresoGeneral = guardarValoresEgresoEjecucion(egresoGeneral, concepto, valorUnitario, cantidad,
+                ejecucionPresupuestal, tipoCosto);
+
+        egresoGeneral.setEtiquetaEgresoIngreso(EtiquetaEgresoIngreso.FUERADELPRESUPUESTO);
+
+        egresoGeneralRepository.save(egresoGeneral);
+
+        return "OK";
     }
 
     @GetMapping("/listar")

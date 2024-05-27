@@ -65,7 +65,11 @@ public class EgresosDescuentosController {
             egresosDescuentos.setPresupuesto(presupuesto.get());
             egresosDescuentos.setTipoDescuento(tipoDescuento.get());
             // La fecha y hora se asigna en el momento de la creación con la del sistema
-            egresosDescuentos.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
+            egresosDescuentos.setFechaHoraCreacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " "
+                    + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute() + ":"
+                    + java.time.LocalDateTime.now().getSecond());
             egresosDescuentos.setFechaHoraUltimaModificacion("No ha sido modificado");
 
             // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
@@ -97,59 +101,56 @@ public class EgresosDescuentosController {
     }
 
     /*
-     * Se crea un egreso en la ejecución presupuestal exactamente igual al que se
-     * presupuestó.
-     * Se hace nulo el presupuesto porque ejecución presupuestal ya tiene un
-     * presupuesto asociado
-     */
-    @PostMapping("/crearEgresoEjecucionMismoValor")
-    public @ResponseBody String crearEgresoEjecucionMismoValor(@RequestParam int idEjecucionPresupuestal,
-            @RequestParam int idEgreso) {
-
-        EjecucionPresupuestal ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(idEjecucionPresupuestal)
-                .orElseThrow();
-
-        EgresosDescuentos egresoDescuento = egresoDescuentoRepository.findById(idEgreso).orElseThrow();
-
-        EgresosDescuentos egresoDescuentoNuevo = egresoDescuento;
-
-        egresoDescuentoNuevo.setEjecucionPresupuestal(ejecucionPresupuestal);
-        egresoDescuentoNuevo.setPresupuesto(null);
-        egresoDescuentoNuevo.setEtiquetaEgresoIngreso(EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR);
-
-        egresoDescuentoRepository.save(egresoDescuentoNuevo);
-
-        return "OK";
-
-    }
-
-    /*
-     * Se crea un egreso en la ejecución presupuestal con valores diferentes a los
-     * presupuestados
-     * Se hace nulo el presupuesto porque ejecución presupuestal ya tiene un
-     * presupuesto asociado
+     * Se crea un egreso en la ejecución presupuestal de un elemento que se tuvo en
+     * cuenta en el presupuesto.
+     * En el frontend habrá una lista de egresos del presupuesto en la sección de
+     * descuentos. Cuando se elija uno, se cargará
+     * toda la información de este en los campos, si se guarda así tal como está
+     * entonces se pondrá la etiqueta MISMOVALOR, en cambio
+     * si se cambia algún valor entonces se pondrá la etiqueta OTROVALOR.
      * 
      */
-    @PostMapping("/crearEgresoEjecucionDiferenteValor")
-    public @ResponseBody String crearEgresoEjecucionDiferenteValor(@RequestParam int idEjecucionPresupuestal,
+    @PostMapping("/crearEgresoEjecucionDelPresupuesto")
+    public @ResponseBody String crearEgresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
             @RequestParam int numEstudiantes,
             @RequestParam double valor, @RequestParam int numPeriodos,
-            @RequestParam int idTipoDescuento) {
+            @RequestParam int idTipoDescuento, @RequestParam int idEgreso) {
 
         EjecucionPresupuestal ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(idEjecucionPresupuestal)
                 .orElseThrow();
 
         TipoDescuento tipoDescuento = tipoDescuentoRepository.findById(idTipoDescuento).orElseThrow();
 
-        guardarValoresEgresoEjecucion(numEstudiantes, valor, numPeriodos, ejecucionPresupuestal, tipoDescuento,
-                EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR);
+        EgresosDescuentos egresoDescuento = new EgresosDescuentos();
+
+        egresoDescuento = guardarValoresEgresoEjecucion(egresoDescuento, numEstudiantes, valor, numPeriodos,
+                ejecucionPresupuestal, tipoDescuento);
+
+        EgresosDescuentos egresoDelPresupuesto = egresoDescuentoRepository.findById(idEgreso).orElseThrow();
+
+        // Si todos los datos del egresoDelPresupuesto son iguales a los que se quieren
+        // guardar en este nuevo egreso, entonces poner la etiqueta MISMOVALOR, pues
+        // significa que es el mismo que se presupuestó
+        if (egresoDelPresupuesto.getNumEstudiantes() == numEstudiantes && egresoDelPresupuesto.getValor() == valor
+                && egresoDelPresupuesto.getNumPeriodos() == numPeriodos
+                && egresoDelPresupuesto.getTipoDescuento().getId() == tipoDescuento.getId()) {
+            egresoDescuento.setEtiquetaEgresoIngreso(EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR);
+        } else {
+            egresoDescuento.setEtiquetaEgresoIngreso(EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR);
+        }
+
+        egresoDescuentoRepository.save(egresoDescuento);
 
         return "OK";
     }
 
-    private void guardarValoresEgresoEjecucion(int numEstudiantes, double valor, int numPeriodos,
-            EjecucionPresupuestal ejecucionPresupuestal, TipoDescuento tipoDescuento, EtiquetaEgresoIngreso etiqueta) {
-        EgresosDescuentos egresoDescuento = new EgresosDescuentos();
+    /*
+     * Guarda los valores en un objeto del tipo del egreso.
+     */
+
+    private EgresosDescuentos guardarValoresEgresoEjecucion(EgresosDescuentos egresoDescuento, int numEstudiantes,
+            double valor, int numPeriodos,
+            EjecucionPresupuestal ejecucionPresupuestal, TipoDescuento tipoDescuento) {
 
         egresoDescuento.setEjecucionPresupuestal(ejecucionPresupuestal);
         egresoDescuento.setPresupuesto(null);
@@ -158,13 +159,18 @@ public class EgresosDescuentosController {
         egresoDescuento.setNumPeriodos(numPeriodos);
         egresoDescuento.setTotalDescuento(valor * numEstudiantes * numPeriodos);
         egresoDescuento.setTipoDescuento(tipoDescuento);
-        egresoDescuento.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
+        egresoDescuento.setFechaHoraCreacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear() + " "
+                + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute() + ":"
+                + java.time.LocalDateTime.now().getSecond());
         egresoDescuento.setFechaHoraUltimaModificacion("No ha sido modificado");
-        egresoDescuento.setEtiquetaEgresoIngreso(etiqueta);
-
-        egresoDescuentoRepository.save(egresoDescuento);
+        return egresoDescuento;
     }
 
+    /*
+     * Se crea un egreso en la ejecución presupuestal de un elemento que no se tuvo
+     * en cuenta en el presupuesto. (Valores en blanco)
+     */
     @PostMapping("/crearEgresoFueraDelPresupuesto")
     public @ResponseBody String crearEgresoFueraDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
             @RequestParam int numEstudiantes,
@@ -176,8 +182,14 @@ public class EgresosDescuentosController {
 
         TipoDescuento tipoDescuento = tipoDescuentoRepository.findById(idTipoDescuento).orElseThrow();
 
-        guardarValoresEgresoEjecucion(numEstudiantes, valor, numPeriodos, ejecucionPresupuestal, tipoDescuento,
-                EtiquetaEgresoIngreso.FUERADELPRESUPUESTO);
+        EgresosDescuentos egresoDescuento = new EgresosDescuentos();
+
+        egresoDescuento = guardarValoresEgresoEjecucion(egresoDescuento, numEstudiantes, valor, numPeriodos,
+                ejecucionPresupuestal, tipoDescuento);
+
+        egresoDescuento.setEtiquetaEgresoIngreso(EtiquetaEgresoIngreso.FUERADELPRESUPUESTO);
+
+        egresoDescuentoRepository.save(egresoDescuento);
 
         return "OK";
     }
@@ -208,7 +220,12 @@ public class EgresosDescuentosController {
             egresosDescuentosActualizado.setNumPeriodos(numPeriodos);
             egresosDescuentosActualizado.setTotalDescuento(valor * numEstudiantes * numPeriodos);
             egresosDescuentosActualizado.setTipoDescuento(tipoDescuento.get());
-            egresosDescuentosActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
+            egresosDescuentosActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().getDayOfMonth()
+                    + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " "
+                    + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute() + ":"
+                    + java.time.LocalDateTime.now().getSecond());
             int idPresupuesto = egresosDescuentosActualizado.getPresupuesto().getId();
             double valorNuevo = egresosDescuentosActualizado.getTotalDescuento();
             presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, valorAnterior, "descuento");

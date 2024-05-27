@@ -102,7 +102,13 @@ public class PresupuestoController {
                                                                           // asigna a presupuesto
             presupuesto.get().setCohorte(cohorte.get());
 
-            presupuesto.get().setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
+            presupuesto.get()
+                    .setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                            + java.time.LocalDateTime.now().getMonthValue() + "/"
+                            + java.time.LocalDateTime.now().getYear() + " "
+                            + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute()
+                            + ":"
+                            + java.time.LocalDateTime.now().getSecond());
             presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
@@ -124,7 +130,10 @@ public class PresupuestoController {
             }
 
             presupuesto.get().setEstado("revision");
-            presupuesto.get().setFechaHoraEnviadoRevision(java.time.LocalDateTime.now().toString());
+            presupuesto.get().setFechaHoraEnviadoRevision(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " " + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute()
+                    + ":" + java.time.LocalDateTime.now().getSecond());
             presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
@@ -143,7 +152,10 @@ public class PresupuestoController {
                 return "Error: No se puede aprobar porque el presupuesto no está en estado de revisión";
             }
             presupuesto.get().setEstado("aprobado");
-            presupuesto.get().setFechaHoraAprobado(java.time.LocalDateTime.now().toString());
+            presupuesto.get().setFechaHoraAprobado(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " " + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute()
+                    + ":" + java.time.LocalDateTime.now().getSecond());
 
             // Cómo ya está aprobado el presupuesto, se crea una ejecución presupuestal por
             // ahora vacía (sólo tiene el id del presupuesto)

@@ -36,24 +36,24 @@ public class EjecucionPresupuestal {
     // Son todos los ingresos menos los descuentos
     @Getter
     @Setter
-    private double ingresosTotales;
+    private double ingresosTotalesEjecucion;
 
     // Incluye gastos personales(ServDocentes parcial, ServNoDocentes total,
     // OtrosServDocentes total)
     // gastos generales, otros gastos, transferencias y gastos de viaje
     @Getter
     @Setter
-    private double egresosProgramaTotales;
+    private double egresosProgramaTotalesEjecucion;
 
     // Incluye gastos de inversiones, recurrentes adm y gastos personales
     // (ServDocentes parcial)
     @Getter
     @Setter
-    private double egresosRecurrentesUniversidadTotales;
+    private double egresosRecurrentesUniversidadTotalesEjecucion;
 
     @Getter
     @Setter
-    private double balanceGeneral;
+    private double balanceGeneralEjecucion;
 
     @OneToMany(mappedBy = "ejecucionPresupuestal")
     @JsonManagedReference
