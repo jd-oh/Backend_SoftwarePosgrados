@@ -209,7 +209,12 @@ public class EgresosInversionesController {
             egresosInversionesActualizado.setConcepto(concepto);
             egresosInversionesActualizado.setValor(valor);
             egresosInversionesActualizado.setTipoInversion(tipoInversion.get());
-            egresosInversionesActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
+            egresosInversionesActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().getDayOfMonth()
+                    + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " "
+                    + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute() + ":"
+                    + java.time.LocalDateTime.now().getSecond());
 
             int idPresupuesto = egresosInversionesActualizado.getPresupuesto().getId();
 

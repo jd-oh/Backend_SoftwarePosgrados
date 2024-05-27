@@ -42,9 +42,6 @@ public class EgresosOtrosController {
     private PresupuestoController presupuestoController;
 
     @Autowired
-    private EgresosTransferenciasController egresosTransferenciasController;
-
-    @Autowired
     private EjecucionPresupuestalRepository ejecucionPresupuestalRepository;
 
     @PostMapping("/crear")
@@ -221,7 +218,11 @@ public class EgresosOtrosController {
             egresosOtrosActualizado.setValorTotal(cantidad * valorUnitario);
 
             egresosOtrosActualizado.setTipoCosto(tipoCosto.get());
-            egresosOtrosActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
+            egresosOtrosActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " "
+                    + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute() + ":"
+                    + java.time.LocalDateTime.now().getSecond());
 
             int idPresupuesto = egresosOtrosActualizado.getPresupuesto().getId();
             double valorNuevo = egresosOtrosActualizado.getValorTotal();

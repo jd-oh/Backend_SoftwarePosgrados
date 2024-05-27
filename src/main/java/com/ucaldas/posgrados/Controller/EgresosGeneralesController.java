@@ -224,7 +224,12 @@ public class EgresosGeneralesController {
             egresosGeneralesActualizado.setValorUnitario(valorUnitario);
             egresosGeneralesActualizado.setCantidad(cantidad);
             egresosGeneralesActualizado.setValorTotal(cantidad * valorUnitario);
-            egresosGeneralesActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
+            egresosGeneralesActualizado.setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().getDayOfMonth()
+                    + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " "
+                    + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute() + ":"
+                    + java.time.LocalDateTime.now().getSecond());
 
             egresosGeneralesActualizado.setTipoCosto(tipoCosto.get());
             int idPresupuesto = egresosGeneralesActualizado.getPresupuesto().getId();

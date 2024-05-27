@@ -225,7 +225,13 @@ public class EgresosOtrosServDocentesController {
             egresosOtrosServDocentesActualizado.setNumHoras(numHoras);
             egresosOtrosServDocentesActualizado.setValorTotal(valorTotal);
             egresosOtrosServDocentesActualizado
-                    .setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
+                    .setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                            + java.time.LocalDateTime.now().getMonthValue() + "/"
+                            + java.time.LocalDateTime.now().getYear()
+                            + " "
+                            + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute()
+                            + ":"
+                            + java.time.LocalDateTime.now().getSecond());
 
             egresosOtrosServDocentesActualizado.setTipoCosto(tipoCosto.get());
 
