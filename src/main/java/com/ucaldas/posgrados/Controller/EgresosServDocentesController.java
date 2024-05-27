@@ -339,6 +339,7 @@ public class EgresosServDocentesController {
         return egresoServDocenteRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    // Este es para el presupuesto
     @GetMapping("/totalEgresosServDocentes")
     public @ResponseBody double totalEgresosServDocentes(int idPresupuesto) {
         double total = 0;
@@ -355,18 +356,93 @@ public class EgresosServDocentesController {
         return total;
     }
 
-    @GetMapping("/totalEgresosServDocentesDePlanta")
-    public @ResponseBody double totalEgresosServDocentesDePlanta(int idPresupuesto) {
+    // Este es para la ejecución presupuestal
+    @GetMapping("/totalEgresosServDocentesEjecucion")
+    public @ResponseBody double totalEgresosServDocentesEjecucion(int idEjecucionPresupuestal) {
         double total = 0;
         Iterable<EgresosServDocentes> egresosServDocentes = egresoServDocenteRepository
-                .findByPresupuestoId(idPresupuesto);
+                .findByEjecucionPresupuestalId(idEjecucionPresupuestal);
 
         // Si no hay egresos de otros
         if (!egresosServDocentes.iterator().hasNext()) {
             return total;
         }
         for (EgresosServDocentes egresoServDocente : egresosServDocentes) {
+            total += egresoServDocente.getTotalPagoProfesor();
+        }
+        return total;
+    }
+
+    // Este es para el presupuesto
+    @GetMapping("/totalEgresosServDocentesDePlanta")
+    public @ResponseBody double totalEgresosServDocentesDePlanta(int idPresupuesto) {
+        double total = 0;
+        Iterable<EgresosServDocentes> egresosServDocentes = egresoServDocenteRepository
+                .findByPresupuestoId(idPresupuesto);
+
+        // Si no hay egresos
+        if (!egresosServDocentes.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosServDocentes egresoServDocente : egresosServDocentes) {
             if (egresoServDocente.isEsDocentePlanta()) {
+                total += egresoServDocente.getTotalPagoProfesor();
+            }
+        }
+        return total;
+    }
+
+    // Este es para la ejecución presupuestal
+    @GetMapping("/totalEgresosServDocentesDePlantaEjecucion")
+    public @ResponseBody double totalEgresosServDocentesDePlantaEjecucion(int idEjecucionPresupuestal) {
+        double total = 0;
+        Iterable<EgresosServDocentes> egresosServDocentes = egresoServDocenteRepository
+                .findByEjecucionPresupuestalId(idEjecucionPresupuestal);
+
+        // Si no hay egresos
+        if (!egresosServDocentes.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosServDocentes egresoServDocente : egresosServDocentes) {
+            if (egresoServDocente.isEsDocentePlanta()) {
+                total += egresoServDocente.getTotalPagoProfesor();
+            }
+        }
+        return total;
+    }
+
+    // Este es para el presupuesto
+    @GetMapping("/totalEgresosServDocentesNoDePlanta")
+    public @ResponseBody double totalEgresosServDocentesNoDePlanta(int idPresupuesto) {
+        double total = 0;
+        Iterable<EgresosServDocentes> egresosServDocentes = egresoServDocenteRepository
+                .findByPresupuestoId(idPresupuesto);
+
+        // Si no hay egresos
+        if (!egresosServDocentes.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosServDocentes egresoServDocente : egresosServDocentes) {
+            if (!egresoServDocente.isEsDocentePlanta()) {
+                total += egresoServDocente.getTotalPagoProfesor();
+            }
+        }
+        return total;
+    }
+
+    // Este es para la ejecución presupuestal
+    @GetMapping("/totalEgresosServDocentesNoDePlantaEjecucion")
+    public @ResponseBody double totalEgresosServDocentesNoDePlantaEjecucion(int idEjecucionPresupuestal) {
+        double total = 0;
+        Iterable<EgresosServDocentes> egresosServDocentes = egresoServDocenteRepository
+                .findByEjecucionPresupuestalId(idEjecucionPresupuestal);
+
+        // Si no hay egresos
+        if (!egresosServDocentes.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosServDocentes egresoServDocente : egresosServDocentes) {
+            if (!egresoServDocente.isEsDocentePlanta()) {
                 total += egresoServDocente.getTotalPagoProfesor();
             }
         }

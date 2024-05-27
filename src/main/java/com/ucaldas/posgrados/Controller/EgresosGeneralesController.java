@@ -268,10 +268,27 @@ public class EgresosGeneralesController {
         return egresoGeneralRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    // Este es el total de egresos generales de un presupuesto
     @GetMapping("/totalEgresosGenerales")
     public @ResponseBody double totalEgresosGenerales(int idPresupuesto) {
         double total = 0;
         Iterable<EgresosGenerales> egresosGenerales = egresoGeneralRepository.findByPresupuestoId(idPresupuesto);
+        // Si no hay egresos generales
+        if (!egresosGenerales.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosGenerales egresoGeneral : egresosGenerales) {
+            total += egresoGeneral.getValorTotal();
+        }
+        return total;
+    }
+
+    // Este es el total de egresos generales de una ejecución presupuestal
+    @GetMapping("/totalEgresosGeneralesEjecucion")
+    public @ResponseBody double totalEgresosGeneralesEjecucion(int idEjecucionPresupuestal) {
+        double total = 0;
+        Iterable<EgresosGenerales> egresosGenerales = egresoGeneralRepository
+                .findByEjecucionPresupuestalId(idEjecucionPresupuestal);
         // Si no hay egresos generales
         if (!egresosGenerales.iterator().hasNext()) {
             return total;

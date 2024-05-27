@@ -247,10 +247,25 @@ public class IngresosController {
         return "OK";
     }
 
+    // Este es para el presupuesto
     @GetMapping("/totalIngresos")
     public @ResponseBody double totalIngresos(int idPresupuesto) {
         double totalIngresos = 0;
         Iterable<Ingresos> ingresos = ingresoRepository.findByPresupuestoId(idPresupuesto);
+        if (!ingresos.iterator().hasNext()) {
+            return totalIngresos;
+        }
+        for (Ingresos ingreso : ingresos) {
+            totalIngresos += ingreso.getValor();
+        }
+        return totalIngresos;
+    }
+
+    // Este es para la ejecución presupuestal
+    @GetMapping("/totalIngresosEjecucion")
+    public @ResponseBody double totalIngresosEjecucion(int idEjecucionPresupuestal) {
+        double totalIngresos = 0;
+        Iterable<Ingresos> ingresos = ingresoRepository.findByEjecucionPresupuestalId(idEjecucionPresupuestal);
         if (!ingresos.iterator().hasNext()) {
             return totalIngresos;
         }

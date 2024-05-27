@@ -271,10 +271,28 @@ public class EgresosTransferenciasController {
         return egresoTransferenciaRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    // Este es para el presupuesto
     @GetMapping("/totalEgresosTransferencias")
     public @ResponseBody double totalEgresosTransferencias(int idPresupuesto) {
         Iterable<EgresosTransferencias> egresosTransferencias = egresoTransferenciaRepository
                 .findByPresupuestoId(idPresupuesto);
+        double total = 0;
+
+        if (!egresosTransferencias.iterator().hasNext()) {
+            return 0;
+        }
+
+        for (EgresosTransferencias egreso : egresosTransferencias) {
+            total += egreso.getValorTotal();
+        }
+        return total;
+    }
+
+    // Este es para la ejecución presupuestal
+    @GetMapping("/totalEgresosTransferenciasEjecucion")
+    public @ResponseBody double totalEgresosTransferenciasEjecucion(int idEjecucionPresupuestal) {
+        Iterable<EgresosTransferencias> egresosTransferencias = egresoTransferenciaRepository
+                .findByEjecucionPresupuestalId(idEjecucionPresupuestal);
         double total = 0;
 
         if (!egresosTransferencias.iterator().hasNext()) {

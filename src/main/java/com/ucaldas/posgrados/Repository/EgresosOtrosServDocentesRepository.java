@@ -10,4 +10,6 @@ public interface EgresosOtrosServDocentesRepository extends CrudRepository<Egres
 
     Iterable<EgresosOtrosServDocentes> findByPresupuestoId(int idPresupuesto);
 
+    Iterable<EgresosOtrosServDocentes> findByEjecucionPresupuestalId(int idEjecucionPresupuestal);
+
 }

@@ -253,10 +253,29 @@ public class EgresosInversionesController {
         return egresoInversionRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    // Este es para listar los egresos de inversiones que se hicieron en el
+    // presupuesto
     @GetMapping("/totalEgresosInversiones")
     public @ResponseBody double totalEgresosInversiones(int idPresupuesto) {
         double total = 0;
         Iterable<EgresosInversiones> egresosInversiones = egresoInversionRepository.findByPresupuestoId(idPresupuesto);
+
+        if (!egresosInversiones.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosInversiones egreso : egresosInversiones) {
+            total += egreso.getValor();
+        }
+        return total;
+    }
+
+    // Este es para listar los egresos de inversiones que se hicieron en la
+    // ejecución presupuestal
+    @GetMapping("/totalEgresosInversionesEjecucion")
+    public @ResponseBody double totalEgresosInversionesEjecucion(int idEjecucionPresupuestal) {
+        double total = 0;
+        Iterable<EgresosInversiones> egresosInversiones = egresoInversionRepository
+                .findByEjecucionPresupuestalId(idEjecucionPresupuestal);
 
         if (!egresosInversiones.iterator().hasNext()) {
             return total;

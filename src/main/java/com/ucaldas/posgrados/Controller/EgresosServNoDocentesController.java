@@ -259,13 +259,31 @@ public class EgresosServNoDocentesController {
         return egresoServNoDocenteRepository.findByPresupuestoId(idPresupuesto);
     }
 
+    // Este es para el presupuesto
     @GetMapping("/totalEgresosServNoDocentes")
     public @ResponseBody double totalEgresosServNoDocentes(int idPresupuesto) {
         double total = 0;
         Iterable<EgresosServNoDocentes> egresosServNoDocentes = egresoServNoDocenteRepository
                 .findByPresupuestoId(idPresupuesto);
 
-        // Si no hay egresos de otros
+        // Si no hay egresos
+        if (!egresosServNoDocentes.iterator().hasNext()) {
+            return total;
+        }
+        for (EgresosServNoDocentes egresoRecurrenteAdm : egresosServNoDocentes) {
+            total += egresoRecurrenteAdm.getValorTotal();
+        }
+        return total;
+    }
+
+    // Este es para la ejecución presupuestal
+    @GetMapping("/totalEgresosServNoDocentesEjecucion")
+    public @ResponseBody double totalEgresosServNoDocentesEjecucion(int idEjecucionPresupuestal) {
+        double total = 0;
+        Iterable<EgresosServNoDocentes> egresosServNoDocentes = egresoServNoDocenteRepository
+                .findByEjecucionPresupuestalId(idEjecucionPresupuestal);
+
+        // Si no hay egresos
         if (!egresosServNoDocentes.iterator().hasNext()) {
             return total;
         }

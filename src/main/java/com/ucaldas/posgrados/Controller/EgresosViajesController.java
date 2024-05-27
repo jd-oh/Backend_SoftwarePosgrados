@@ -275,4 +275,24 @@ public class EgresosViajesController {
         return total;
     }
 
+    // Este es para la ejecución presupuestal
+    @GetMapping("/totalEgresosViajesEjecucion")
+    // Total de egresos de viajes por ejecución presupuestal
+    public @ResponseBody double totalEgresosViajesEjecucion(int idEjecucionPresupuestal) {
+
+        Iterable<EgresosViajes> egresosViajes = egresoViajeRepository
+                .findByEjecucionPresupuestalId(idEjecucionPresupuestal);
+        double total = 0;
+
+        if (!egresosViajes.iterator().hasNext()) {
+            return total;
+        }
+
+        for (EgresosViajes egresoViaje : egresosViajes) {
+            total += egresoViaje.getValorTotal();
+        }
+
+        return total;
+    }
+
 }
