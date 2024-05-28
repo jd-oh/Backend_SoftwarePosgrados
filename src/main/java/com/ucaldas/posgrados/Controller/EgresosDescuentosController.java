@@ -109,6 +109,8 @@ public class EgresosDescuentosController {
      * entonces se pondrá la etiqueta MISMOVALOR, en cambio
      * si se cambia algún valor entonces se pondrá la etiqueta OTROVALOR.
      * 
+     * El tipo de descuento no se puede modificar.
+     * 
      */
     @PostMapping("/crearEgresoEjecucionDelPresupuesto")
     public @ResponseBody String crearEgresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
@@ -247,6 +249,12 @@ public class EgresosDescuentosController {
     @GetMapping("/listarPorPresupuesto")
     public @ResponseBody Iterable<EgresosDescuentos> listarPorPresupuesto(@RequestParam int idPresupuesto) {
         return egresoDescuentoRepository.findByPresupuestoId(idPresupuesto);
+    }
+
+    @GetMapping("/listarPorEjecucionPresupuestal")
+    public @ResponseBody Iterable<EgresosDescuentos> listarPorEjecucionPresupuestal(
+            @RequestParam int idEjecucionPresupuestal) {
+        return egresoDescuentoRepository.findByEjecucionPresupuestalId(idEjecucionPresupuestal);
     }
 
     @DeleteMapping(path = "/eliminar")

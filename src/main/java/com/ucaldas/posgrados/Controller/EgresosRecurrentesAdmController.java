@@ -97,6 +97,7 @@ public class EgresosRecurrentesAdmController {
      * entonces se pondrá la etiqueta MISMOVALOR, en cambio
      * si se cambia algún valor entonces se pondrá la etiqueta OTROVALOR.
      * 
+     * La unidad ni el cargo se pueden modificar.
      */
     @PostMapping("/crearEgresoEjecucionDelPresupuesto")
     public @ResponseBody String crearEgresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
@@ -238,6 +239,13 @@ public class EgresosRecurrentesAdmController {
     @GetMapping("/listarPorPresupuesto")
     public @ResponseBody Iterable<EgresosRecurrentesAdm> listarPorPresupuesto(@RequestParam int idPresupuesto) {
         return egresoRecurrenteAdmRepository.findByPresupuestoId(idPresupuesto);
+    }
+
+    // Listar por ejecucion presupuestal
+    @GetMapping("/listarPorEjecucionPresupuestal")
+    public @ResponseBody Iterable<EgresosRecurrentesAdm> listarPorEjecucionPresupuestal(
+            @RequestParam int idEjecucionPresupuestal) {
+        return egresoRecurrenteAdmRepository.findByEjecucionPresupuestalId(idEjecucionPresupuestal);
     }
 
     // Este es para presupuesto

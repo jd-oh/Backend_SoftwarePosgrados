@@ -114,6 +114,7 @@ public class EgresosGeneralesController {
      * entonces se pondrá la etiqueta MISMOVALOR, en cambio
      * si se cambia algún valor entonces se pondrá la etiqueta OTROVALOR.
      * 
+     * El concepto no se puede modificar.
      */
     @PostMapping("/crearEgresoEjecucionDelPresupuesto")
     public @ResponseBody String crearEgresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
@@ -266,6 +267,13 @@ public class EgresosGeneralesController {
     @GetMapping("/listarPorPresupuesto")
     public @ResponseBody Iterable<EgresosGenerales> listarPorPresupuesto(@RequestParam int idPresupuesto) {
         return egresoGeneralRepository.findByPresupuestoId(idPresupuesto);
+    }
+
+    // Listar por ejecución presupuestal
+    @GetMapping("/listarPorEjecucionPresupuestal")
+    public @ResponseBody Iterable<EgresosGenerales> listarPorEjecucionPresupuestal(
+            @RequestParam int idEjecucionPresupuestal) {
+        return egresoGeneralRepository.findByEjecucionPresupuestalId(idEjecucionPresupuestal);
     }
 
     // Este es el total de egresos generales de un presupuesto

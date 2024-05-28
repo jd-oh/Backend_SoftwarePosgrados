@@ -37,6 +37,9 @@ public class IngresosController {
     private PresupuestoController presupuestoController;
 
     @Autowired
+    private EjecucionPresupuestalController ejecucionPresupuestalController;
+
+    @Autowired
     private EgresosTransferenciasController egresosTransferenciasController;
 
     @Autowired
@@ -78,7 +81,7 @@ public class IngresosController {
             presupuestoController.actualizarIngresosTotales(idPresupuesto, valorNuevo, 0, "ingreso");
 
             // Si existen egresos de transferencias entonces llamamos al metodo
-            // 'actualizarIngresosTotales'
+            // 'actualizarValoresTransferenciasPorIngresos'
             if (egresosTransferenciasController.listar().iterator().hasNext()) {
                 egresosTransferenciasController.actualizarValoresTransferenciasPorIngresos();
 
@@ -102,6 +105,7 @@ public class IngresosController {
      * entonces se pondrá la etiqueta MISMOVALOR, en cambio
      * si se cambia algún valor entonces se pondrá la etiqueta OTROVALOR.
      * 
+     * Concepto no se puede modificar.
      */
     @PostMapping("/crearEgresoEjecucionDelPresupuesto")
     public @ResponseBody String crearEgresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
@@ -127,7 +131,19 @@ public class IngresosController {
             ingreso.setEtiquetaEgresoIngreso(EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR);
         }
 
-        ingresoRepository.save(ingreso);
+        ejecucionPresupuestalController.actualizarIngresosTotales(idEjecucionPresupuestal, valor, 0, "ingreso");
+
+        // Si existen egresos de transferencias entonces llamamos al metodo
+        // 'actualizarValoresTransferenciasPorIngresos'
+        if (egresosTransferenciasController.listar().iterator().hasNext()) {
+            egresosTransferenciasController.actualizarValoresTransferenciasPorIngresos();
+
+        }
+
+        // guardar el ingreso en la ejecución presupuestal
+        ejecucionPresupuestal.getIngresosEjecucion().add(ingreso);
+
+        ejecucionPresupuestalRepository.save(ejecucionPresupuestal);
 
         return "OK";
     }
@@ -185,6 +201,12 @@ public class IngresosController {
     @GetMapping("/listarPorPresupuesto")
     public @ResponseBody Iterable<Ingresos> listarPorPresupuesto(@RequestParam int idPresupuesto) {
         return ingresoRepository.findByPresupuestoId(idPresupuesto);
+    }
+
+    // Listar por ejecución presupuestal
+    @GetMapping("/listarPorEjecucionPresupuestal")
+    public @ResponseBody Iterable<Ingresos> listarPorEjecucionPresupuestal(@RequestParam int idEjecucionPresupuestal) {
+        return ingresoRepository.findByEjecucionPresupuestalId(idEjecucionPresupuestal);
     }
 
     @GetMapping("/buscar")

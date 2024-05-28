@@ -57,4 +57,107 @@ public class EjecucionPresupuestalController {
         return ejecucionPresupuestalRepository.findAll();
     }
 
+    // Se utiliza para actualizar el atributo ingresosTotales de la clase
+    // Presupuesto
+    public String actualizarIngresosTotales(int idEjecucionPresupuestal,
+            double nuevoValor, double antiguoValor, String tipo) {
+        Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository
+                .findById(idEjecucionPresupuestal);
+
+        if (ejecucionPresupuestal.isPresent() && tipo.equals("ingreso")) {
+            ejecucionPresupuestal.get().setIngresosTotalesEjecucion(
+                    ejecucionPresupuestal.get().getIngresosTotalesEjecucion() - antiguoValor + nuevoValor);
+            actualizarBalanceGeneral(idEjecucionPresupuestal);
+            return "OK";
+        } else if (ejecucionPresupuestal.isPresent() && tipo.equals("descuento")) {
+            ejecucionPresupuestal.get().setIngresosTotalesEjecucion(
+                    ejecucionPresupuestal.get().getIngresosTotalesEjecucion() - nuevoValor + antiguoValor);
+            actualizarBalanceGeneral(idEjecucionPresupuestal);
+            return "OK";
+        } else {
+            return "Error: Ejecucion presupuestal no encontrada";
+        }
+
+    }
+
+    @GetMapping(path = "/ingresosTotales")
+    public @ResponseBody double ingresosTotales(@RequestParam int id) {
+        Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
+
+        if (ejecucionPresupuestal.isPresent()) {
+            return ejecucionPresupuestal.get().getIngresosTotalesEjecucion();
+        } else {
+            return 0;
+        }
+    }
+
+    // Se utiliza para actualizar el atributo egresosProgramaTotales de la clase
+    // EjecucionPresupuestal
+    // Cuando se crea: antiguo valor será 0
+    // Cuando se modifica: antiguo valor será el valor que se quiere modificar y
+    // nuevo valor será el valor nuevo
+    // Cuando se elimina: nuevo valor será 0
+    public String actualizarEgresosProgramaTotales(int id,
+            double nuevoValor, double antiguoValor) {
+        Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
+
+        if (ejecucionPresupuestal.isPresent()) {
+
+            ejecucionPresupuestal.get().setEgresosProgramaTotalesEjecucion(
+                    ejecucionPresupuestal.get().getEgresosProgramaTotalesEjecucion() - antiguoValor + nuevoValor);
+
+            actualizarBalanceGeneral(id);
+
+            ejecucionPresupuestalRepository.save(ejecucionPresupuestal.get());
+            return "OK";
+        } else {
+            return "Error: Ejecucion presupuestal no encontrada";
+        }
+
+    }
+
+    // Se utiliza para actualizar el atributo egresosProgramaTotales de la clase
+    // EjecucionPresupuestal
+    // Cuando se crea: antiguo valor será 0
+    // Cuando se modifica: antiguo valor será el valor que se quiere modificar y
+    // nuevo valor será el valor nuevo
+    // Cuando se elimina: nuevo valor será 0
+    public String actualizarEgresosRecurrentesUniversidadTotales(int id,
+            double nuevoValor, double antiguoValor) {
+        Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
+
+        if (ejecucionPresupuestal.isPresent()) {
+            ejecucionPresupuestal.get().setEgresosRecurrentesUniversidadTotalesEjecucion(
+                    ejecucionPresupuestal.get().getEgresosRecurrentesUniversidadTotalesEjecucion() - antiguoValor
+                            + nuevoValor);
+
+            actualizarBalanceGeneral(id);
+
+            ejecucionPresupuestalRepository.save(ejecucionPresupuestal.get());
+            return "OK";
+        } else {
+            return "Error: Ejecucion presupuestal no encontrada";
+        }
+    }
+
+    // Cuando se crea un ejecucionPresupuestal, ingresos y los egresos tienen un
+    // valor de 0,
+    // por lo que no habrán excepciones al momento de realizar la operación
+    public String actualizarBalanceGeneral(int id) {
+        Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
+
+        if (ejecucionPresupuestal.isPresent()) {
+            ejecucionPresupuestal.get()
+                    .setBalanceGeneralEjecucion(ejecucionPresupuestal.get().getIngresosTotalesEjecucion()
+                            - ejecucionPresupuestal.get().getEgresosProgramaTotalesEjecucion()
+                            - ejecucionPresupuestal.get().getEgresosRecurrentesUniversidadTotalesEjecucion());
+
+            // Hay un error acá
+            ejecucionPresupuestalRepository.save(ejecucionPresupuestal.get());
+            return "OK";
+        } else {
+            return "Error: Ejecucion presupuestal no encontrada";
+        }
+    }
+
 }

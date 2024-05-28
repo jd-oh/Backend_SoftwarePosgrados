@@ -129,6 +129,7 @@ public class EgresosServDocentesController {
      * entonces se pondrá la etiqueta MISMOVALOR, en cambio
      * si se cambia algún valor entonces se pondrá la etiqueta OTROVALOR.
      * 
+     * No se puede modificar nombreMateria
      */
     @PostMapping("/crearEgresoEjecucionDelPresupuesto")
     public @ResponseBody String crearEgresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
@@ -337,6 +338,13 @@ public class EgresosServDocentesController {
     @GetMapping("/listarPorPresupuesto")
     public @ResponseBody Iterable<EgresosServDocentes> listarPorPresupuesto(@RequestParam int idPresupuesto) {
         return egresoServDocenteRepository.findByPresupuestoId(idPresupuesto);
+    }
+
+    // Listar por ejecución presupuestal
+    @GetMapping("/listarPorEjecucionPresupuestal")
+    public @ResponseBody Iterable<EgresosServDocentes> listarPorEjecucionPresupuestal(
+            @RequestParam int idEjecucionPresupuestal) {
+        return egresoServDocenteRepository.findByEjecucionPresupuestalId(idEjecucionPresupuestal);
     }
 
     // Este es para el presupuesto

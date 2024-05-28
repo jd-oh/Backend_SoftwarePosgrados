@@ -100,6 +100,7 @@ public class EgresosViajesController {
      * entonces se pondrá la etiqueta MISMOVALOR, en cambio
      * si se cambia algún valor entonces se pondrá la etiqueta OTROVALOR.
      * 
+     * Descripción no se puede modificar.
      */
     @PostMapping("/crearEgresoEjecucionDelPresupuesto")
     public @ResponseBody String crearEgresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
@@ -255,6 +256,13 @@ public class EgresosViajesController {
     @GetMapping("/listarPorPresupuesto")
     public @ResponseBody Iterable<EgresosViajes> listarPorPresupuesto(@RequestParam int idPresupuesto) {
         return egresoViajeRepository.findByPresupuestoId(idPresupuesto);
+    }
+
+    // Listar por ejecución presupuestal
+    @GetMapping("/listarPorEjecucionPresupuestal")
+    public @ResponseBody Iterable<EgresosViajes> listarPorEjecucionPresupuestal(
+            @RequestParam int idEjecucionPresupuestal) {
+        return egresoViajeRepository.findByEjecucionPresupuestalId(idEjecucionPresupuestal);
     }
 
     @GetMapping("/totalEgresosViajes")

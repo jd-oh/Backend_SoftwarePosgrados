@@ -102,6 +102,8 @@ public class EgresosOtrosController {
      * entonces se pondrá la etiqueta MISMOVALOR, en cambio
      * si se cambia algún valor entonces se pondrá la etiqueta OTROVALOR.
      * 
+     * 
+     * El concepto no se puede modificar.
      */
     @PostMapping("/crearEgresoEjecucionDelPresupuesto")
     public @ResponseBody String crearEgresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
@@ -255,6 +257,13 @@ public class EgresosOtrosController {
     @GetMapping("/listarPorPresupuesto")
     public @ResponseBody Iterable<EgresosOtros> listarPorPresupuesto(@RequestParam int idPresupuesto) {
         return egresoOtroRepository.findByPresupuestoId(idPresupuesto);
+    }
+
+    // Listar por ejecución presupuestal
+    @GetMapping("/listarPorEjecucionPresupuestal")
+    public @ResponseBody Iterable<EgresosOtros> listarPorEjecucionPresupuestal(
+            @RequestParam int idEjecucionPresupuestal) {
+        return egresoOtroRepository.findByEjecucionPresupuestalId(idEjecucionPresupuestal);
     }
 
     // Este es para el presupuesto
