@@ -34,7 +34,7 @@ public class AuthService {
         private final AuthenticationManager authenticacionManager;
         @Autowired
         private final JavaMailSender mailSender;
-        private final String urlCambiarPassword = "http://localhost:8080/autenticacion/cambiarPassword";
+        private final String urlCambiarPassword = "http://localhost:4200/login/cambiar-contrasena";
 
         public AuthResponse login(LoginRequest loginRequest) {
                 authenticacionManager.authenticate(
@@ -64,17 +64,18 @@ public class AuthService {
 
                 userRepository.save(usuario);
 
+                String token = jwtService.getToken(usuario);
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(registerRequest.getEmail());
                 message.setSubject("Bienvenido a nuestra plataforma de posgrados");
                 message.setText("Tu nombre de usuario es: " + registerRequest.getUsername() + "\n"
                                 + "Tu contraseña es: " + registerRequest.getPassword() + "\n"
                                 + "Para cambiar tu contraseña, haz clic en el siguiente enlace: "
-                                + urlCambiarPassword);
+                                + urlCambiarPassword + "?token=" + jwtService.getToken(usuario));
                 mailSender.send(message);
 
                 return AuthResponse.builder()
-                                .token(jwtService.getToken(usuario))
+                                .token(token)
                                 .build();
 
         }
