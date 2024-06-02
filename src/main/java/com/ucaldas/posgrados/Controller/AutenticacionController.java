@@ -1,6 +1,7 @@
 package com.ucaldas.posgrados.Controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ucaldas.posgrados.DTO.AuthResponse;
 import com.ucaldas.posgrados.DTO.LoginRequest;
@@ -44,7 +45,16 @@ public class AutenticacionController {
     @PostMapping(value = "/registro")
     public ResponseEntity<AuthResponse> registro(@RequestParam String nombre, @RequestParam String apellido,
             @RequestParam String email, @RequestParam int idRol,
-            @RequestParam int idFacultad) {
+            @RequestParam(required = false) Integer idFacultad) {
+
+        // Definir el ID de rol para ADMIN
+        final int ADMIN_ROLE_ID = 1; // Asumiendo que 1 es el ID para ADMIN
+
+        // Validar que idFacultad no sea null si el usuario no es ADMIN
+        if (idRol != ADMIN_ROLE_ID && idFacultad == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El idFacultad es obligatorio para usuarios no ADMIN");
+        }
 
         // numero al azar de dos cifras
         int numero = (int) (Math.random() * 90 + 10);
@@ -64,6 +74,7 @@ public class AutenticacionController {
         String password = generarPassword();
 
         String username = nombreUsuario + "." + apellidoUsuario + numero; // nombre.apellidoXX
+
         RegisterRequest registerRequest = new RegisterRequest(nombre, apellido, email, username, password, idRol,
                 idFacultad);
         return ResponseEntity.ok(authService.registro(registerRequest));
@@ -112,7 +123,7 @@ public class AutenticacionController {
         CharacterRule splCharRule = new CharacterRule(specialChars);
         splCharRule.setNumberOfCharacters(1);
 
-        String password = generator.generatePassword(8, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
+        String password = generator.generatePassword(15, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
 
         System.out.println(password);
         return password;

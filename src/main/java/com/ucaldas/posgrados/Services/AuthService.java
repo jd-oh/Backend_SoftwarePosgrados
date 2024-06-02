@@ -50,7 +50,10 @@ public class AuthService {
 
         public AuthResponse registro(RegisterRequest registerRequest) {
                 Rol rol = rolRepository.findById(registerRequest.getIdRol()).orElseThrow();
-                Facultad facultad = facultadRepository.findById(registerRequest.getIdFacultad()).orElseThrow();
+                Facultad facultad = null;
+                if (registerRequest.getIdFacultad() != null) {
+                        facultad = facultadRepository.findById(registerRequest.getIdFacultad()).orElseThrow();
+                }
                 Usuario usuario = Usuario.builder()
                                 .username(registerRequest.getUsername())
                                 .password(passwordEncoder.encode(registerRequest.getPassword()))

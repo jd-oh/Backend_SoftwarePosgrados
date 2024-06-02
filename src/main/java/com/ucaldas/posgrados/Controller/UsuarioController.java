@@ -61,14 +61,18 @@ public class UsuarioController {
     @PutMapping("editarDatosBasicos")
     public ResponseEntity<String> editarDatosBasicos(@RequestParam int id, @RequestParam String nombre,
             @RequestParam String apellido,
-            @RequestParam String email, @RequestParam int idFacultad, @RequestParam int idRol) {
+            @RequestParam String email, @RequestParam(required = false) Integer idFacultad, @RequestParam int idRol) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow();
-        Facultad facultad = facultadRepository.findById(idFacultad).orElseThrow();
+
         Rol rol = rolRepository.findById(idRol).orElseThrow();
+        if (idFacultad != null) {
+            Facultad facultad = facultadRepository.findById(idFacultad).orElseThrow();
+            usuario.setFacultad(facultad);
+        }
         usuario.setNombre(nombre);
         usuario.setApellido(apellido);
         usuario.setEmail(email);
-        usuario.setFacultad(facultad);
+
         usuario.setRol(rol);
         usuarioRepository.save(usuario);
         return ResponseEntity.ok("OK");
