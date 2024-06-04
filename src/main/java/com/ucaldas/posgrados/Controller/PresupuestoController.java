@@ -357,4 +357,14 @@ public class PresupuestoController {
         }
     }
 
+    @GetMapping("/listarAprobados")
+    public @ResponseBody Iterable<Presupuesto> listarAprobados() {
+        return presupuestoRepository.findByEstado("aprobado");
+    }
+
+    @GetMapping("/listarEnRevision")
+    public @ResponseBody Iterable<Presupuesto> listarEnRevision() {
+        return presupuestoRepository.findByEstado("revision");
+    }
+
 }

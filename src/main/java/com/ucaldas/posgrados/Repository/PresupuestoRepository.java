@@ -12,4 +12,6 @@ public interface PresupuestoRepository extends CrudRepository<Presupuesto, Integ
 
     Optional<Presupuesto> findByCohorteId(int idCohorte);
 
+    Iterable<Presupuesto> findByEstado(String string);
+
 }
