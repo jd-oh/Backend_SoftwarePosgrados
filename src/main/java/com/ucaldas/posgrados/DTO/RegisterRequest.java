@@ -17,5 +17,6 @@ public class RegisterRequest {
     String password;
     int idRol;
     Integer idFacultad;
+    Integer idPrograma;
 
 }

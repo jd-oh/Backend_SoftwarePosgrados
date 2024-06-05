@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ucaldas.posgrados.Entity.Facultad;
+import com.ucaldas.posgrados.Entity.Programa;
 import com.ucaldas.posgrados.Entity.Rol;
 import com.ucaldas.posgrados.Entity.Usuario;
 import com.ucaldas.posgrados.Repository.FacultadRepository;
+import com.ucaldas.posgrados.Repository.ProgramaRepository;
 import com.ucaldas.posgrados.Repository.RolRepository;
 import com.ucaldas.posgrados.Repository.UsuarioRepository;
 
@@ -31,6 +33,9 @@ public class UsuarioController {
 
     @Autowired
     private FacultadRepository facultadRepository;
+
+    @Autowired
+    private ProgramaRepository programaRepository;
 
     @Autowired
     private RolRepository rolRepository;
@@ -61,13 +66,19 @@ public class UsuarioController {
     @PutMapping("editarDatosBasicos")
     public ResponseEntity<String> editarDatosBasicos(@RequestParam int id, @RequestParam String nombre,
             @RequestParam String apellido,
-            @RequestParam String email, @RequestParam(required = false) Integer idFacultad, @RequestParam int idRol) {
+            @RequestParam String email, @RequestParam int idRol, @RequestParam(required = false) Integer idFacultad,
+            @RequestParam(required = false) Integer idPrograma) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow();
 
         Rol rol = rolRepository.findById(idRol).orElseThrow();
         if (idFacultad != null) {
             Facultad facultad = facultadRepository.findById(idFacultad).orElseThrow();
             usuario.setFacultad(facultad);
+        }
+
+        if (idPrograma != null) {
+            Programa programa = programaRepository.findById(idPrograma).orElseThrow();
+            usuario.setPrograma(programa);
         }
         usuario.setNombre(nombre);
         usuario.setApellido(apellido);

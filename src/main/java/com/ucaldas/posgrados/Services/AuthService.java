@@ -13,10 +13,12 @@ import com.ucaldas.posgrados.DTO.AuthResponse;
 import com.ucaldas.posgrados.DTO.LoginRequest;
 import com.ucaldas.posgrados.DTO.RegisterRequest;
 import com.ucaldas.posgrados.Entity.Facultad;
+import com.ucaldas.posgrados.Entity.Programa;
 import com.ucaldas.posgrados.Entity.Rol;
 import com.ucaldas.posgrados.Entity.Usuario;
 import com.ucaldas.posgrados.Jwt.JwtService;
 import com.ucaldas.posgrados.Repository.FacultadRepository;
+import com.ucaldas.posgrados.Repository.ProgramaRepository;
 import com.ucaldas.posgrados.Repository.RolRepository;
 import com.ucaldas.posgrados.Repository.UsuarioRepository;
 
@@ -29,6 +31,7 @@ public class AuthService {
         private final UsuarioRepository userRepository;
         private final RolRepository rolRepository;
         private final FacultadRepository facultadRepository;
+        private final ProgramaRepository programaRepository;
         private final JwtService jwtService;
         private final PasswordEncoder passwordEncoder;
         private final AuthenticationManager authenticacionManager;
@@ -51,8 +54,13 @@ public class AuthService {
         public AuthResponse registro(RegisterRequest registerRequest) {
                 Rol rol = rolRepository.findById(registerRequest.getIdRol()).orElseThrow();
                 Facultad facultad = null;
+                Programa programa = null;
                 if (registerRequest.getIdFacultad() != null) {
                         facultad = facultadRepository.findById(registerRequest.getIdFacultad()).orElseThrow();
+                }
+
+                if (registerRequest.getIdPrograma() != null) {
+                        programa = programaRepository.findById(registerRequest.getIdPrograma()).orElseThrow();
                 }
                 Usuario usuario = Usuario.builder()
                                 .username(registerRequest.getUsername())
@@ -62,6 +70,7 @@ public class AuthService {
                                 .email(registerRequest.getEmail())
                                 .rol(rol)
                                 .facultad(facultad)
+                                .programa(programa)
                                 .enabled(true)
                                 .build();
 
