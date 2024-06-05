@@ -69,12 +69,12 @@ public class EjecucionPresupuestalController {
 
     @GetMapping("/listarPorFacultad")
     public @ResponseBody Iterable<EjecucionPresupuestal> listarPorFacultad(@RequestParam int idFacultad) {
-        return ejecucionPresupuestalRepository.findByPresupuestoFacultadId(idFacultad);
+        return ejecucionPresupuestalRepository.findByPresupuestoCohorteProgramaFacultadId(idFacultad);
     }
 
     @GetMapping("/listarPorPrograma")
     public @ResponseBody Iterable<EjecucionPresupuestal> listarPorPrograma(@RequestParam int idPrograma) {
-        return ejecucionPresupuestalRepository.findByPresupuestoProgramaId(idPrograma);
+        return ejecucionPresupuestalRepository.findByPresupuestoCohorteProgramaId(idPrograma);
     }
 
     // Se utiliza para actualizar el atributo ingresosTotales de la clase

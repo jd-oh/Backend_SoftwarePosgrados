@@ -44,8 +44,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/presupuesto/crear",
                                                                 "/presupuesto/actualizar",
                                                                 "/presupuesto/enviarParaRevision",
-                                                                "/presupuesto/enviarParaRevision",
-                                                                "/presupuesto/eliminar,")
+                                                                "/presupuesto/eliminar")
                                                 .hasAuthority("DIRECTOR")
                                                 // DECANO
                                                 .requestMatchers("/presupuesto/aprobar",
