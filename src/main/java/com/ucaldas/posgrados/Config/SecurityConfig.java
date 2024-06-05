@@ -45,65 +45,65 @@ public class SecurityConfig {
                                                                 "/presupuesto/actualizar",
                                                                 "/presupuesto/enviarParaRevision",
                                                                 "/presupuesto/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
                                                 // DECANO
                                                 .requestMatchers("/presupuesto/aprobar",
                                                                 "/presupuesto/listarPorFacultad")
-                                                .hasAuthority("DECANO")
+                                                .hasAnyAuthority("DECANO", "ADMIN")
                                                 // DIRECTOR Y DECANO
                                                 .requestMatchers("/presupuesto/buscarPorCohorte",
                                                                 "/presupuesto/listarPorPrograma",
                                                                 "/presupuesto/ingresosTotales")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-                                                // ADMIN
-                                                .requestMatchers("/presupuesto/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Ejecución Presupuestal */
                                                 // DIRECTOR
                                                 .requestMatchers("/ejecucionPresupuestal/crear",
                                                                 "/ejecucionPresupuestal/listarPorPrograma")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
                                                 // DECANO
                                                 .requestMatchers("/ejecucionPresupuestal/listarPorFacultad")
-                                                .hasAuthority("DECANO")
+                                                .hasAnyAuthority("DECANO", "ADMIN")
                                                 // DIRECTOR Y DECANO
                                                 .requestMatchers("/ejecucionPresupuestal/listarPorPresupuesto",
                                                                 "/ejecucionPresupuestal/ingresosTotales")
                                                 .hasAnyAuthority("DECANO",
-                                                                "DIRECTOR")
-
-                                                // ADMIN
-                                                .requestMatchers("/ejecucionPresupuestal/**").hasAuthority("ADMIN")
+                                                                "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Facultad: Sólo admin */
-                                                .requestMatchers("/facultad/**").hasAuthority("ADMIN")
+                                                .requestMatchers("/facultad/crear", "/facultad/actualizar",
+                                                                "/facultad/eliminar", "/facultad/listar")
+                                                .hasAuthority("ADMIN")
 
                                                 /* Permisos de Programa: Sólo admin */
-                                                .requestMatchers("/programa/**").hasAuthority("ADMIN")
+                                                .requestMatchers("/programa/crear", "/programa/actualizar",
+                                                                "/programa/eliminar", "/programa/listar")
+                                                .hasAuthority("ADMIN")
 
                                                 /* Permisos de Rol: Sólo admin */
-                                                .requestMatchers("/rol/**").hasAuthority("ADMIN")
+                                                .requestMatchers("/rol/crear", "/rol/actualizar",
+                                                                "/rol/eliminar", "/rol/listar")
+                                                .hasAuthority("ADMIN")
 
                                                 /* Permisos de Usuario */
                                                 // DIRECTOR Y DECANO
                                                 .requestMatchers("/usuario/editarDatosBasicos")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 // ADMIN
-                                                .requestMatchers("/usuario/**").hasAuthority("ADMIN")
+                                                .requestMatchers("/usuario/desactivar", "/usuario/listar",
+                                                                "/usuario/activar")
+                                                .hasAuthority("ADMIN")
 
                                                 /* Permisos de Cohorte */
                                                 // DIRECTOR
                                                 .requestMatchers("/cohorte/crear", "/cohorte/actualizar",
                                                                 "/cohorte/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
 
                                                 // DIRECTOR Y DECANO
                                                 .requestMatchers("/cohorte/listar")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-
-                                                // ADMIN
-                                                .requestMatchers("/cohorte/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Egreso Descuento */
                                                 // DIRECTOR
@@ -112,7 +112,7 @@ public class SecurityConfig {
                                                                 "/egresoDescuento/crearEgresoFueraDelPresupuesto",
                                                                 "/egresoDescuento/actualizar",
                                                                 "egresoDescuento/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
                                                                 "egresoDescuento/listarPorPresupuesto",
@@ -120,9 +120,7 @@ public class SecurityConfig {
 
                                                                 "egresoDescuento/totalEgresosDescuentos",
                                                                 "egresoDescuento/totalEgresosDescuentosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-                                                // ADMIN
-                                                .requestMatchers("/egresoDescuento/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Egreso General */
                                                 // DIRECTOR
@@ -131,7 +129,7 @@ public class SecurityConfig {
                                                                 "/egresoGeneral/crearEgresoFueraDelPresupuesto",
                                                                 "/egresoGeneral/actualizar",
                                                                 "egresoGeneral/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
                                                                 "egresoGeneral/listarPorPresupuesto",
@@ -139,9 +137,7 @@ public class SecurityConfig {
 
                                                                 "egresoGeneral/totalEgresosDescuentos",
                                                                 "egresoGeneral/totalEgresosDescuentosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-                                                // ADMIN
-                                                .requestMatchers("/egresoGeneral/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Egreso Inversion */
                                                 // DIRECTOR
@@ -150,7 +146,7 @@ public class SecurityConfig {
                                                                 "/egresoInversion/crearEgresoFueraDelPresupuesto",
                                                                 "/egresoInversion/actualizar",
                                                                 "egresoInversion/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
 
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
@@ -159,10 +155,7 @@ public class SecurityConfig {
 
                                                                 "egresoInversion/totalEgresosDescuentos",
                                                                 "egresoInversion/totalEgresosDescuentosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-
-                                                // ADMIN
-                                                .requestMatchers("/egresoInversion/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Egreso Otro */
                                                 // DIRECTOR
@@ -171,7 +164,7 @@ public class SecurityConfig {
                                                                 "/egresoOtro/crearEgresoFueraDelPresupuesto",
                                                                 "/egresoOtro/actualizar",
                                                                 "egresoOtro/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
 
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
@@ -180,10 +173,7 @@ public class SecurityConfig {
 
                                                                 "egresoOtro/totalEgresosDescuentos",
                                                                 "egresoOtro/totalEgresosDescuentosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-
-                                                // ADMIN
-                                                .requestMatchers("/egresoOtro/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Egreso Otros Serv Docente */
                                                 // DIRECTOR
@@ -192,7 +182,7 @@ public class SecurityConfig {
                                                                 "/egresoOtrosServDocente/crearEgresoFueraDelPresupuesto",
                                                                 "/egresoOtrosServDocente/actualizar",
                                                                 "egresoOtrosServDocente/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
 
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
@@ -201,10 +191,7 @@ public class SecurityConfig {
 
                                                                 "egresoOtrosServDocente/totalEgresosDescuentos",
                                                                 "egresoOtrosServDocente/totalEgresosDescuentosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-
-                                                // ADMIN
-                                                .requestMatchers("/egresoOtrosServDocente/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Egreso Recurrente Adm */
                                                 // DIRECTOR
@@ -213,7 +200,7 @@ public class SecurityConfig {
                                                                 "/egresoRecurrenteAdm/crearEgresoFueraDelPresupuesto",
                                                                 "/egresoRecurrenteAdm/actualizar",
                                                                 "egresoRecurrenteAdm/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
 
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
@@ -222,10 +209,7 @@ public class SecurityConfig {
 
                                                                 "egresoRecurrenteAdm/totalEgresosDescuentos",
                                                                 "egresoRecurrenteAdm/totalEgresosDescuentosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-
-                                                // ADMIN
-                                                .requestMatchers("/egresoRecurrenteAdm/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Egreso Serv Docente */
                                                 // DIRECTOR
@@ -234,7 +218,7 @@ public class SecurityConfig {
                                                                 "/egresoServDocente/crearEgresoFueraDelPresupuesto",
                                                                 "/egresoServDocente/actualizar",
                                                                 "egresoServDocente/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
 
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
@@ -243,10 +227,7 @@ public class SecurityConfig {
 
                                                                 "egresoServDocente/totalEgresosDescuentos",
                                                                 "egresoServDocente/totalEgresosDescuentosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-
-                                                // ADMIN
-                                                .requestMatchers("/egresoServDocente/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Egreso Serv No Docente */
                                                 // DIRECTOR
@@ -255,7 +236,7 @@ public class SecurityConfig {
                                                                 "/egresoServNoDocente/crearEgresoFueraDelPresupuesto",
                                                                 "/egresoServNoDocente/actualizar",
                                                                 "egresoServNoDocente/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
 
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
@@ -264,10 +245,7 @@ public class SecurityConfig {
 
                                                                 "egresoServNoDocente/totalEgresosDescuentos",
                                                                 "egresoServNoDocente/totalEgresosDescuentosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-
-                                                // ADMIN
-                                                .requestMatchers("/egresoServNoDocente/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Egreso Transferencia */
                                                 // DIRECTOR
@@ -276,7 +254,7 @@ public class SecurityConfig {
                                                                 "/egresoTransferencia/crearEgresoFueraDelPresupuesto",
                                                                 "/egresoTransferencia/actualizar",
                                                                 "egresoTransferencia/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
 
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
@@ -285,10 +263,7 @@ public class SecurityConfig {
 
                                                                 "egresoTransferencia/totalEgresosDescuentos",
                                                                 "egresoTransferencia/totalEgresosDescuentosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-
-                                                // ADMIN
-                                                .requestMatchers("/egresoTransferencia/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 /* Permisos de Egreso Viaje */
                                                 // DIRECTOR
@@ -297,7 +272,7 @@ public class SecurityConfig {
                                                                 "/egresoViaje/crearEgresoFueraDelPresupuesto",
                                                                 "/egresoViaje/actualizar",
                                                                 "egresoViaje/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
 
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
@@ -306,18 +281,15 @@ public class SecurityConfig {
 
                                                                 "egresoViaje/totalEgresosDescuentos",
                                                                 "egresoViaje/totalEgresosDescuentosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
-                                                // ADMIN
-                                                .requestMatchers("/egresoViaje/**").hasAuthority("ADMIN")
-
-                                                /* Permisos de Ingresp */
+                                                /* Permisos de Ingreso */
                                                 // DIRECTOR
                                                 .requestMatchers("/ingreso/crear",
                                                                 "/ingreso/crearIngresoEjecucionDelPresupuesto",
                                                                 "/ingreso/crearIngresoFueraDelPresupuesto",
                                                                 "/ingreso/actualizar", "ingreso/eliminar")
-                                                .hasAuthority("DIRECTOR")
+                                                .hasAnyAuthority("DIRECTOR", "ADMIN")
 
                                                 // DECANO Y DIRECTOR
                                                 .requestMatchers(
@@ -326,10 +298,7 @@ public class SecurityConfig {
 
                                                                 "ingreso/totalIngresos",
                                                                 "ingreso/totalIngresosEjecucion")
-                                                .hasAnyAuthority("DECANO", "DIRECTOR")
-
-                                                // ADMIN
-                                                .requestMatchers("/ingreso/**").hasAuthority("ADMIN")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
                                                 // Se debe estar autenticado para acceder a cualquier otra ruta que no
                                                 // sea login o registro
