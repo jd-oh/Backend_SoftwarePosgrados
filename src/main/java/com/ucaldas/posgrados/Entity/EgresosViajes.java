@@ -1,38 +1,22 @@
 package com.ucaldas.posgrados.Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class EgresosViajes {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+
+@EqualsAndHashCode(callSuper = true)
+public class EgresosViajes extends RegistroFinanciero {
 
     private String descripcion;
+
     private int numPersonas;
-
-    @ManyToOne
-    @JoinColumn(name = "idPresupuesto", referencedColumnName = "id")
-    @JsonBackReference
-    private Presupuesto presupuesto;
-
-    @ManyToOne
-    @JoinColumn(name = "idEjecucionPresupuestal", referencedColumnName = "id")
-    @JsonBackReference
-    private EjecucionPresupuestal ejecucionPresupuestal;
 
     private double valorTransporte;
 
@@ -42,9 +26,4 @@ public class EgresosViajes {
 
     private double valorTotal;
 
-    private String fechaHoraCreacion;
-
-    private String fechaHoraUltimaModificacion;
-
-    private EtiquetaEgresoIngreso etiquetaEgresoIngreso;
 }

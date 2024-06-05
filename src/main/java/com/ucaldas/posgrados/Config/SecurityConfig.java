@@ -95,8 +95,12 @@ public class SecurityConfig {
                                                 /* Permisos de Cohorte */
                                                 // DIRECTOR
                                                 .requestMatchers("/cohorte/crear", "/cohorte/actualizar",
-                                                                "/cohorte/eliminar", "/cohorte/listar")
+                                                                "/cohorte/eliminar")
                                                 .hasAuthority("DIRECTOR")
+
+                                                // DIRECTOR Y DECANO
+                                                .requestMatchers("/cohorte/listar")
+                                                .hasAnyAuthority("DECANO", "DIRECTOR")
 
                                                 // ADMIN
                                                 .requestMatchers("/cohorte/**").hasAuthority("ADMIN")
