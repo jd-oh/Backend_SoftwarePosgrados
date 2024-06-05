@@ -97,9 +97,9 @@ public class IngresosController {
     }
 
     /*
-     * Se crea un egreso en la ejecución presupuestal de un elemento que se tuvo en
+     * Se crea un ingreso en la ejecución presupuestal de un elemento que se tuvo en
      * cuenta en el presupuesto.
-     * En el frontend habrá una lista de egresos del presupuesto en la sección de
+     * En el frontend habrá una lista de ingreso del presupuesto en la sección de
      * descuentos. Cuando se elija uno, se cargará
      * toda la información de este en los campos, si se guarda así tal como está
      * entonces se pondrá la etiqueta MISMOVALOR, en cambio
@@ -107,8 +107,8 @@ public class IngresosController {
      * 
      * Concepto no se puede modificar.
      */
-    @PostMapping("/crearEgresoEjecucionDelPresupuesto")
-    public @ResponseBody String crearEgresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
+    @PostMapping("/crearIngresoEjecucionDelPresupuesto")
+    public @ResponseBody String crearIngresoEjecucionDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
             @RequestParam String concepto,
             @RequestParam double valor, @RequestParam int idIngreso) {
 
@@ -149,7 +149,7 @@ public class IngresosController {
     }
 
     /*
-     * Guarda los valores en un objeto del tipo del egreso.
+     * Guarda los valores en un objeto del tipo del ingreso.
      */
 
     private Ingresos guardarValoresEgresoEjecucion(Ingresos ingreso,
@@ -170,11 +170,11 @@ public class IngresosController {
     }
 
     /*
-     * Se crea un egreso en la ejecución presupuestal de un elemento que no se tuvo
+     * Se crea un ingreso en la ejecución presupuestal de un elemento que no se tuvo
      * en cuenta en el presupuesto. (Valores en blanco)
      */
-    @PostMapping("/crearEgresoFueraDelPresupuesto")
-    public @ResponseBody String crearEgresoFueraDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
+    @PostMapping("/crearIngresoFueraDelPresupuesto")
+    public @ResponseBody String crearIngresoFueraDelPresupuesto(@RequestParam int idEjecucionPresupuestal,
             @RequestParam String concepto,
             @RequestParam double valor) {
 

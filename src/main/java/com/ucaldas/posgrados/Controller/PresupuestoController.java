@@ -75,6 +75,16 @@ public class PresupuestoController {
         return presupuestoRepository.findAllByOrderByEstadoAsc();
     }
 
+    @GetMapping("/listarPorPrograma")
+    public @ResponseBody Iterable<Presupuesto> listarPorPrograma(@RequestParam int idPrograma) {
+        return presupuestoRepository.findByCohorteProgramaId(idPrograma);
+    }
+
+    @GetMapping("/listarPorFacultad")
+    public @ResponseBody Iterable<Presupuesto> listarPorFacultad(@RequestParam int idFacultad) {
+        return presupuestoRepository.findByCohorteProgramaFacultadId(idFacultad);
+    }
+
     @GetMapping("/buscar")
     public @ResponseBody Optional<Presupuesto> buscar(@RequestParam int id) {
         return presupuestoRepository.findById(id);

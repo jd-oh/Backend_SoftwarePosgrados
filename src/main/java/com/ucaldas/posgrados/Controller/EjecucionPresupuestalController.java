@@ -43,6 +43,11 @@ public class EjecucionPresupuestalController {
             }
 
             EjecucionPresupuestal ejecucionPresupuestal = new EjecucionPresupuestal();
+            ejecucionPresupuestal.setBalanceGeneralEjecucion(0);
+            ejecucionPresupuestal.setEgresosProgramaTotalesEjecucion(0);
+            ejecucionPresupuestal.setEgresosRecurrentesUniversidadTotalesEjecucion(0);
+            ejecucionPresupuestal.setIngresosTotalesEjecucion(0);
+
             ejecucionPresupuestal.setPresupuesto(presupuesto.get());
 
             ejecucionPresupuestalRepository.save(ejecucionPresupuestal);
@@ -55,6 +60,21 @@ public class EjecucionPresupuestalController {
     @GetMapping("/listar")
     public @ResponseBody Iterable<EjecucionPresupuestal> listar() {
         return ejecucionPresupuestalRepository.findAll();
+    }
+
+    @GetMapping("/listarPorPresupuesto")
+    public @ResponseBody Optional<EjecucionPresupuestal> listarPorPresupuesto(@RequestParam int idPresupuesto) {
+        return ejecucionPresupuestalRepository.findByPresupuestoId(idPresupuesto);
+    }
+
+    @GetMapping("/listarPorFacultad")
+    public @ResponseBody Iterable<EjecucionPresupuestal> listarPorFacultad(@RequestParam int idFacultad) {
+        return ejecucionPresupuestalRepository.findByPresupuestoFacultadId(idFacultad);
+    }
+
+    @GetMapping("/listarPorPrograma")
+    public @ResponseBody Iterable<EjecucionPresupuestal> listarPorPrograma(@RequestParam int idPrograma) {
+        return ejecucionPresupuestalRepository.findByPresupuestoProgramaId(idPrograma);
     }
 
     // Se utiliza para actualizar el atributo ingresosTotales de la clase
