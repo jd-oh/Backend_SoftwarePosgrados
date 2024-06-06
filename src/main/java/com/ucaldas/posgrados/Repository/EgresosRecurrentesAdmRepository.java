@@ -10,4 +10,6 @@ public interface EgresosRecurrentesAdmRepository extends CrudRepository<EgresosR
 
     Iterable<EgresosRecurrentesAdm> findByPresupuestoId(int idPresupuesto);
 
+    Iterable<EgresosRecurrentesAdm> findByEjecucionPresupuestalId(int idEjecucionPresupuestal);
+
 }

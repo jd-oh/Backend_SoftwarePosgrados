@@ -44,6 +44,10 @@ public class Usuario implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "idFacultad", referencedColumnName = "id")
     Facultad facultad;
+
+    @ManyToOne
+    @JoinColumn(name = "idPrograma", referencedColumnName = "id")
+    Programa programa;
     boolean enabled;
 
     @Override

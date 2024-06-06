@@ -52,7 +52,13 @@ public class PresupuestoController {
             // los gastos e ingresos, después de este paso se puede cambiar el estado
             presupuesto.setEstado("borrador");
 
-            presupuesto.setFechaHoraCreacion(java.time.LocalDateTime.now().toString());
+            presupuesto.setFechaHoraCreacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " " + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute()
+                    + ":" + java.time.LocalDateTime.now().getSecond());
+            presupuesto.setFechaHoraUltimaModificacion("No ha sido modificado");
+            presupuesto.setFechaHoraEnviadoRevision("No ha sido enviado a revisión");
+            presupuesto.setFechaHoraAprobado("No ha sido enviado a revisión");
 
             // Asignar la programa al cohorte
             presupuesto.setCohorte(cohorte.get());
@@ -67,6 +73,16 @@ public class PresupuestoController {
     @GetMapping("/listar")
     public @ResponseBody Iterable<Presupuesto> listar() {
         return presupuestoRepository.findAllByOrderByEstadoAsc();
+    }
+
+    @GetMapping("/listarPorPrograma")
+    public @ResponseBody Iterable<Presupuesto> listarPorPrograma(@RequestParam int idPrograma) {
+        return presupuestoRepository.findByCohorteProgramaId(idPrograma);
+    }
+
+    @GetMapping("/listarPorFacultad")
+    public @ResponseBody Iterable<Presupuesto> listarPorFacultad(@RequestParam int idFacultad) {
+        return presupuestoRepository.findByCohorteProgramaFacultadId(idFacultad);
     }
 
     @GetMapping("/buscar")
@@ -88,11 +104,21 @@ public class PresupuestoController {
         Optional<Cohorte> cohorte = cohorteRepository.findById(idCohorte);
 
         if (presupuesto.isPresent() && cohorte.isPresent()) {
+            // Comprobar que el estado del presupuesto sea "borrador"
+            if (!presupuesto.get().getEstado().equals("borrador")) {
+                return "Error: No se puede modificar el presupuesto porque no está en estado de borrador";
+            }
             observaciones.ifPresent(presupuesto.get()::setObservaciones); // Si observaciones no es null, entonces se
                                                                           // asigna a presupuesto
             presupuesto.get().setCohorte(cohorte.get());
 
-            presupuesto.get().setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().toString());
+            presupuesto.get()
+                    .setFechaHoraUltimaModificacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                            + java.time.LocalDateTime.now().getMonthValue() + "/"
+                            + java.time.LocalDateTime.now().getYear() + " "
+                            + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute()
+                            + ":"
+                            + java.time.LocalDateTime.now().getSecond());
             presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
@@ -107,8 +133,17 @@ public class PresupuestoController {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
 
         if (presupuesto.isPresent()) {
+
+            // Comprobar que el presupuesto esté en estado "borrador"
+            if (!presupuesto.get().getEstado().equals("borrador")) {
+                return "Error: No se puede enviar a revisión porque el presupuesto no está en estado de borrador";
+            }
+
             presupuesto.get().setEstado("revision");
-            presupuesto.get().setFechaHoraEnviadoRevision(java.time.LocalDateTime.now().toString());
+            presupuesto.get().setFechaHoraEnviadoRevision(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " " + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute()
+                    + ":" + java.time.LocalDateTime.now().getSecond());
             presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
@@ -121,8 +156,16 @@ public class PresupuestoController {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
 
         if (presupuesto.isPresent()) {
+
+            // Comprobar que el presupuesto esté en estado "revision"
+            if (!presupuesto.get().getEstado().equals("revision")) {
+                return "Error: No se puede aprobar porque el presupuesto no está en estado de revisión";
+            }
             presupuesto.get().setEstado("aprobado");
-            presupuesto.get().setFechaHoraAprobado(java.time.LocalDateTime.now().toString());
+            presupuesto.get().setFechaHoraAprobado(java.time.LocalDateTime.now().getDayOfMonth() + "/"
+                    + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear()
+                    + " " + java.time.LocalDateTime.now().getHour() + ":" + java.time.LocalDateTime.now().getMinute()
+                    + ":" + java.time.LocalDateTime.now().getSecond());
 
             // Cómo ya está aprobado el presupuesto, se crea una ejecución presupuestal por
             // ahora vacía (sólo tiene el id del presupuesto)
@@ -241,6 +284,7 @@ public class PresupuestoController {
                     - presupuesto.get().getEgresosProgramaTotales()
                     - presupuesto.get().getEgresosRecurrentesUniversidadTotales());
 
+            // Hay un error acá
             presupuestoRepository.save(presupuesto.get());
             return "OK";
         } else {
@@ -321,6 +365,16 @@ public class PresupuestoController {
         } else {
             return "Error: Presupuesto no encontrado";
         }
+    }
+
+    @GetMapping("/listarAprobados")
+    public @ResponseBody Iterable<Presupuesto> listarAprobados() {
+        return presupuestoRepository.findByEstado("aprobado");
+    }
+
+    @GetMapping("/listarEnRevision")
+    public @ResponseBody Iterable<Presupuesto> listarEnRevision() {
+        return presupuestoRepository.findByEstado("revision");
     }
 
 }

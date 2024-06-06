@@ -10,4 +10,6 @@ public interface IngresosRepository extends CrudRepository<Ingresos, Integer> {
 
     Iterable<Ingresos> findByPresupuestoId(int idPresupuesto);
 
+    Iterable<Ingresos> findByEjecucionPresupuestalId(int idEjecucionPresupuestal);
+
 }

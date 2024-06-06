@@ -1,6 +1,7 @@
 package com.ucaldas.posgrados.Controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ucaldas.posgrados.DTO.AuthResponse;
 import com.ucaldas.posgrados.DTO.LoginRequest;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.passay.*;
 import org.passay.CharacterData;
@@ -20,6 +22,7 @@ import org.passay.CharacterData;
 @RestController
 @RequestMapping("/autenticacion")
 @RequiredArgsConstructor
+@CrossOrigin()
 public class AutenticacionController {
 
     private final AuthService authService;
@@ -42,7 +45,23 @@ public class AutenticacionController {
     @PostMapping(value = "/registro")
     public ResponseEntity<AuthResponse> registro(@RequestParam String nombre, @RequestParam String apellido,
             @RequestParam String email, @RequestParam int idRol,
-            @RequestParam int idFacultad) {
+            @RequestParam(required = false) Integer idFacultad, @RequestParam(required = false) Integer idPrograma) {
+
+        // Definir el ID de rol para ADMIN
+        final int ADMIN_ROLE_ID = 1; // Asumiendo que 1 es el ID para ADMIN
+        final int DIRECTOR_ROLE_ID = 3;
+
+        // Validar que idFacultad no sea null si el usuario no es ADMIN
+        if (idRol != ADMIN_ROLE_ID && idFacultad == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El idFacultad es obligatorio para usuarios no ADMIN");
+        }
+
+        // Validar que idPrograma no sea null si el usuario es DIRECTOR
+        if (idRol == DIRECTOR_ROLE_ID && idPrograma == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "El idPrograma es obligatorio para usuarios DIRECTOR");
+        }
 
         // numero al azar de dos cifras
         int numero = (int) (Math.random() * 90 + 10);
@@ -62,8 +81,9 @@ public class AutenticacionController {
         String password = generarPassword();
 
         String username = nombreUsuario + "." + apellidoUsuario + numero; // nombre.apellidoXX
+
         RegisterRequest registerRequest = new RegisterRequest(nombre, apellido, email, username, password, idRol,
-                idFacultad);
+                idFacultad, idPrograma);
         return ResponseEntity.ok(authService.registro(registerRequest));
     }
 
@@ -110,7 +130,7 @@ public class AutenticacionController {
         CharacterRule splCharRule = new CharacterRule(specialChars);
         splCharRule.setNumberOfCharacters(1);
 
-        String password = generator.generatePassword(8, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
+        String password = generator.generatePassword(15, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
 
         System.out.println(password);
         return password;
