@@ -32,6 +32,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/autenticacion/login",
                                                                 "/autenticacion/olvideMiPassword")
                                                 .permitAll()
+                                                .requestMatchers("/cdp/**").permitAll()
                                                 // DIRECTOR, ADMIN Y DECANO
                                                 .requestMatchers("/autenticacion/cambiarPassword",
                                                                 "/autenticacion/refrescarToken")
@@ -300,6 +301,34 @@ public class SecurityConfig {
                                                                 "ingreso/totalIngresosEjecucion")
                                                 .hasAnyAuthority("DECANO", "DIRECTOR", "ADMIN")
 
+                                                /* Permisos de Tipo Compensación: Sólo admin */
+                                                .requestMatchers("/tipoCompensacion/crear",
+                                                                "/tipoCompensacion/actualizar",
+                                                                "/tipoCompensacion/eliminar",
+                                                                "/tipoCompensacion/listar")
+                                                .hasAuthority("ADMIN")
+
+                                                /* Permisos de Tipo Costo: Sólo admin */
+                                                .requestMatchers("/tipoCosto/crear", "/tipoCosto/actualizar",
+                                                                "/tipoCosto/eliminar", "/tipoCosto/listar")
+                                                .hasAuthority("ADMIN")
+
+                                                /* Permisos de Tipo Descuento: Sólo admin */
+                                                .requestMatchers("/tipoDescuento/crear", "/tipoDescuento/actualizar",
+                                                                "/tipoDescuento/eliminar", "/tipoDescuento/listar")
+                                                .hasAuthority("ADMIN")
+
+                                                /* Permisos de Tipo Inversion: Sólo admin */
+                                                .requestMatchers("/tipoInversion/crear", "/tipoInversion/actualizar",
+                                                                "/tipoInversion/eliminar", "/tipoInversion/listar")
+                                                .hasAuthority("ADMIN")
+
+                                                /* Permisos de Tipo Transferencia: Sólo admin */
+                                                .requestMatchers("/tipoTransferencia/crear",
+                                                                "/tipoTransferencia/actualizar",
+                                                                "/tipoTransferencia/eliminar",
+                                                                "/tipoTransferencia/listar")
+                                                .hasAuthority("ADMIN")
                                                 // Se debe estar autenticado para acceder a cualquier otra ruta que no
                                                 // sea login o registro
                                                 .anyRequest().authenticated())

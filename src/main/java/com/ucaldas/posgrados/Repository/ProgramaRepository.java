@@ -11,4 +11,6 @@ public interface ProgramaRepository extends CrudRepository<Programa, Integer> {
 
     Iterable<Programa> findAllByFacultad(Facultad facultad);
 
+    Iterable<Programa> findAllByNombre(String nombrePrograma);
+
 }

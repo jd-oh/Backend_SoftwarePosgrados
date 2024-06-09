@@ -10,4 +10,6 @@ public interface CohorteRepository extends CrudRepository<Cohorte, Integer> {
 
     Iterable<Cohorte> findAllByOrderByFechaDesc();
 
+    Iterable<Cohorte> findByProgramaId(int idPrograma);
+
 }

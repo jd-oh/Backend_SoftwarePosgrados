@@ -82,8 +82,9 @@ public class PresupuestoController {
         return presupuestoRepository.findByCohorteProgramaId(idPrograma);
     }
 
-    @GetMapping("/listarPorFacultad")
-    public @ResponseBody Iterable<Presupuesto> listarPorFacultad(@AuthenticationPrincipal Usuario usuarioActual) {
+    @GetMapping("/listarPorFacultadPorRevisar")
+    public @ResponseBody Iterable<Presupuesto> listarPorFacultadPorRevisar(
+            @AuthenticationPrincipal Usuario usuarioActual) {
         if (usuarioActual.getRol().getNombre().equals("ADMIN")) {
             // Si el usuario es un administrador, devuelve todos los presupuestos
             return presupuestoRepository.findAll();
@@ -91,7 +92,35 @@ public class PresupuestoController {
             // Si el usuario no es un administrador, filtra los presupuestos por la facultad
             // del usuario
             int idFacultad = usuarioActual.getFacultad().getId();
-            return presupuestoRepository.findByCohorteProgramaFacultadId(idFacultad);
+            return presupuestoRepository.findByCohorteProgramaFacultadIdAndEstado(idFacultad, "revision");
+        }
+    }
+
+    @GetMapping("/listarPorFacultadAprobados")
+    public @ResponseBody Iterable<Presupuesto> listarPorFacultadAprobados(
+            @AuthenticationPrincipal Usuario usuarioActual) {
+        if (usuarioActual.getRol().getNombre().equals("ADMIN")) {
+            // Si el usuario es un administrador, devuelve todos los presupuestos
+            return presupuestoRepository.findAll();
+        } else {
+            // Si el usuario no es un administrador, filtra los presupuestos por la facultad
+            // del usuario
+            int idFacultad = usuarioActual.getFacultad().getId();
+            return presupuestoRepository.findByCohorteProgramaFacultadIdAndEstado(idFacultad, "aprobado");
+        }
+    }
+
+    @GetMapping("/listarPorFacultadDesaprobados")
+    public @ResponseBody Iterable<Presupuesto> listarPorFacultadDesaprobados(
+            @AuthenticationPrincipal Usuario usuarioActual) {
+        if (usuarioActual.getRol().getNombre().equals("ADMIN")) {
+            // Si el usuario es un administrador, devuelve todos los presupuestos
+            return presupuestoRepository.findAll();
+        } else {
+            // Si el usuario no es un administrador, filtra los presupuestos por la facultad
+            // del usuario
+            int idFacultad = usuarioActual.getFacultad().getId();
+            return presupuestoRepository.findByCohorteProgramaFacultadIdAndEstado(idFacultad, "desaprobado");
         }
     }
 
@@ -180,6 +209,25 @@ public class PresupuestoController {
             // Cómo ya está aprobado el presupuesto, se crea una ejecución presupuestal por
             // ahora vacía (sólo tiene el id del presupuesto)
             ejecucionPresupuestalController.crear(id);
+
+            presupuestoRepository.save(presupuesto.get());
+            return "OK";
+        } else {
+            return "Error: Presupuesto no encontrado";
+        }
+    }
+
+    @PutMapping(path = "/desaprobar")
+    public @ResponseBody String desaprobar(@RequestParam int id) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(id);
+
+        if (presupuesto.isPresent()) {
+
+            // Comprobar que el presupuesto esté en estado "revision"
+            if (!presupuesto.get().getEstado().equals("revision")) {
+                return "Error: No se puede aprobar porque el presupuesto no está en estado de revisión";
+            }
+            presupuesto.get().setEstado("desaprobado");
 
             presupuestoRepository.save(presupuesto.get());
             return "OK";

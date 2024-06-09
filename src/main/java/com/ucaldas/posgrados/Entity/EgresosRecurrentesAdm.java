@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -14,6 +15,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class EgresosRecurrentesAdm extends RegistroFinanciero {
 
+    @Getter
+    private final static String rubro = "Recurrentes Administrativos";
     private String unidad;
     private String cargo;
 

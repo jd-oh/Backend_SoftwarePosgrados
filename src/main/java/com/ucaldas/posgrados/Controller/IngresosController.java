@@ -66,10 +66,7 @@ public class IngresosController {
                     + java.time.LocalDateTime.now().getSecond());
             ingreso.setFechaHoraUltimaModificacion("No ha sido modificado");
 
-            // Aún no hay ejecución presupuestal porque no se sabe si el presupuesto será
-            // aprobado o no.
-            // La etiqueta también es nula porque se usa en la ejecución presupuestal
-            ingreso.setEjecucionPresupuestal(null);
+            // La etiqueta sólo se usa en la ejecución presupuestal
             ingreso.setEtiquetaEgresoIngreso(null);
 
             // Guardar el egreso general en el presupuesto
@@ -141,7 +138,7 @@ public class IngresosController {
         }
 
         // guardar el ingreso en la ejecución presupuestal
-        ejecucionPresupuestal.getIngresosEjecucion().add(ingreso);
+        // ejecucionPresupuestal.getIngresosEjecucion().add(ingreso);
 
         ejecucionPresupuestalRepository.save(ejecucionPresupuestal);
 
@@ -156,7 +153,7 @@ public class IngresosController {
             @RequestParam String concepto,
             @RequestParam double valor, EjecucionPresupuestal ejecucionPresupuestal) {
 
-        ingreso.setEjecucionPresupuestal(ejecucionPresupuestal);
+        // ingreso.setEjecucionPresupuestal(ejecucionPresupuestal);
         ingreso.setPresupuesto(null);
         ingreso.setConcepto(concepto);
         ingreso.setValor(valor);

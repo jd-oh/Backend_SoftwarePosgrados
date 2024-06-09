@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ucaldas.posgrados.DTO.TotalEjecucionResponse;
+import com.ucaldas.posgrados.Entity.Cdp;
 import com.ucaldas.posgrados.Entity.EjecucionPresupuestal;
 import com.ucaldas.posgrados.Entity.Presupuesto;
-
+import com.ucaldas.posgrados.Repository.CdpRepository;
 import com.ucaldas.posgrados.Repository.EjecucionPresupuestalRepository;
 import com.ucaldas.posgrados.Repository.PresupuestoRepository;
 
@@ -28,6 +30,9 @@ public class EjecucionPresupuestalController {
 
     @Autowired
     private EjecucionPresupuestalRepository ejecucionPresupuestalRepository;
+
+    @Autowired
+    private CdpRepository cdpRepository;
 
     // Se crea solo con el id del presupuesto porque al momento de que un
     // presupuesto es aprobado se crea una ejecución presupuestal
@@ -177,6 +182,60 @@ public class EjecucionPresupuestalController {
             return "OK";
         } else {
             return "Error: Ejecucion presupuestal no encontrada";
+        }
+    }
+
+    @GetMapping(path = "/totalesEjecucion")
+    public @ResponseBody TotalEjecucionResponse totalesEjecucion(@RequestParam int id) {
+        Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
+
+        int totalDescuentos = 0;
+        int totalGenerales = 0;
+        int totalInversiones = 0;
+        int totalOtros = 0;
+        int totalOtrosServDocentes = 0;
+        int totalRecurrentesAdm = 0;
+        int totalServDocentes = 0;
+        int totalServNoDocentes = 0;
+        int totalTransferencias = 0;
+        int totalViajes = 0;
+
+        if (ejecucionPresupuestal.isPresent()) {
+            // buscamos los CDP asociados a la ejecucion presupuestal, dependiendo de su
+            // rubro se suman los valores
+            Iterable<Cdp> cdps = cdpRepository.findByEjecucionPresupuestalId(id);
+            for (Cdp cdp : cdps) {
+                if (cdp.getRubro().equals("Descuentos")) {
+                    totalDescuentos += cdp.getValorTotal();
+                } else if (cdp.getRubro().equals("Generales")) {
+                    totalGenerales += cdp.getValorTotal();
+                } else if (cdp.getRubro().equals("Inversiones")) {
+                    totalInversiones += cdp.getValorTotal();
+                } else if (cdp.getRubro().equals("Otros")) {
+                    totalOtros += cdp.getValorTotal();
+                } else if (cdp.getRubro().equals("Otros Servicios Docentes")) {
+                    totalOtrosServDocentes += cdp.getValorTotal();
+                } else if (cdp.getRubro().equals("Recurrentes Adm")) {
+                    totalRecurrentesAdm += cdp.getValorTotal();
+                } else if (cdp.getRubro().equals("Servicios Docentes")) {
+                    totalServDocentes += cdp.getValorTotal();
+                } else if (cdp.getRubro().equals("Servicios No Docentes")) {
+                    totalServNoDocentes += cdp.getValorTotal();
+                } else if (cdp.getRubro().equals("Transferencias")) {
+                    totalTransferencias += cdp.getValorTotal();
+                } else if (cdp.getRubro().equals("Viajes")) {
+                    totalViajes += cdp.getValorTotal();
+                }
+            }
+
+            return TotalEjecucionResponse.builder().totalDescuentos(totalDescuentos).totalGenerales(totalGenerales)
+                    .totalInversiones(totalInversiones).totalOtros(totalOtros)
+                    .totalOtrosServDocentes(totalOtrosServDocentes)
+                    .totalRecurrentesAdm(totalRecurrentesAdm).totalServDocentes(totalServDocentes)
+                    .totalServNoDocentes(totalServNoDocentes).totalTransferencias(totalTransferencias)
+                    .totalViajes(totalViajes).build();
+        } else {
+            return null;
         }
     }
 
