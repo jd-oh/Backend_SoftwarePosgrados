@@ -12,7 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ucaldas.posgrados.DTO.TotalEjecucionResponse;
 import com.ucaldas.posgrados.Entity.Cdp;
+import com.ucaldas.posgrados.Entity.EgresoCDP;
+import com.ucaldas.posgrados.Entity.EgresoDescuentoCDP;
+import com.ucaldas.posgrados.Entity.EgresoGeneralCDP;
+import com.ucaldas.posgrados.Entity.EgresoInversionCDP;
+import com.ucaldas.posgrados.Entity.EgresoOtroCDP;
+import com.ucaldas.posgrados.Entity.EgresoOtroServDocenteCDP;
+import com.ucaldas.posgrados.Entity.EgresoRecurrenteAdmCDP;
+import com.ucaldas.posgrados.Entity.EgresoServDocenteCDP;
+import com.ucaldas.posgrados.Entity.EgresoServNoDocenteCDP;
+import com.ucaldas.posgrados.Entity.EgresoTransferenciaCDP;
+import com.ucaldas.posgrados.Entity.EgresoViajeCDP;
 import com.ucaldas.posgrados.Entity.EjecucionPresupuestal;
+import com.ucaldas.posgrados.Entity.EtiquetaEgresoIngreso;
 import com.ucaldas.posgrados.Entity.Presupuesto;
 import com.ucaldas.posgrados.Repository.CdpRepository;
 import com.ucaldas.posgrados.Repository.EjecucionPresupuestalRepository;
@@ -189,16 +201,16 @@ public class EjecucionPresupuestalController {
     public @ResponseBody TotalEjecucionResponse totalesEjecucion(@RequestParam int id) {
         Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
 
-        int totalDescuentos = 0;
-        int totalGenerales = 0;
-        int totalInversiones = 0;
-        int totalOtros = 0;
-        int totalOtrosServDocentes = 0;
-        int totalRecurrentesAdm = 0;
-        int totalServDocentes = 0;
-        int totalServNoDocentes = 0;
-        int totalTransferencias = 0;
-        int totalViajes = 0;
+        double totalDescuentos = 0;
+        double totalGenerales = 0;
+        double totalInversiones = 0;
+        double totalOtros = 0;
+        double totalOtrosServDocentes = 0;
+        double totalRecurrentesAdm = 0;
+        double totalServDocentes = 0;
+        double totalServNoDocentes = 0;
+        double totalTransferencias = 0;
+        double totalViajes = 0;
 
         if (ejecucionPresupuestal.isPresent()) {
             // buscamos los CDP asociados a la ejecucion presupuestal, dependiendo de su
@@ -207,6 +219,7 @@ public class EjecucionPresupuestalController {
             for (Cdp cdp : cdps) {
                 if (cdp.getRubro().equals("Descuentos")) {
                     totalDescuentos += cdp.getValorTotal();
+
                 } else if (cdp.getRubro().equals("Generales")) {
                     totalGenerales += cdp.getValorTotal();
                 } else if (cdp.getRubro().equals("Inversiones")) {
@@ -225,6 +238,301 @@ public class EjecucionPresupuestalController {
                     totalTransferencias += cdp.getValorTotal();
                 } else if (cdp.getRubro().equals("Viajes")) {
                     totalViajes += cdp.getValorTotal();
+                }
+            }
+
+            return TotalEjecucionResponse.builder().totalDescuentos(totalDescuentos).totalGenerales(totalGenerales)
+                    .totalInversiones(totalInversiones).totalOtros(totalOtros)
+                    .totalOtrosServDocentes(totalOtrosServDocentes)
+                    .totalRecurrentesAdm(totalRecurrentesAdm).totalServDocentes(totalServDocentes)
+                    .totalServNoDocentes(totalServNoDocentes).totalTransferencias(totalTransferencias)
+                    .totalViajes(totalViajes).build();
+        } else {
+            return null;
+        }
+    }
+
+    @GetMapping(path = "/TotalesDelPresupuestoMismoValor")
+    public @ResponseBody TotalEjecucionResponse TotalesDelPresupuestoMismoValor(@RequestParam int id) {
+        Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
+
+        double totalDescuentos = 0;
+        double totalGenerales = 0;
+        double totalInversiones = 0;
+        double totalOtros = 0;
+        double totalOtrosServDocentes = 0;
+        double totalRecurrentesAdm = 0;
+        double totalServDocentes = 0;
+        double totalServNoDocentes = 0;
+        double totalTransferencias = 0;
+        double totalViajes = 0;
+
+        if (ejecucionPresupuestal.isPresent()) {
+
+            Iterable<Cdp> cdps = cdpRepository.findByEjecucionPresupuestalId(id);
+
+            for (Cdp cdp : cdps) {
+
+                for (EgresoCDP egresocdp : cdp.getEgresosCDP()) {
+                    if (egresocdp instanceof EgresoGeneralCDP) {
+                        EgresoGeneralCDP egresoGeneralCDP = (EgresoGeneralCDP) egresocdp;
+                        if (egresoGeneralCDP.getEgresoGeneral()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR) {
+                            totalGenerales += egresoGeneralCDP.getEgresoGeneral().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoDescuentoCDP) {
+                        EgresoDescuentoCDP egresoDescuentoCDP = (EgresoDescuentoCDP) egresocdp;
+                        if (egresoDescuentoCDP.getEgresoDescuento()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR) {
+                            totalDescuentos += egresoDescuentoCDP.getEgresoDescuento().getTotalDescuento();
+                        }
+                    } else if (egresocdp instanceof EgresoInversionCDP) {
+                        EgresoInversionCDP egresoInversionCDP = (EgresoInversionCDP) egresocdp;
+                        if (egresoInversionCDP.getEgresoInversion()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR) {
+                            totalInversiones += egresoInversionCDP.getEgresoInversion().getValor();
+                        }
+                    } else if (egresocdp instanceof EgresoRecurrenteAdmCDP) {
+                        EgresoRecurrenteAdmCDP egresoRecurrenteAdmCDP = (EgresoRecurrenteAdmCDP) egresocdp;
+                        if (egresoRecurrenteAdmCDP.getEgresoRecurrenteAdm()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR) {
+                            totalRecurrentesAdm += egresoRecurrenteAdmCDP.getEgresoRecurrenteAdm().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoServDocenteCDP) {
+                        EgresoServDocenteCDP egresoServDocenteCDP = (EgresoServDocenteCDP) egresocdp;
+                        if (egresoServDocenteCDP.getEgresoServDocente()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR) {
+                            totalServDocentes += egresoServDocenteCDP.getEgresoServDocente().getTotalPagoProfesor();
+                        }
+                    } else if (egresocdp instanceof EgresoServNoDocenteCDP) {
+                        EgresoServNoDocenteCDP egresoServNoDocenteCDP = (EgresoServNoDocenteCDP) egresocdp;
+                        if (egresoServNoDocenteCDP.getEgresoServNoDocente()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR) {
+                            totalServNoDocentes += egresoServNoDocenteCDP.getEgresoServNoDocente().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoTransferenciaCDP) {
+                        EgresoTransferenciaCDP egresoTransferenciaCDP = (EgresoTransferenciaCDP) egresocdp;
+                        if (egresoTransferenciaCDP.getEgresoTransferencia()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR) {
+                            totalTransferencias += egresoTransferenciaCDP.getEgresoTransferencia().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoViajeCDP) {
+                        EgresoViajeCDP egresoViajeCD = (EgresoViajeCDP) egresocdp;
+                        if (egresoViajeCD.getEgresoViaje()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR) {
+                            totalViajes += egresoViajeCD.getEgresoViaje().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoOtroCDP) {
+                        EgresoOtroCDP egresoOtroCDP = (EgresoOtroCDP) egresocdp;
+                        if (egresoOtroCDP.getEgresoOtro()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR) {
+                            totalOtros += egresoOtroCDP.getEgresoOtro().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoOtroServDocenteCDP) {
+                        EgresoOtroServDocenteCDP egresoOtroServDocenteCDP = (EgresoOtroServDocenteCDP) egresocdp;
+                        if (egresoOtroServDocenteCDP.getEgresoOtroServDocente()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_MISMOVALOR) {
+                            totalOtrosServDocentes += egresoOtroServDocenteCDP.getEgresoOtroServDocente()
+                                    .getValorTotal();
+                        }
+                    }
+                }
+
+            }
+
+            return TotalEjecucionResponse.builder().totalDescuentos(totalDescuentos).totalGenerales(totalGenerales)
+                    .totalInversiones(totalInversiones).totalOtros(totalOtros)
+                    .totalOtrosServDocentes(totalOtrosServDocentes)
+                    .totalRecurrentesAdm(totalRecurrentesAdm).totalServDocentes(totalServDocentes)
+                    .totalServNoDocentes(totalServNoDocentes).totalTransferencias(totalTransferencias)
+                    .totalViajes(totalViajes).build();
+        }
+        return null;
+    }
+
+    @GetMapping(path = "/TotalesDelPresupuestoOtroValor")
+    public @ResponseBody TotalEjecucionResponse TotalesDelPresupuestoOtroValor(@RequestParam int id) {
+        Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
+
+        double totalDescuentos = 0;
+        double totalGenerales = 0;
+        double totalInversiones = 0;
+        double totalOtros = 0;
+        double totalOtrosServDocentes = 0;
+        double totalRecurrentesAdm = 0;
+        double totalServDocentes = 0;
+        double totalServNoDocentes = 0;
+        double totalTransferencias = 0;
+        double totalViajes = 0;
+
+        if (ejecucionPresupuestal.isPresent()) {
+
+            Iterable<Cdp> cdps = cdpRepository.findByEjecucionPresupuestalId(id);
+
+            for (Cdp cdp : cdps) {
+
+                for (EgresoCDP egresocdp : cdp.getEgresosCDP()) {
+                    if (egresocdp instanceof EgresoGeneralCDP) {
+                        EgresoGeneralCDP egresoGeneralCDP = (EgresoGeneralCDP) egresocdp;
+                        if (egresoGeneralCDP.getEgresoGeneral()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR) {
+                            totalGenerales += egresoGeneralCDP.getEgresoGeneral().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoDescuentoCDP) {
+                        EgresoDescuentoCDP egresoDescuentoCDP = (EgresoDescuentoCDP) egresocdp;
+                        if (egresoDescuentoCDP.getEgresoDescuento()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR) {
+                            totalDescuentos += egresoDescuentoCDP.getEgresoDescuento().getTotalDescuento();
+                        }
+                    } else if (egresocdp instanceof EgresoInversionCDP) {
+                        EgresoInversionCDP egresoInversionCDP = (EgresoInversionCDP) egresocdp;
+                        if (egresoInversionCDP.getEgresoInversion()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR) {
+                            totalInversiones += egresoInversionCDP.getEgresoInversion().getValor();
+                        }
+                    } else if (egresocdp instanceof EgresoRecurrenteAdmCDP) {
+                        EgresoRecurrenteAdmCDP egresoRecurrenteAdmCDP = (EgresoRecurrenteAdmCDP) egresocdp;
+                        if (egresoRecurrenteAdmCDP.getEgresoRecurrenteAdm()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR) {
+                            totalRecurrentesAdm += egresoRecurrenteAdmCDP.getEgresoRecurrenteAdm().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoServDocenteCDP) {
+                        EgresoServDocenteCDP egresoServDocenteCDP = (EgresoServDocenteCDP) egresocdp;
+                        if (egresoServDocenteCDP.getEgresoServDocente()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR) {
+                            totalServDocentes += egresoServDocenteCDP.getEgresoServDocente().getTotalPagoProfesor();
+                        }
+                    } else if (egresocdp instanceof EgresoServNoDocenteCDP) {
+                        EgresoServNoDocenteCDP egresoServNoDocenteCDP = (EgresoServNoDocenteCDP) egresocdp;
+                        if (egresoServNoDocenteCDP.getEgresoServNoDocente()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR) {
+                            totalServNoDocentes += egresoServNoDocenteCDP.getEgresoServNoDocente().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoTransferenciaCDP) {
+                        EgresoTransferenciaCDP egresoTransferenciaCDP = (EgresoTransferenciaCDP) egresocdp;
+                        if (egresoTransferenciaCDP.getEgresoTransferencia()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR) {
+                            totalTransferencias += egresoTransferenciaCDP.getEgresoTransferencia().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoViajeCDP) {
+                        EgresoViajeCDP egresoViajeCD = (EgresoViajeCDP) egresocdp;
+                        if (egresoViajeCD.getEgresoViaje()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR) {
+                            totalViajes += egresoViajeCD.getEgresoViaje().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoOtroCDP) {
+                        EgresoOtroCDP egresoOtroCDP = (EgresoOtroCDP) egresocdp;
+                        if (egresoOtroCDP.getEgresoOtro()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR) {
+                            totalOtros += egresoOtroCDP.getEgresoOtro().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoOtroServDocenteCDP) {
+                        EgresoOtroServDocenteCDP egresoOtroServDocenteCDP = (EgresoOtroServDocenteCDP) egresocdp;
+                        if (egresoOtroServDocenteCDP.getEgresoOtroServDocente()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.DELPRESUPUESTO_OTROVALOR) {
+                            totalOtrosServDocentes += egresoOtroServDocenteCDP.getEgresoOtroServDocente()
+                                    .getValorTotal();
+                        }
+                    }
+                }
+            }
+
+            return TotalEjecucionResponse.builder().totalDescuentos(totalDescuentos).totalGenerales(totalGenerales)
+                    .totalInversiones(totalInversiones).totalOtros(totalOtros)
+                    .totalOtrosServDocentes(totalOtrosServDocentes)
+                    .totalRecurrentesAdm(totalRecurrentesAdm).totalServDocentes(totalServDocentes)
+                    .totalServNoDocentes(totalServNoDocentes).totalTransferencias(totalTransferencias)
+                    .totalViajes(totalViajes).build();
+
+        } else {
+            return null;
+        }
+    }
+
+    @GetMapping(path = "/TotalesFueraDelPresupuesto")
+    public @ResponseBody TotalEjecucionResponse TotalesFueraDelPresupuesto(@RequestParam int id) {
+        Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
+
+        double totalDescuentos = 0;
+        double totalGenerales = 0;
+        double totalInversiones = 0;
+        double totalOtros = 0;
+        double totalOtrosServDocentes = 0;
+        double totalRecurrentesAdm = 0;
+        double totalServDocentes = 0;
+        double totalServNoDocentes = 0;
+        double totalTransferencias = 0;
+        double totalViajes = 0;
+
+        if (ejecucionPresupuestal.isPresent()) {
+
+            Iterable<Cdp> cdps = cdpRepository.findByEjecucionPresupuestalId(id);
+
+            for (Cdp cdp : cdps) {
+
+                for (EgresoCDP egresocdp : cdp.getEgresosCDP()) {
+                    if (egresocdp instanceof EgresoGeneralCDP) {
+                        EgresoGeneralCDP egresoGeneralCDP = (EgresoGeneralCDP) egresocdp;
+                        if (egresoGeneralCDP.getEgresoGeneral()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.FUERADELPRESUPUESTO) {
+                            totalGenerales += egresoGeneralCDP.getEgresoGeneral().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoDescuentoCDP) {
+                        EgresoDescuentoCDP egresoDescuentoCDP = (EgresoDescuentoCDP) egresocdp;
+                        if (egresoDescuentoCDP.getEgresoDescuento()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.FUERADELPRESUPUESTO) {
+                            totalDescuentos += egresoDescuentoCDP.getEgresoDescuento().getTotalDescuento();
+                        }
+                    } else if (egresocdp instanceof EgresoInversionCDP) {
+                        EgresoInversionCDP egresoInversionCDP = (EgresoInversionCDP) egresocdp;
+                        if (egresoInversionCDP.getEgresoInversion()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.FUERADELPRESUPUESTO) {
+                            totalInversiones += egresoInversionCDP.getEgresoInversion().getValor();
+                        }
+                    } else if (egresocdp instanceof EgresoRecurrenteAdmCDP) {
+                        EgresoRecurrenteAdmCDP egresoRecurrenteAdmCDP = (EgresoRecurrenteAdmCDP) egresocdp;
+                        if (egresoRecurrenteAdmCDP.getEgresoRecurrenteAdm()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.FUERADELPRESUPUESTO) {
+                            totalRecurrentesAdm += egresoRecurrenteAdmCDP.getEgresoRecurrenteAdm().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoServDocenteCDP) {
+                        EgresoServDocenteCDP egresoServDocenteCDP = (EgresoServDocenteCDP) egresocdp;
+                        if (egresoServDocenteCDP.getEgresoServDocente()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.FUERADELPRESUPUESTO) {
+                            totalServDocentes += egresoServDocenteCDP.getEgresoServDocente().getTotalPagoProfesor();
+                        }
+                    } else if (egresocdp instanceof EgresoServNoDocenteCDP) {
+                        EgresoServNoDocenteCDP egresoServNoDocenteCDP = (EgresoServNoDocenteCDP) egresocdp;
+                        if (egresoServNoDocenteCDP.getEgresoServNoDocente()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.FUERADELPRESUPUESTO) {
+                            totalServNoDocentes += egresoServNoDocenteCDP.getEgresoServNoDocente().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoTransferenciaCDP) {
+                        EgresoTransferenciaCDP egresoTransferenciaCDP = (EgresoTransferenciaCDP) egresocdp;
+                        if (egresoTransferenciaCDP.getEgresoTransferencia()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.FUERADELPRESUPUESTO) {
+                            totalTransferencias += egresoTransferenciaCDP.getEgresoTransferencia().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoViajeCDP) {
+                        EgresoViajeCDP egresoViajeCD = (EgresoViajeCDP) egresocdp;
+                        if (egresoViajeCD.getEgresoViaje()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.FUERADELPRESUPUESTO) {
+                            totalViajes += egresoViajeCD.getEgresoViaje().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoOtroCDP) {
+                        EgresoOtroCDP egresoOtroCDP = (EgresoOtroCDP) egresocdp;
+                        if (egresoOtroCDP.getEgresoOtro()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.FUERADELPRESUPUESTO) {
+                            totalOtros += egresoOtroCDP.getEgresoOtro().getValorTotal();
+                        }
+                    } else if (egresocdp instanceof EgresoOtroServDocenteCDP) {
+                        EgresoOtroServDocenteCDP egresoOtroServDocenteCDP = (EgresoOtroServDocenteCDP) egresocdp;
+                        if (egresoOtroServDocenteCDP.getEgresoOtroServDocente()
+                                .getEtiquetaEgresoIngreso() == EtiquetaEgresoIngreso.FUERADELPRESUPUESTO) {
+                            totalOtrosServDocentes += egresoOtroServDocenteCDP.getEgresoOtroServDocente()
+                                    .getValorTotal();
+                        }
+                    }
                 }
             }
 
