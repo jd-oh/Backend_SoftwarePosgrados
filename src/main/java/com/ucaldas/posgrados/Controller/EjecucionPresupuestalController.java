@@ -252,7 +252,7 @@ public class EjecucionPresupuestalController {
         }
     }
 
-    @GetMapping(path = "/TotalesDelPresupuestoMismoValor")
+    @GetMapping(path = "/totalesDelPresupuestoMismoValor")
     public @ResponseBody TotalEjecucionResponse TotalesDelPresupuestoMismoValor(@RequestParam int id) {
         Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
 
@@ -350,7 +350,7 @@ public class EjecucionPresupuestalController {
         return null;
     }
 
-    @GetMapping(path = "/TotalesDelPresupuestoOtroValor")
+    @GetMapping(path = "/totalesDelPresupuestoOtroValor")
     public @ResponseBody TotalEjecucionResponse TotalesDelPresupuestoOtroValor(@RequestParam int id) {
         Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
 
