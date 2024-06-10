@@ -27,11 +27,6 @@ public abstract class RegistroFinanciero {
     @JsonBackReference
     private Presupuesto presupuesto;
 
-    @ManyToOne
-    @JoinColumn(name = "idEjecucionPresupuestal", referencedColumnName = "id")
-    @JsonBackReference
-    private EjecucionPresupuestal ejecucionPresupuestal;
-
     private String fechaHoraCreacion;
 
     private String fechaHoraUltimaModificacion;

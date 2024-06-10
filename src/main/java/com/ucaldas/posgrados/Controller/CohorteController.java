@@ -58,6 +58,11 @@ public class CohorteController {
 
     }
 
+    @GetMapping(path = "/listarPorPrograma")
+    public @ResponseBody Iterable<Cohorte> listarPorPrograma(@RequestParam int idPrograma) {
+        return cohorteRepository.findByProgramaId(idPrograma);
+    }
+
     @GetMapping(path = "/listar")
     public @ResponseBody Iterable<Cohorte> listarTodos() {
 

@@ -15,4 +15,6 @@ public interface EjecucionPresupuestalRepository extends CrudRepository<Ejecucio
     Iterable<EjecucionPresupuestal> findByPresupuestoCohorteProgramaFacultadId(int idFacultad);
 
     Iterable<EjecucionPresupuestal> findByPresupuestoCohorteProgramaId(int idPrograma);
+
+    Optional<EjecucionPresupuestal> findByPresupuestoCohorteId(int idCohorte);
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 @Entity
 @NoArgsConstructor
@@ -14,6 +15,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class EgresosDescuentos extends RegistroFinanciero {
+
+    @Getter
+    private final static String rubro = "Descuentos";
 
     private int numEstudiantes;
     private double valor;

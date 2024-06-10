@@ -6,6 +6,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -16,6 +17,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class EgresosOtrosServDocentes extends RegistroFinanciero {
 
+    @Getter
+    private final static String rubro = "Otros Servicios Docentes";
     private String servicio;
     private String descripcion;
 

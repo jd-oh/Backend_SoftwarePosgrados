@@ -8,4 +8,6 @@ public interface FacultadRepository extends CrudRepository<Facultad, Integer> {
 
     Iterable<Facultad> findAllByOrderByNombreAsc();
 
+    Iterable<Facultad> findAllByNombre(String nombreFacultad);
+
 }

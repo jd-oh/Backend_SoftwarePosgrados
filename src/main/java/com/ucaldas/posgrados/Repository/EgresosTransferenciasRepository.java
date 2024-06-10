@@ -10,6 +10,4 @@ public interface EgresosTransferenciasRepository extends CrudRepository<EgresosT
 
     Iterable<EgresosTransferencias> findByPresupuestoId(int idPresupuesto);
 
-    Iterable<EgresosTransferencias> findByEjecucionPresupuestalId(int idEjecucionPresupuestal);
-
 }
