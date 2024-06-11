@@ -2,6 +2,8 @@ package com.ucaldas.posgrados.Controller;
 
 import java.util.Optional;
 
+import javax.swing.text.html.Option;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ucaldas.posgrados.Entity.Cohorte;
+import com.ucaldas.posgrados.Entity.EjecucionPresupuestal;
 import com.ucaldas.posgrados.Entity.Presupuesto;
 import com.ucaldas.posgrados.Entity.Usuario;
 import com.ucaldas.posgrados.Repository.CohorteRepository;
@@ -132,7 +135,29 @@ public class PresupuestoController {
     // Buscar el presupuesto por cohorte
     @GetMapping("/buscarPorCohorte")
     public @ResponseBody Optional<Presupuesto> buscarPorCohorte(@RequestParam int idCohorte) {
-        return presupuestoRepository.findByCohorteId(idCohorte);
+
+        Optional<Cohorte> cohorte = cohorteRepository.findById(idCohorte);
+
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findByCohorteId(idCohorte);
+
+        if (cohorte.isPresent() && presupuesto.isPresent()) {
+            return presupuesto;
+        } else {
+            return null;
+        }
+
+    }
+
+    @GetMapping("/obtenerEjecucionPresupuestal")
+    public @ResponseBody Optional<EjecucionPresupuestal> obtenerEjecucionPresupuestal(@RequestParam int idPresupuesto) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
+        Optional<EjecucionPresupuestal> ejecucion = ejecucionPresupuestalController.buscarPorPresupuesto(idPresupuesto);
+
+        if (presupuesto.isPresent() && ejecucion.isPresent()) {
+            return ejecucion;
+        } else {
+            return null;
+        }
     }
 
     @PutMapping(path = "/actualizar")
