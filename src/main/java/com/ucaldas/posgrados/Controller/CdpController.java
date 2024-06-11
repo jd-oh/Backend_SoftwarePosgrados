@@ -1181,8 +1181,14 @@ public class CdpController {
         // se debe comprar el rol.getNombre() con "DECANO"
         Usuario decano = usuarioRepository.findByFacultadNombreAndRolNombre(nombreFacultad, "DECANO");
 
-        infoTable.addCell("Nombre del ordenador del gasto");
-        infoTable.addCell(decano.getNombre() + " " + decano.getApellido());
+        if (decano == null) {
+            infoTable.addCell("Nombre del ordenador del gasto");
+            infoTable.addCell("");
+        } else {
+            infoTable.addCell("Nombre del ordenador del gasto");
+            infoTable.addCell(decano.getNombre() + " " + decano.getApellido());
+        }
+
         return infoTable;
     }
 
