@@ -46,6 +46,17 @@ public class EjecucionPresupuestalController {
     @Autowired
     private CdpRepository cdpRepository;
 
+    @GetMapping("/buscarPorPresupuesto")
+    public @ResponseBody Optional<EjecucionPresupuestal> buscarPorPresupuesto(@RequestParam int idPresupuesto) {
+        Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
+
+        if (presupuesto.isPresent()) {
+            return ejecucionPresupuestalRepository.findByPresupuestoId(idPresupuesto);
+        } else {
+            return null;
+        }
+    }
+
     // Se crea solo con el id del presupuesto porque al momento de que un
     // presupuesto es aprobado se crea una ejecución presupuestal
     // Pero aún sin gastos/ingresos, pues estos se van creando a medida que se van
