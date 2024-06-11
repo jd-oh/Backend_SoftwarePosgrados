@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.*;
 
@@ -227,7 +229,18 @@ public class CdpController {
         }
     }
 
-    public @ResponseBody Iterable<? extends RegistroFinanciero> listarPorRubro(@RequestParam String rubro) {
+    public @ResponseBody Iterable<? extends RegistroFinanciero> listarPorRubro(@RequestParam String rubro,
+            @RequestParam int idEjecucionPresupuestal) {
+
+        EjecucionPresupuestal ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(idEjecucionPresupuestal)
+                .get();
+
+        if (ejecucionPresupuestal == null) {
+            return Collections.emptyList();
+        }
+
+        int idPresupuesto = ejecucionPresupuestal.getPresupuesto().getId();
+
         Map<String, CrudRepository<? extends RegistroFinanciero, Integer>> rubroToRepositoryMap = new HashMap<>();
         rubroToRepositoryMap.put(EgresosGenerales.getRubro(), egresosGeneralesRepository);
         rubroToRepositoryMap.put(EgresosOtros.getRubro(), egresosOtrosRepository);
@@ -241,8 +254,13 @@ public class CdpController {
         rubroToRepositoryMap.put(EgresosViajes.getRubro(), egresosViajesRepository);
 
         CrudRepository<? extends RegistroFinanciero, Integer> repository = rubroToRepositoryMap.get(rubro);
+
         if (repository != null) {
-            return repository.findAll();
+            List<? extends RegistroFinanciero> allRecords = (List<? extends RegistroFinanciero>) repository.findAll();
+            List<? extends RegistroFinanciero> filteredRecords = allRecords.stream()
+                    .filter(record -> record.getPresupuesto().getId() == idPresupuesto)
+                    .collect(Collectors.toList());
+            return filteredRecords;
         } else {
             return Collections.emptyList();
         }
@@ -250,8 +268,9 @@ public class CdpController {
     }
 
     @GetMapping(path = "/listarPorRubroDisponibles")
-    public @ResponseBody Iterable<? extends RegistroFinanciero> listarPorRubroDisponibles(@RequestParam String rubro) {
-        Iterable<? extends RegistroFinanciero> registros = listarPorRubro(rubro);
+    public @ResponseBody Iterable<? extends RegistroFinanciero> listarPorRubroDisponibles(@RequestParam String rubro,
+            @RequestParam int idEjecucionPresupuestal) {
+        Iterable<? extends RegistroFinanciero> registros = listarPorRubro(rubro, idEjecucionPresupuestal);
         List<RegistroFinanciero> registrosDisponibles = new ArrayList<>();
 
         for (RegistroFinanciero registro : registros) {
