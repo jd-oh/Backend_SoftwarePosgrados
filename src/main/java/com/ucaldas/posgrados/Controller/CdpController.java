@@ -53,6 +53,7 @@ import com.ucaldas.posgrados.Entity.EgresosTransferencias;
 import com.ucaldas.posgrados.Entity.EgresosViajes;
 import com.ucaldas.posgrados.Entity.EjecucionPresupuestal;
 import com.ucaldas.posgrados.Entity.RegistroFinanciero;
+import com.ucaldas.posgrados.Entity.Usuario;
 import com.ucaldas.posgrados.Repository.CdpRepository;
 import com.ucaldas.posgrados.Repository.EgresosDescuentosRepository;
 import com.ucaldas.posgrados.Repository.EgresosGeneralesRepository;
@@ -65,6 +66,7 @@ import com.ucaldas.posgrados.Repository.EgresosServNoDocentesRepository;
 import com.ucaldas.posgrados.Repository.EgresosTransferenciasRepository;
 import com.ucaldas.posgrados.Repository.EgresosViajesRepository;
 import com.ucaldas.posgrados.Repository.EjecucionPresupuestalRepository;
+import com.ucaldas.posgrados.Repository.UsuarioRepository;
 
 @RestController
 @CrossOrigin
@@ -108,6 +110,9 @@ public class CdpController {
 
     @Autowired
     private EgresosViajesRepository egresosViajesRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     /* CONTROLLERS */
 
@@ -806,26 +811,26 @@ public class CdpController {
             PdfWriter.getInstance(document, out);
             document.open();
 
-            Font font = FontFactory.getFont(FontFactory.TIMES, 16, BaseColor.BLACK);
+            // Font font = FontFactory.getFont(FontFactory.TIMES, 16, BaseColor.BLACK);
 
             agregarLogo(document);
 
             agregarUniversidadYFormato(document);
             // Crear un salto de línea más pequeño
             Paragraph smallGap = new Paragraph(" ");
-            smallGap.setSpacingBefore(5); // Ajusta este valor según el tamaño del espacio que quieras
+            smallGap.setSpacingBefore(5);
 
             // Agregar el salto de línea al documento
             document.add(smallGap);
 
-            PdfPTable headerTable = agregarCodigoYVersion(font);
+            PdfPTable headerTable = agregarCodigoYVersion();
 
             document.add(headerTable);
 
             // Agregar el salto de línea al documento
             document.add(smallGap);
 
-            PdfPTable dateTable = agregarFechaYSCDP(idCdp, font);
+            PdfPTable dateTable = agregarFechaYSCDP(idCdp);
 
             document.add(dateTable);
             document.add(Chunk.NEWLINE);
@@ -841,8 +846,14 @@ public class CdpController {
 
             Iterable<EgresoCDP> egresos = cdp.get().getEgresosCDP();
 
-            agregarEgresosCDPALaTabla(tablaEgresosCDP, egresos);
+            double totalCDP = agregarEgresosCDPALaTabla(tablaEgresosCDP, egresos);
             document.add(tablaEgresosCDP);
+
+            // Agregar el salto de línea al documento
+            document.add(smallGap);
+
+            agregarValorTotal(document, totalCDP);
+
             document.close();
 
             ByteArrayInputStream bis = new ByteArrayInputStream(out.toByteArray());
@@ -860,55 +871,61 @@ public class CdpController {
         }
     }
 
-    private void agregarEgresosCDPALaTabla(PdfPTable table, Iterable<EgresoCDP> egresos) {
+    private double agregarEgresosCDPALaTabla(PdfPTable table, Iterable<EgresoCDP> egresos) {
+
+        double total = 0;
+
         for (EgresoCDP egreso : egresos) {
 
             if (egreso instanceof EgresoDescuentoCDP) {
 
-                agregarEgresoDescuento(table, egreso);
+                total += agregarEgresoDescuento(table, egreso);
 
             } else if (egreso instanceof EgresoGeneralCDP) {
 
-                agregarEgresoGeneral(table, egreso);
+                total += agregarEgresoGeneral(table, egreso);
 
             } else if (egreso instanceof EgresoInversionCDP) {
 
-                agregarEgresoInversion(table, egreso);
+                total += agregarEgresoInversion(table, egreso);
 
             } else if (egreso instanceof EgresoOtroCDP) {
 
-                agregarEgresoOtro(table, egreso);
+                total += agregarEgresoOtro(table, egreso);
 
             } else if (egreso instanceof EgresoOtroServDocenteCDP) {
 
-                agregarEgresoOtroServDocente(table, egreso);
+                total += agregarEgresoOtroServDocente(table, egreso);
 
             } else if (egreso instanceof EgresoRecurrenteAdmCDP) {
 
-                agregarEgresoRecurrenteAdm(table, egreso);
+                total += agregarEgresoRecurrenteAdm(table, egreso);
 
             } else if (egreso instanceof EgresoServDocenteCDP) {
 
-                agregarEgresoServDocente(table, egreso);
+                total += agregarEgresoServDocente(table, egreso);
 
             } else if (egreso instanceof EgresoServNoDocenteCDP) {
 
-                agregarEgresoServNoDocente(table, egreso);
+                total += agregarEgresoServNoDocente(table, egreso);
 
             } else if (egreso instanceof EgresoTransferenciaCDP) {
 
-                agregarEgresoTransferencia(table, egreso);
+                total += agregarEgresoTransferencia(table, egreso);
 
             } else if (egreso instanceof EgresoViajeCDP) {
 
-                agregarEgresoViaje(table, egreso);
+                total += agregarEgresoViaje(table, egreso);
 
             }
 
         }
+
+        return total;
     }
 
-    private void agregarEgresoViaje(PdfPTable table, EgresoCDP egreso) {
+    private double agregarEgresoViaje(PdfPTable table, EgresoCDP egreso) {
+
         EgresoViajeCDP egresoViajeCDP = (EgresoViajeCDP) egreso;
         EgresosViajes egresoViaje = egresoViajeCDP.getEgresoViaje();
 
@@ -921,9 +938,11 @@ public class CdpController {
         table.addCell(String.valueOf(egresoViaje.getNumViajesPorPersona()));
         table.addCell(String.valueOf(egresoViaje.getValorTransporte()));
         table.addCell(String.valueOf(egresoViaje.getValorTotal()));
+
+        return egresoViaje.getValorTotal();
     }
 
-    private void agregarEgresoTransferencia(PdfPTable table, EgresoCDP egreso) {
+    private double agregarEgresoTransferencia(PdfPTable table, EgresoCDP egreso) {
         EgresoTransferenciaCDP egresoTransferenciaCDP = (EgresoTransferenciaCDP) egreso;
         EgresosTransferencias egresoTransferencia = egresoTransferenciaCDP.getEgresoTransferencia();
 
@@ -933,9 +952,11 @@ public class CdpController {
         table.addCell(String.valueOf(egresoTransferencia.getPorcentaje()));
         table.addCell(egresoTransferencia.getTipoTransferencia().getNombreTipo());
         table.addCell(String.valueOf(egresoTransferencia.getValorTotal()));
+
+        return egresoTransferencia.getValorTotal();
     }
 
-    private void agregarEgresoServNoDocente(PdfPTable table, EgresoCDP egreso) {
+    private double agregarEgresoServNoDocente(PdfPTable table, EgresoCDP egreso) {
         EgresoServNoDocenteCDP egresoServNoDocenteCDP = (EgresoServNoDocenteCDP) egreso;
         EgresosServNoDocentes egresoServNoDocente = egresoServNoDocenteCDP.getEgresoServNoDocente();
 
@@ -946,9 +967,11 @@ public class CdpController {
         table.addCell(String.valueOf(egresoServNoDocente.getCantidad()));
         table.addCell(egresoServNoDocente.getTipoCosto().getNombreTipo());
         table.addCell(String.valueOf(egresoServNoDocente.getValorUnitario()));
+
+        return egresoServNoDocente.getValorUnitario();
     }
 
-    private void agregarEgresoServDocente(PdfPTable table, EgresoCDP egreso) {
+    private double agregarEgresoServDocente(PdfPTable table, EgresoCDP egreso) {
         EgresoServDocenteCDP egresoServDocenteCDP = (EgresoServDocenteCDP) egreso;
         EgresosServDocentes egresoServDocente = egresoServDocenteCDP.getEgresoServDocente();
 
@@ -965,9 +988,11 @@ public class CdpController {
         table.addCell(String.valueOf(egresoServDocente.getValorHoraProfesor()));
         table.addCell(egresoServDocente.getTipoCompensacion().getNombreTipo());
         table.addCell(String.valueOf(egresoServDocente.getTotalPagoProfesor()));
+
+        return egresoServDocente.getTotalPagoProfesor();
     }
 
-    private void agregarEgresoRecurrenteAdm(PdfPTable table, EgresoCDP egreso) {
+    private double agregarEgresoRecurrenteAdm(PdfPTable table, EgresoCDP egreso) {
         EgresoRecurrenteAdmCDP egresoRecurrenteAdmCDP = (EgresoRecurrenteAdmCDP) egreso;
         EgresosRecurrentesAdm egresoRecurrenteAdm = egresoRecurrenteAdmCDP.getEgresoRecurrenteAdm();
 
@@ -979,9 +1004,11 @@ public class CdpController {
         table.addCell(String.valueOf(egresoRecurrenteAdm.getValorHora()));
         table.addCell(String.valueOf(egresoRecurrenteAdm.getNumHoras()));
         table.addCell(String.valueOf(egresoRecurrenteAdm.getValorTotal()));
+
+        return egresoRecurrenteAdm.getValorTotal();
     }
 
-    private void agregarEgresoOtroServDocente(PdfPTable table, EgresoCDP egreso) {
+    private double agregarEgresoOtroServDocente(PdfPTable table, EgresoCDP egreso) {
         EgresoOtroServDocenteCDP egresoOtroServDocenteCDP = (EgresoOtroServDocenteCDP) egreso;
         EgresosOtrosServDocentes egresoOtroServDocente = egresoOtroServDocenteCDP
                 .getEgresoOtroServDocente();
@@ -994,9 +1021,11 @@ public class CdpController {
         table.addCell(String.valueOf(egresoOtroServDocente.getNumHoras()));
         table.addCell(egresoOtroServDocente.getTipoCosto().getNombreTipo());
         table.addCell(String.valueOf(egresoOtroServDocente.getValorTotal()));
+
+        return egresoOtroServDocente.getValorTotal();
     }
 
-    private void agregarEgresoOtro(PdfPTable table, EgresoCDP egreso) {
+    private double agregarEgresoOtro(PdfPTable table, EgresoCDP egreso) {
         EgresoOtroCDP egresoOtroCDP = (EgresoOtroCDP) egreso;
         EgresosOtros egresoOtro = egresoOtroCDP.getEgresoOtro();
 
@@ -1007,9 +1036,11 @@ public class CdpController {
         table.addCell(String.valueOf(egresoOtro.getCantidad()));
         table.addCell(egresoOtro.getTipoCosto().getNombreTipo());
         table.addCell(String.valueOf(egresoOtro.getValorUnitario()));
+
+        return egresoOtro.getValorUnitario();
     }
 
-    private void agregarEgresoInversion(PdfPTable table, EgresoCDP egreso) {
+    private double agregarEgresoInversion(PdfPTable table, EgresoCDP egreso) {
         EgresoInversionCDP egresoInversionCDP = (EgresoInversionCDP) egreso;
         EgresosInversiones egresoInversion = egresoInversionCDP.getEgresoInversion();
 
@@ -1019,9 +1050,11 @@ public class CdpController {
         table.addCell(egresoInversion.getConcepto());
         table.addCell(egresoInversion.getTipoInversion().getNombreTipo());
         table.addCell(String.valueOf(egresoInversion.getValor()));
+
+        return egresoInversion.getValor();
     }
 
-    private void agregarEgresoGeneral(PdfPTable table, EgresoCDP egreso) {
+    private double agregarEgresoGeneral(PdfPTable table, EgresoCDP egreso) {
         EgresoGeneralCDP egresoGeneralCDP = (EgresoGeneralCDP) egreso;
         EgresosGenerales egresoGeneral = egresoGeneralCDP.getEgresoGeneral();
         table.addCell(String.valueOf(egreso.getId()));
@@ -1032,9 +1065,11 @@ public class CdpController {
         table.addCell(String.valueOf(egresoGeneral.getCantidad()));
         table.addCell(egresoGeneral.getTipoCosto().getNombreTipo());
         table.addCell(String.valueOf(egresoGeneral.getValorUnitario()));
+
+        return egresoGeneral.getValorUnitario();
     }
 
-    private void agregarEgresoDescuento(PdfPTable table, EgresoCDP egreso) {
+    private double agregarEgresoDescuento(PdfPTable table, EgresoCDP egreso) {
         EgresoDescuentoCDP egresoDescuentoCDP = (EgresoDescuentoCDP) egreso;
         EgresosDescuentos egresoDescuento = egresoDescuentoCDP.getEgresoDescuento();
         table.addCell(String.valueOf(egreso.getId()));
@@ -1046,6 +1081,8 @@ public class CdpController {
         table.addCell(egresoDescuento.getTipoDescuento().getNombreTipo());
         table.addCell(String.valueOf(egresoDescuento.getValor()));
         table.addCell(String.valueOf(egresoDescuento.getTotalDescuento()));
+
+        return egresoDescuento.getTotalDescuento();
     }
 
     private PdfPTable crearTablaEgresosCDP(String[] headersTableEgresosCDP) {
@@ -1053,61 +1090,65 @@ public class CdpController {
         table.setWidthPercentage(100);
 
         Font headersTableEgresosCDPFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
-        BaseColor headerBackgroundColor = new BaseColor(0, 122, 181); // Color de fondo para las celdas del
-                                                                      // encabezado
+        // BaseColor headerBackgroundColor = new BaseColor(0, 122, 181); // Color de
+        // fondo para las celdas del
+        // encabezado
 
         for (String header : headersTableEgresosCDP) {
             PdfPCell EgresosCell = new PdfPCell(new Phrase(header, headersTableEgresosCDPFont));
-            EgresosCell.setBackgroundColor(headerBackgroundColor);
+            EgresosCell.setBackgroundColor(BaseColor.BLUE);
             table.addCell(EgresosCell);
         }
         return table;
     }
 
-    private PdfPTable agregarFechaYSCDP(int idCdp, Font font) throws DocumentException {
+    private PdfPTable agregarFechaYSCDP(int idCdp) throws DocumentException {
         // Crear tabla para fecha y SCDP
         PdfPTable dateTable = new PdfPTable(2); // 2 columnas
-        dateTable.setWidthPercentage(70); // Ancho de la tabla como porcentaje del ancho de la página
+        dateTable.setWidthPercentage(60); // Ancho de la tabla como porcentaje del ancho de la página
         dateTable.setWidths(new int[] { 2, 1 }); // Proporción de los anchos de las columnas
 
+        Font fontFecha = FontFactory.getFont(FontFactory.TIMES, 13, BaseColor.BLACK);
         // Agregar celda para fecha
         PdfPCell fechaCell = new PdfPCell(new Phrase(
                 "Fecha de la solicitud: " + java.time.LocalDateTime.now().getDayOfMonth()
                         + "/"
                         + java.time.LocalDateTime.now().getMonthValue() + "/"
                         + java.time.LocalDateTime.now().getYear(),
-                font));
+                fontFecha));
         fechaCell.setBorder(Rectangle.NO_BORDER);
         dateTable.addCell(fechaCell);
 
         // Agregar celda para SCDP
-        PdfPCell SCDPCell = new PdfPCell(new Phrase("SCDP No. " + idCdp, font));
+        PdfPCell SCDPCell = new PdfPCell(new Phrase("SCDP No. " + idCdp, fontFecha));
         SCDPCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         SCDPCell.setBorder(Rectangle.NO_BORDER);
         dateTable.addCell(SCDPCell);
         return dateTable;
     }
 
-    private PdfPTable agregarCodigoYVersion(Font font) throws DocumentException {
+    private PdfPTable agregarCodigoYVersion() throws DocumentException {
         // Crear tabla para el código y la versión
         PdfPTable headerTable = new PdfPTable(2); // 2 columnas
-        headerTable.setWidthPercentage(70); // Ancho de la tabla como porcentaje del ancho de la página
+        headerTable.setWidthPercentage(60); // Ancho de la tabla como porcentaje del ancho de la página
         headerTable.setWidths(new int[] { 2, 1 }); // Proporción de los anchos de las columnas
 
+        Font fontCodigo = FontFactory.getFont(FontFactory.TIMES, 13, BaseColor.BLACK);
         // Agregar celda para el código
-        PdfPCell codigoCell = new PdfPCell(new Phrase("CÓDIGO: R - 410 - 1 - GF - 148", font));
+        PdfPCell codigoCell = new PdfPCell(new Phrase("CÓDIGO: R - 410 - 1 - GF - 148", fontCodigo));
         codigoCell.setBorder(Rectangle.NO_BORDER);
         headerTable.addCell(codigoCell);
 
         // Agregar celda para la versión
-        PdfPCell versionCell = new PdfPCell(new Phrase("VERSIÓN: 2", font));
+        PdfPCell versionCell = new PdfPCell(new Phrase("VERSIÓN: 2", fontCodigo));
         versionCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         versionCell.setBorder(Rectangle.NO_BORDER);
         headerTable.addCell(versionCell);
         return headerTable;
     }
 
-    private PdfPTable crearInformacionSolicitante(Optional<Cdp> cdp) throws DocumentException {
+    private PdfPTable crearInformacionSolicitante(Optional<Cdp> cdp)
+            throws DocumentException {
         // Crear tabla para la información solicitante
         PdfPTable infoTable = new PdfPTable(2); // 2 columnas
         infoTable.setWidthPercentage(100); // Ancho de la tabla como porcentaje del ancho de la página
@@ -1121,18 +1162,27 @@ public class CdpController {
         headerCell.setColspan(2); // Hacer que la celda ocupe ambas columnas
         infoTable.addCell(headerCell);
 
+        String nombreFacultad = cdp.get().getEjecucionPresupuestal().getPresupuesto().getCohorte()
+                .getPrograma().getFacultad().getNombre();
+
         // Agregar los datos de la información solicitante
         infoTable.addCell("Nombre de la dependencia");
-        infoTable.addCell("DECANATO FAC. " + cdp.get().getEjecucionPresupuestal().getPresupuesto().getCohorte()
-                .getPrograma().getFacultad().getNombre().toUpperCase());
+        infoTable.addCell("DECANATO FAC. " + nombreFacultad.toUpperCase());
         infoTable.addCell("Código área (SGF)");
         infoTable.addCell("160203");
         infoTable.addCell("Nombre del proyecto");
-        infoTable.addCell(""); // Aquí puedes agregar el nombre del proyecto
+        infoTable.addCell(cdp.get().getEjecucionPresupuestal().getPresupuesto().getCohorte()
+                .getPrograma().getNombre().toUpperCase());
         infoTable.addCell("Código del proyecto");
-        infoTable.addCell(""); // Aquí puedes agregar el código del proyecto
+        infoTable.addCell(String.valueOf(cdp.get().getEjecucionPresupuestal().getPresupuesto().getCohorte()
+                .getPrograma().getId()));
+
+        // buscar entre los usuarios el decano de esta facultad
+        // se debe comprar el rol.getNombre() con "DECANO"
+        Usuario decano = usuarioRepository.findByFacultadNombreAndRolNombre(nombreFacultad, "DECANO");
+
         infoTable.addCell("Nombre del ordenador del gasto");
-        infoTable.addCell(""); // Aquí puedes agregar el nombre del ordenador del gasto
+        infoTable.addCell(decano.getNombre() + " " + decano.getApellido());
         return infoTable;
     }
 
@@ -1146,6 +1196,21 @@ public class CdpController {
         Font fontFormato = FontFactory.getFont(FontFactory.TIMES, 16, BaseColor.BLACK);
         Paragraph formato = new Paragraph("FORMATO PARA SOLICITUD DE CERTIFICADO DE DISPONIBILIDAD PRESUPUESTAL",
                 fontFormato);
+        formato.setAlignment(Element.ALIGN_CENTER);
+        document.add(formato);
+    }
+
+    private void agregarValorTotal(Document document, double total) throws DocumentException {
+        Font fontTotal = FontFactory.getFont(FontFactory.TIMES, 13, BaseColor.BLACK);
+        Paragraph universidad = new Paragraph("Valor total de la disponibilidad presupuestal solicitada", fontTotal);
+        universidad.setAlignment(Element.ALIGN_CENTER);
+        document.add(universidad);
+
+        Paragraph smallGap = new Paragraph(" ");
+        smallGap.setSpacingBefore(3);
+        Font fontValor = FontFactory.getFont(FontFactory.TIMES, 15, BaseColor.BLACK);
+        Paragraph formato = new Paragraph("$" + String.valueOf(total),
+                fontValor);
         formato.setAlignment(Element.ALIGN_CENTER);
         document.add(formato);
     }
