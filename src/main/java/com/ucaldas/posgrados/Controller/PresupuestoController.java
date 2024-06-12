@@ -89,8 +89,9 @@ public class PresupuestoController {
     public @ResponseBody Iterable<Presupuesto> listarPorFacultadPorRevisar(
             @AuthenticationPrincipal Usuario usuarioActual) {
         if (usuarioActual.getRol().getNombre().equals("ADMIN")) {
-            // Si el usuario es un administrador, devuelve todos los presupuestos
-            return presupuestoRepository.findAll();
+            // Si el usuario es un administrador, devuelve todos los presupuestos en estado
+            // revision
+            return presupuestoRepository.findByEstado("revision");
         } else {
             // Si el usuario no es un administrador, filtra los presupuestos por la facultad
             // del usuario
@@ -104,7 +105,7 @@ public class PresupuestoController {
             @AuthenticationPrincipal Usuario usuarioActual) {
         if (usuarioActual.getRol().getNombre().equals("ADMIN")) {
             // Si el usuario es un administrador, devuelve todos los presupuestos
-            return presupuestoRepository.findAll();
+            return presupuestoRepository.findByEstado("aprobado");
         } else {
             // Si el usuario no es un administrador, filtra los presupuestos por la facultad
             // del usuario
@@ -118,7 +119,7 @@ public class PresupuestoController {
             @AuthenticationPrincipal Usuario usuarioActual) {
         if (usuarioActual.getRol().getNombre().equals("ADMIN")) {
             // Si el usuario es un administrador, devuelve todos los presupuestos
-            return presupuestoRepository.findAll();
+            return presupuestoRepository.findByEstado("desaprobado");
         } else {
             // Si el usuario no es un administrador, filtra los presupuestos por la facultad
             // del usuario
