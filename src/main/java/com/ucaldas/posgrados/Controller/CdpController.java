@@ -738,6 +738,60 @@ public class CdpController {
         return cdpRepository.findAll();
     }
 
+    @GetMapping(path = "/encabezadosEgresos")
+    private String[] encabezadosEgresos(int idCdp) {
+        Cdp cdp = cdpRepository.findById(idCdp).get();
+        String rubroEgresosGenerales = EgresosGenerales.getRubro();
+        String rubroEgresosOtros = EgresosOtros.getRubro();
+        String rubroEgresosOtrosServDocentes = EgresosOtrosServDocentes.getRubro();
+        String rubroEgresosServDocentes = EgresosServDocentes.getRubro();
+        String rubroEgresosServNoDocentes = EgresosServNoDocentes.getRubro();
+        String rubroEgresosTransferencias = EgresosTransferencias.getRubro();
+        String rubroEgresosDescuentos = EgresosDescuentos.getRubro();
+        String rubroEgresosRecurrentesAdm = EgresosRecurrentesAdm.getRubro();
+        String rubroEgresosInversiones = EgresosInversiones.getRubro();
+        String rubroEgresosViajes = EgresosViajes.getRubro();
+
+        String[] headers = null;
+
+        if (cdp.getRubro().equals(rubroEgresosGenerales)) {
+            headers = new String[] { "Concepto", "Cantidad",
+                    "Tipo de costo", "Valor unitario" };
+        } else if (cdp.getRubro().equals(rubroEgresosOtros)) {
+            headers = new String[] { "Concepto", "Cantidad",
+                    "Tipo de costo", "Valor unitario" };
+        } else if (cdp.getRubro().equals(rubroEgresosOtrosServDocentes)) {
+            headers = new String[] { "Servicio", "Descripción", "Número de horas",
+                    "Tipo de costo",
+                    "Valor total" };
+        } else if (cdp.getRubro().equals(rubroEgresosServDocentes)) {
+            headers = new String[] { "Nombre de la materia", "Es docente de planta",
+                    "Nombre del docente", "Escalafón", "Título", "Horas teóricas de la materia",
+                    "Horas prácticas de la materia", "Valor hora profesor", "Tipo de compensación", "Valor total" };
+        } else if (cdp.getRubro().equals(rubroEgresosServNoDocentes)) {
+            headers = new String[] { "Servicio", "Cantidad",
+                    "Tipo de costo", "Valor unitario" };
+        } else if (cdp.getRubro().equals(rubroEgresosTransferencias)) {
+            headers = new String[] { "Porcentaje", "Tipo de transferencia",
+                    "Valor total" };
+        } else if (cdp.getRubro().equals(rubroEgresosDescuentos)) {
+            headers = new String[] { "Número de estudiantes", "Valor",
+                    "Número de periodos", "Tipo de descuento", "Descuento total" };
+        } else if (cdp.getRubro().equals(rubroEgresosRecurrentesAdm)) {
+            headers = new String[] { "Unidad", "Cargo", "Valor hora",
+                    "Número de horas", "Valor total" };
+        } else if (cdp.getRubro().equals(rubroEgresosInversiones)) {
+            headers = new String[] { "Concepto", "Tipo de inversión", "Valor" };
+        } else if (cdp.getRubro().equals(rubroEgresosViajes)) {
+            headers = new String[] { "Concepto", "Número de personas",
+                    "Apoyo desplazamiento", "Número de viajes por persona", "Valor transporte", "Valor total" };
+        } else {
+            headers = new String[] {};
+        }
+
+        return headers;
+    }
+
     /*
      * /*
      * 
