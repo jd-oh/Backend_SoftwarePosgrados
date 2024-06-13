@@ -72,6 +72,16 @@ public class ProgramaController {
         return programaRepository.findAllByOrderByNombreAsc();
     }
 
+    @GetMapping(path = "/listarPorFacultad")
+    public @ResponseBody Iterable<Programa> listarPorFacultad(@RequestParam int idFacultad) {
+        Optional<Facultad> facultad = facultadRepository.findById(idFacultad);
+        if (facultad.isPresent()) {
+            return programaRepository.findAllByFacultad(facultad.get());
+        } else {
+            return null;
+        }
+    }
+
     @GetMapping(path = "/buscar")
     public @ResponseBody String buscarPorId(@RequestParam int id) {
         return programaRepository.findById(id).get().toString();
