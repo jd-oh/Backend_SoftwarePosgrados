@@ -228,7 +228,7 @@ public class CdpController {
                     + java.time.LocalDateTime.now().getSecond());
 
             cdpRepository.save(cdp);
-            return "OK";
+            return cdp.getId() + "";
         } else {
             return "Esta cohorte no tiene un presupuesto aprobado";
         }
