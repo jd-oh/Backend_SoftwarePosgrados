@@ -263,8 +263,10 @@ public class CdpController {
         if (repository != null) {
             List<? extends RegistroFinanciero> allRecords = (List<? extends RegistroFinanciero>) repository.findAll();
             List<? extends RegistroFinanciero> filteredRecords = allRecords.stream()
-                    .filter(record -> record.getPresupuesto().getId() == idPresupuesto)
+                    .filter(record -> record.getPresupuesto() != null
+                            && record.getPresupuesto().getId() == idPresupuesto)
                     .collect(Collectors.toList());
+
             return filteredRecords;
         } else {
             return Collections.emptyList();
