@@ -769,7 +769,7 @@ public class CdpController {
         } else if (cdp.getRubro().equals(rubroEgresosServDocentes)) {
             headers = new String[] { "nombreMateria", "esDocentePlanta",
                     "nombreDocente", "escalafon", "titulo", "horasTeoricasMat",
-                    "HorasPracticasMat", "valorHoraProfesor", "tipoCompensacion", "valorTotal" };
+                    "HorasPracticasMat", "valorHoraProfesor", "tipoCompensacion", "valorTotalDocente" };
         } else if (cdp.getRubro().equals(rubroEgresosServNoDocentes)) {
             headers = new String[] { "servicio", "cantidad",
                     "tipoCosto", "valorUnitario" };
