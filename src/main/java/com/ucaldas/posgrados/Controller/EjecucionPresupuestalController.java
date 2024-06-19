@@ -46,6 +46,24 @@ public class EjecucionPresupuestalController {
     @Autowired
     private CdpRepository cdpRepository;
 
+    @GetMapping(path = "/buscarPorCohorte")
+    public @ResponseBody Optional<EjecucionPresupuestal> buscarPorCohorte(@RequestParam int idCohorte) {
+
+        return ejecucionPresupuestalRepository.findByPresupuestoCohorteId(idCohorte);
+    }
+
+    @GetMapping(path = "/buscarEjecucionPresupuestal")
+    public @ResponseBody Optional<EjecucionPresupuestal> buscarEjecucionPresupuestal(@RequestParam int id) {
+
+        Optional<EjecucionPresupuestal> ejecucionPresupuestal = ejecucionPresupuestalRepository.findById(id);
+
+        if (ejecucionPresupuestal.isPresent()) {
+            return ejecucionPresupuestal;
+        } else {
+            return null;
+        }
+    }
+
     @GetMapping("/buscarPorPresupuesto")
     public @ResponseBody Optional<EjecucionPresupuestal> buscarPorPresupuesto(@RequestParam int idPresupuesto) {
         Optional<Presupuesto> presupuesto = presupuestoRepository.findById(idPresupuesto);
