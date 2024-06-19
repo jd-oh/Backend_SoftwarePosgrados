@@ -119,7 +119,7 @@ public class EgresoViajeCdpController {
         egresoViaje.setApoyoDesplazamiento(apoyoDesplazamiento);
         egresoViaje.setNumViajesPorPersona(numViajesPorPersona);
         egresoViaje.setValorTransporte(valorTransporte);
-        egresoViaje.setValorTotal(numPersonas * apoyoDesplazamiento * numViajesPorPersona * valorTransporte);
+        egresoViaje.setValorTotal((valorTransporte * numPersonas * numViajesPorPersona) + apoyoDesplazamiento);
 
         egresoViaje.setFechaHoraCreacion(java.time.LocalDateTime.now().getDayOfMonth() + "/"
                 + java.time.LocalDateTime.now().getMonthValue() + "/" + java.time.LocalDateTime.now().getYear() + " "

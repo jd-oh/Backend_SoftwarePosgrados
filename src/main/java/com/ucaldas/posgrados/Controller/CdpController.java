@@ -694,7 +694,8 @@ public class CdpController {
 
         if (respuesta.equals("OK")) {
             Cdp cdp = cdpRepository.findById(idCdp).get();
-            cdp.setValorTotal(cdp.getValorTotal() + valorTransporte * numPersonas * numViajesPorPersona);
+            cdp.setValorTotal(
+                    cdp.getValorTotal() + (valorTransporte * numPersonas * numViajesPorPersona) + apoyoDesplazamiento);
             cdpRepository.save(cdp);
             return "OK";
         } else {
