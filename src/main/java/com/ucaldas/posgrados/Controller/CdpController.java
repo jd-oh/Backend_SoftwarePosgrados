@@ -1281,7 +1281,8 @@ public class CdpController {
     private void agregarLogo(Document document) throws BadElementException, DocumentException {
         // Agregar la imagen "Sistema integrado de gestión"
         try {
-            Image logo = Image.getInstance("/sig.jpg"); // Reemplaza esto con la ruta a tu imagen
+            Image logo = Image.getInstance("src/main/resources/images/sig.jpg"); // Reemplaza esto con la ruta a tu
+                                                                                 // imagen
             logo.scaleToFit(100, 100); // Ajusta el tamaño de la imagen según sea necesario
             logo.setAlignment(Element.ALIGN_CENTER);
             document.add(logo);
